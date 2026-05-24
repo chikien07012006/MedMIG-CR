@@ -1,0 +1,20 @@
+{
+  "associated with": 0,
+  "carrier": 1,
+  "contraindication": 2,
+  "enzyme": 3,
+  "expression absent": 4,
+  "expression present": 5,
+  "indication": 6,
+  "interacts with": 7,
+  "linked to": 8,
+  "off-label use": 9,
+  "parent-child": 10,
+  "phenotype absent": 11,
+  "phenotype present": 12,
+  "ppi": 13,
+  "side effect": 14,
+  "synergistic interaction": 15,
+  "target": 16,
+  "transporter": 17
+}

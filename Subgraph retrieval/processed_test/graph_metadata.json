@@ -1,0 +1,10 @@
+{
+  "num_nodes": 90384,
+  "num_relations": 18,
+  "num_edges": 294432,
+  "graph_path": "D:\\MedMIG-CR\\Subgraph retrieval\\processed_test\\graph_csr.npz",
+  "mappings": {
+    "node2id": "D:\\MedMIG-CR\\Subgraph retrieval\\processed_test\\mappings\\node2id.json",
+    "relation2id": "D:\\MedMIG-CR\\Subgraph retrieval\\processed_test\\mappings\\relation2id.json"
+  }
+}
