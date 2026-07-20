@@ -1,0 +1,8 @@
+{
+  "num_conditions": 95,
+  "num_condition_auto": 70,
+  "num_evidences": 987,
+  "num_evidence_auto": 648,
+  "condition_threshold": 0.82,
+  "evidence_threshold": 0.78
+}

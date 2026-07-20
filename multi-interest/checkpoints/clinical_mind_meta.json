@@ -1,9 +1,0 @@
-{
-  "D": 64,
-  "K": 5,
-  "R": 3,
-  "max_seq_len": 16,
-  "num_symptoms": 8367,
-  "num_diseases": 9783,
-  "temperature": 0.07
-}

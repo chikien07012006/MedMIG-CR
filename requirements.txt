@@ -1,6 +1,4 @@
-pandas
 numpy
+pandas
 scipy
-networkx
 torch
-torch_geometric

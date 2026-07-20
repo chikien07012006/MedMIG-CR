@@ -1,6 +1,43 @@
-*.csv
-/processed_medmigcr_dataset
-db.html
-multi-interest\README_MIND_MedMIGCR.md
-/checkpoints
-/venv
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments and local env files
+/venv/
+/.venv/
+/env/
+/.env
+/.env.*
+
+# Large/raw local datasets
+/kg_giant.csv
+/Benchmark data/DDXPlus/*.csv
+/processed_medmigcr_dataset/
+/types.csv
+
+# Generated processed data and mappings for retrieval runs
+/data/processed/
+
+# Model checkpoints, projections, and run outputs
+/artifacts/checkpoints/
+/checkpoints/
+/results/
+
+# Obsolete/generated folders from pre-reorg experiments
+/multi-interest/
+/Subgraph retrieval/
+/legacy/
+
+# Local reports or generated HTML
+/db.html
+/medmigcr-survey.html
+/Papers/
+
+# Logs and OS/editor noise
+*.log
+.DS_Store
+Thumbs.db
