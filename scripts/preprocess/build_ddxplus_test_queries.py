@@ -4,6 +4,7 @@ import argparse
 import ast
 import csv
 import json
+import statistics
 from collections import Counter
 from pathlib import Path
 from typing import Any, Dict, List
@@ -49,6 +50,10 @@ def build_queries(
     stats = Counter()
     missing_evidences = Counter()
     missing_pathologies = Counter()
+    mapped_evidence_frequency = Counter()
+    seed_node_frequency = Counter()
+    seed_counts: List[int] = []
+    evidence_counts: List[int] = []
 
     with patients_csv.open("r", newline="", encoding="utf-8-sig") as in_handle, output_csv.open(
         "w", newline="", encoding="utf-8"
@@ -72,11 +77,16 @@ def build_queries(
             stats["patients_total"] += 1
             evidence_keys = parse_list_cell(row.get("EVIDENCES", ""))
             seed_nodes: List[str] = []
+            mapped_evidence_keys: List[str] = []
+            unmapped_evidence_keys: List[str] = []
             for evidence_key in evidence_keys:
                 nodes = selected_nodes(evidence_map, evidence_key)
                 if nodes:
                     seed_nodes.extend(nodes)
+                    mapped_evidence_keys.append(evidence_key)
+                    mapped_evidence_frequency[evidence_key] += 1
                 else:
+                    unmapped_evidence_keys.append(evidence_key)
                     missing_evidences[evidence_key] += 1
 
             seed_nodes = sorted(set(seed_nodes))
@@ -87,11 +97,22 @@ def build_queries(
                 stats["skipped_missing_pathology_mapping"] += 1
                 missing_pathologies[pathology] += 1
                 continue
+            target_set = set(target_nodes)
+            overlapping_nodes = target_set.intersection(seed_nodes)
+            if overlapping_nodes:
+                stats["queries_with_target_seed_overlap_removed"] += 1
+                stats["target_seed_nodes_removed"] += len(overlapping_nodes)
+                seed_nodes = [node for node in seed_nodes if node not in target_set]
             if len(seed_nodes) < min_seed_nodes:
                 stats["skipped_too_few_seed_nodes"] += 1
                 continue
 
             stats["patients_written"] += 1
+            stats["evidence_mentions_total"] += len(evidence_keys)
+            stats["evidence_mentions_mapped"] += len(mapped_evidence_keys)
+            seed_counts.append(len(seed_nodes))
+            evidence_counts.append(len(evidence_keys))
+            seed_node_frequency.update(seed_nodes)
             writer.writerow(
                 {
                     "patient_index": patient_index,
@@ -111,6 +132,24 @@ def build_queries(
         "min_seed_nodes": min_seed_nodes,
         "missing_evidence_top20": missing_evidences.most_common(20),
         "missing_pathology_top20": missing_pathologies.most_common(20),
+        "num_unique_mapped_evidences": len(mapped_evidence_frequency),
+        "num_unique_seed_nodes": len(seed_node_frequency),
+        "num_unique_target_nodes": len(
+            {
+                node
+                for entry in condition_map.values()
+                for node in entry.get("selected_primekg_nodes", [])
+            }
+        ),
+        "mean_seed_nodes": statistics.fmean(seed_counts) if seed_counts else 0.0,
+        "median_seed_nodes": statistics.median(seed_counts) if seed_counts else 0.0,
+        "mean_evidences": statistics.fmean(evidence_counts) if evidence_counts else 0.0,
+        "evidence_mention_coverage": (
+            stats["evidence_mentions_mapped"] / stats["evidence_mentions_total"]
+            if stats["evidence_mentions_total"]
+            else 0.0
+        ),
+        "top_seed_nodes": seed_node_frequency.most_common(20),
     }
     with summary_json.open("w", encoding="utf-8") as handle:
         json.dump(summary, handle, indent=2, ensure_ascii=False)
@@ -119,10 +158,10 @@ def build_queries(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build DDXPlus test queries mapped to PrimeKG seed/target nodes.")
     parser.add_argument("--patients_csv", type=Path, default=Path("Benchmark data/DDXPlus/release_test_patients.csv"))
-    parser.add_argument("--evidence_map", type=Path, default=Path("data/mappings/ddxplus/evidence_to_primekg.json"))
-    parser.add_argument("--condition_map", type=Path, default=Path("data/mappings/ddxplus/condition_to_primekg.json"))
-    parser.add_argument("--output_csv", type=Path, default=Path("data/processed/ddxplus/test_queries.csv"))
-    parser.add_argument("--summary_json", type=Path, default=Path("data/processed/ddxplus/test_query_summary.json"))
+    parser.add_argument("--evidence_map", type=Path, default=Path("data/mappings/ddxplus_v2/evidence_to_primekg.json"))
+    parser.add_argument("--condition_map", type=Path, default=Path("data/mappings/ddxplus_v2/condition_to_primekg.json"))
+    parser.add_argument("--output_csv", type=Path, default=Path("data/processed/ddxplus_v2/test_queries.csv"))
+    parser.add_argument("--summary_json", type=Path, default=Path("data/processed/ddxplus_v2/test_query_summary.json"))
     parser.add_argument("--min_seed_nodes", type=int, default=1)
     return parser.parse_args()
 

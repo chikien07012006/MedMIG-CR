@@ -76,7 +76,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output_csv", type=Path, default=Path("results/seed_svd/predictions.csv"))
     parser.add_argument("--summary_json", type=Path, default=Path("results/seed_svd/retrieval_summary.json"))
     parser.add_argument("--interest_count", type=int, default=1)
-    parser.add_argument("--max_hops", type=int, default=3)
+    parser.add_argument("--max_hops", type=int, default=5)
     parser.add_argument("--beam_width", type=int, default=32)
     parser.add_argument("--paths_per_interest", type=int, default=100)
     parser.add_argument("--top_k", type=int, default=50)

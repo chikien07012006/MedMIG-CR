@@ -77,6 +77,11 @@ def patient_rows(path: Path) -> List[Dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
+def query_rows(path: Path) -> List[Dict[str, str]]:
+    with path.open("r", newline="", encoding="utf-8-sig") as handle:
+        return list(csv.DictReader(handle))
+
+
 def candidate_from_row(row: Dict[str, str]) -> str:
     for column in CANDIDATE_COLUMNS:
         value = row.get(column)
@@ -228,6 +233,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Evaluate DDXPlus KG retrieval predictions.")
     parser.add_argument("--patients_csv", type=Path, default=Path("Benchmark data/DDXPlus/release_test_patients.csv"))
     parser.add_argument("--condition_map", type=Path, default=Path("data/mappings/ddxplus/condition_to_primekg.json"))
+    parser.add_argument("--queries_csv", type=Path, default=None)
     parser.add_argument("--predictions", type=Path, required=True)
     parser.add_argument("--output_dir", type=Path, default=Path("results/ddxplus_retrieval"))
     parser.add_argument("--target_mode", choices=("pathology", "differential"), default="pathology")
@@ -238,23 +244,43 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    patients = patient_rows(args.patients_csv)
-    if args.limit_patients is not None:
-        patients = patients[: args.limit_patients]
     condition_map = load_json(args.condition_map)
     predictions = load_predictions(args.predictions)
 
     rows: List[Dict[str, Any]] = []
     skipped: Dict[str, int] = defaultdict(int)
-    for patient_index, patient in enumerate(patients):
-        target_nodes = target_nodes_for_patient(patient, condition_map, args.target_mode)
+    if args.queries_csv is not None:
+        cohort = query_rows(args.queries_csv)
+        if args.limit_patients is not None:
+            cohort = cohort[: args.limit_patients]
+        evaluation_items = [
+            (
+                int(query["patient_index"]),
+                {"PATHOLOGY": query.get("pathology", "")},
+                [node for node in query.get("target_node_keys", "").split(";") if node],
+            )
+            for query in cohort
+        ]
+    else:
+        patients = patient_rows(args.patients_csv)
+        if args.limit_patients is not None:
+            patients = patients[: args.limit_patients]
+        evaluation_items = [
+            (
+                patient_index,
+                patient,
+                target_nodes_for_patient(patient, condition_map, args.target_mode),
+            )
+            for patient_index, patient in enumerate(patients)
+        ]
+
+    for patient_index, patient, target_nodes in evaluation_items:
         if not target_nodes:
             skipped["missing_target_mapping"] += 1
             continue
-        ranked_candidates = predictions.get(patient_index)
+        ranked_candidates = predictions.get(patient_index, [])
         if not ranked_candidates:
             skipped["missing_prediction"] += 1
-            continue
         rows.append(
             metric_row(
                 patient_index=patient_index,
@@ -273,6 +299,7 @@ def main() -> None:
             "patients_csv": str(args.patients_csv),
             "predictions": str(args.predictions),
             "condition_map": str(args.condition_map),
+            "queries_csv": str(args.queries_csv) if args.queries_csv else None,
             "target_mode": args.target_mode,
             "topk": args.topk,
         }

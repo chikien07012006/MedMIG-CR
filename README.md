@@ -9,6 +9,8 @@ MedMIG-CR is a research workspace for evaluating knowledge-graph retrieval metho
 
 The repository now treats retrieval as a replaceable component. Proposed methods and baselines only need to emit a common prediction format; the evaluator handles DDXPlus targets and metrics.
 
+The latest mapping/query-building v2 experiment and old-vs-new results are documented in [`reports/mapping_query_v2_experiment.md`](reports/mapping_query_v2_experiment.md).
+
 ## Current Research Task
 
 RQ3 asks whether multi-interest KG retrieval improves clinical disease retrieval compared with single-vector and other baseline methods. The immediate engineering goal is a reliable evaluation harness before adding new retrieval models.

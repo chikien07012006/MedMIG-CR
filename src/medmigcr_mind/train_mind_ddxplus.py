@@ -102,17 +102,11 @@ def encode_seed_nodes(cell: str, vocab: Dict[str, int], max_len: int) -> List[in
 
 
 def positive_rows(frame: pd.DataFrame) -> pd.DataFrame:
-    rows = []
-    for row in frame.itertuples(index=False):
-        for target in split_nodes(str(row.target_node_keys)):
-            rows.append(
-                {
-                    "patient_index": int(row.patient_index),
-                    "seed_node_keys": str(row.seed_node_keys),
-                    "target_node": target,
-                }
-            )
-    return pd.DataFrame(rows)
+    rows = frame[["patient_index", "seed_node_keys", "target_node_keys"]].copy()
+    rows["target_node"] = rows["target_node_keys"].astype(str).str.split(";")
+    rows = rows.explode("target_node", ignore_index=True)
+    rows["target_node"] = rows["target_node"].astype(str).str.strip()
+    return rows.loc[rows["target_node"] != "", ["patient_index", "seed_node_keys", "target_node"]]
 
 
 class DDXPlusMindDataset(Dataset):
@@ -121,40 +115,35 @@ class DDXPlusMindDataset(Dataset):
         frame: pd.DataFrame,
         seed_vocab: Dict[str, int],
         disease_vocab: Dict[str, int],
-        disease_ids_for_neg: np.ndarray,
         max_seq_len: int,
-        n_neg: int,
     ) -> None:
-        self.rows = frame.reset_index(drop=True)
-        self.seed_vocab = seed_vocab
-        self.disease_vocab = disease_vocab
-        self.disease_ids_for_neg = disease_ids_for_neg
-        self.max_seq_len = max_seq_len
-        self.n_neg = n_neg
+        rows = frame.reset_index(drop=True)
+        seeds = np.full((len(rows), max_seq_len), PAD_SYM, dtype=np.int64)
+        for index, cell in enumerate(rows["seed_node_keys"].astype(str)):
+            encoded = [seed_vocab.get(node, UNK_SYM) for node in split_nodes(cell)][:max_seq_len]
+            seeds[index, : len(encoded)] = encoded
+        positives = rows["target_node"].map(disease_vocab).to_numpy(dtype=np.int64)
+        self.seeds = torch.from_numpy(seeds)
+        self.positives = torch.from_numpy(positives)
 
     def __len__(self) -> int:
-        return len(self.rows)
+        return len(self.positives)
 
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        row = self.rows.iloc[idx]
-        seed_ids = encode_seed_nodes(str(row["seed_node_keys"]), self.seed_vocab, self.max_seq_len)
-        pos = int(self.disease_vocab[str(row["target_node"])])
-        pool = self.disease_ids_for_neg[self.disease_ids_for_neg != pos]
-        if len(pool) == 0:
-            pool = self.disease_ids_for_neg
-        neg = np.random.choice(pool, size=self.n_neg, replace=True)
-        return (
-            torch.tensor(seed_ids, dtype=torch.long),
-            torch.tensor(pos, dtype=torch.long),
-            torch.tensor(neg, dtype=torch.long),
-        )
+    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
+        return self.seeds[idx], self.positives[idx]
 
 
 def collate_fn(batch):
     seeds = torch.stack([item[0] for item in batch], dim=0)
     pos = torch.stack([item[1] for item in batch], dim=0)
-    neg = torch.stack([item[2] for item in batch], dim=0)
-    return seeds, pos, neg
+    return seeds, pos
+
+
+def sample_negatives(pos: torch.Tensor, n_neg: int, num_diseases: int) -> torch.Tensor:
+    if num_diseases <= 2:
+        return torch.ones((pos.shape[0], n_neg), dtype=torch.long, device=pos.device)
+    neg = torch.randint(1, num_diseases - 1, (pos.shape[0], n_neg), device=pos.device)
+    return neg + (neg >= pos.unsqueeze(1)).long()
 
 
 def main() -> None:
@@ -173,15 +162,11 @@ def main() -> None:
 
     seed_vocab = build_seed_vocab(train_queries, valid_queries)
     disease_vocab = build_disease_vocab(train_queries, valid_queries)
-    disease_ids_for_neg = np.asarray([idx for idx in range(1, len(disease_vocab))], dtype=np.int64)
-
     train_ds = DDXPlusMindDataset(
         train_pos,
         seed_vocab,
         disease_vocab,
-        disease_ids_for_neg,
         args.max_seq_len,
-        args.n_neg,
     )
     train_loader = DataLoader(
         train_ds,
@@ -191,6 +176,15 @@ def main() -> None:
         collate_fn=collate_fn,
         pin_memory=torch.cuda.is_available(),
     )
+    valid_loader = None
+    if not valid_pos.empty:
+        valid_ds = DDXPlusMindDataset(valid_pos, seed_vocab, disease_vocab, args.max_seq_len)
+        valid_loader = DataLoader(
+            valid_ds,
+            batch_size=args.batch_size,
+            shuffle=False,
+            collate_fn=collate_fn,
+        )
 
     device = torch.device(args.device)
     model = ClinicalMIND(
@@ -206,25 +200,16 @@ def main() -> None:
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 
     def evaluate() -> Tuple[float, float]:
-        if valid_pos.empty:
+        if valid_loader is None:
             return 0.0, 0.0
-        valid_ds = DDXPlusMindDataset(
-            valid_pos,
-            seed_vocab,
-            disease_vocab,
-            disease_ids_for_neg,
-            args.max_seq_len,
-            args.n_neg,
-        )
-        valid_loader = DataLoader(valid_ds, batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn)
         model.eval()
         losses: List[float] = []
         sims: List[float] = []
         with torch.no_grad():
-            for seeds, pos, neg in valid_loader:
+            for seeds, pos in valid_loader:
                 seeds = seeds.to(device)
                 pos = pos.to(device)
-                neg = neg.to(device)
+                neg = sample_negatives(pos, args.n_neg, len(disease_vocab))
                 loss = training_bce_loss(model, seeds, pos, neg, temperature=args.temperature)
                 z, _, active_mask = model.encode_symptoms(seeds)
                 losses.append(float(loss.item()))
@@ -238,10 +223,10 @@ def main() -> None:
         model.train()
         total = 0.0
         seen = 0
-        for seeds, pos, neg in train_loader:
+        for seeds, pos in train_loader:
             seeds = seeds.to(device)
             pos = pos.to(device)
-            neg = neg.to(device)
+            neg = sample_negatives(pos, args.n_neg, len(disease_vocab))
             optimizer.zero_grad(set_to_none=True)
             loss = training_bce_loss(model, seeds, pos, neg, temperature=args.temperature)
             loss.backward()

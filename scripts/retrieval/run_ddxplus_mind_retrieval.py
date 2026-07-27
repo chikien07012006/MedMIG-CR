@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import sys
 from pathlib import Path
 from typing import Dict, Iterable, List, Sequence, Tuple
@@ -77,20 +78,34 @@ def resolve_seed_ids(graph_store: GraphStore, seed_node_keys: Sequence[str]) -> 
     return sorted(set(ids))
 
 
-def is_disease_node(node_name: str | None) -> bool:
-    return bool(node_name and node_name.startswith("disease|"))
-
-
-def disease_endpoint_scores(result, graph_store: GraphStore, top_k: int) -> List[Tuple[str, float]]:
+def target_endpoint_scores(
+    result, graph_store: GraphStore, top_k: int, target_universe: set[str] | None
+) -> List[Tuple[str, float]]:
     scores: Dict[str, float] = {}
     for item in result.paths:
         node_name = graph_store.lookup_node_name(item.current_node)
-        if not is_disease_node(node_name):
+        if not node_name:
+            continue
+        if target_universe is not None and node_name not in target_universe:
+            continue
+        if target_universe is None and not node_name.startswith("disease|"):
             continue
         current = scores.get(node_name)
         if current is None or item.score > current:
             scores[node_name] = float(item.score)
     return sorted(scores.items(), key=lambda pair: pair[1], reverse=True)[:top_k]
+
+
+def load_target_universe(path: Path | None) -> set[str] | None:
+    if path is None:
+        return None
+    with path.open("r", encoding="utf-8-sig") as handle:
+        mapping = json.load(handle)
+    return {
+        node
+        for entry in mapping.values()
+        for node in entry.get("selected_primekg_nodes", [])
+    }
 
 
 def write_predictions(path: Path, rows: Iterable[Dict[str, object]]) -> None:
@@ -115,10 +130,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--graph_dir", type=Path, default=Path("data/processed/primekg_graph"))
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--projection", type=Path, default=None)
+    parser.add_argument("--condition_map", type=Path, default=None)
     parser.add_argument("--output_csv", type=Path, required=True)
     parser.add_argument("--summary_json", type=Path, default=None)
     parser.add_argument("--interest_count", type=int, default=None)
-    parser.add_argument("--max_hops", type=int, default=3)
+    parser.add_argument("--max_hops", type=int, default=5)
     parser.add_argument("--beam_width", type=int, default=32)
     parser.add_argument("--paths_per_interest", type=int, default=100)
     parser.add_argument("--top_k", type=int, default=50)
@@ -148,6 +164,15 @@ def main() -> None:
     )
     engine = RetrievalEngine(graph_store, projection=load_projection(args.projection))
     queries = load_queries(args.test_queries_csv, limit=args.limit_patients)
+    target_universe = load_target_universe(args.condition_map)
+    target_node_ids = None
+    if target_universe is not None:
+        target_node_ids = {
+            node_id
+            for node_key in target_universe
+            for node_id in [graph_store.lookup_node_id(node_key)]
+            if node_id is not None
+        }
 
     rows: List[Dict[str, object]] = []
     skipped_missing_seed = 0
@@ -175,8 +200,9 @@ def main() -> None:
             beta=args.beta,
             interest_vectors=z,
             max_paths_per_interest=args.paths_per_interest,
+            target_node_ids=target_node_ids,
         )
-        ranked = disease_endpoint_scores(result, graph_store, top_k=args.top_k)
+        ranked = target_endpoint_scores(result, graph_store, top_k=args.top_k, target_universe=target_universe)
         if not ranked:
             no_disease_candidates += 1
             continue
@@ -196,6 +222,9 @@ def main() -> None:
         "graph_dir": str(args.graph_dir),
         "checkpoint": str(args.checkpoint),
         "projection": str(args.projection) if args.projection else None,
+        "condition_map": str(args.condition_map) if args.condition_map else None,
+        "target_universe_size": len(target_universe) if target_universe is not None else None,
+        "target_aware_candidate_collection": target_node_ids is not None,
         "output_csv": str(args.output_csv),
         "num_queries_loaded": len(queries),
         "num_prediction_rows": len(rows),
@@ -211,8 +240,6 @@ def main() -> None:
     }
     summary_path = args.summary_json or args.output_csv.with_suffix(".summary.json")
     summary_path.parent.mkdir(parents=True, exist_ok=True)
-    import json
-
     with summary_path.open("w", encoding="utf-8") as handle:
         json.dump(summary, handle, indent=2, ensure_ascii=False)
     print(f"Wrote predictions to {args.output_csv}")

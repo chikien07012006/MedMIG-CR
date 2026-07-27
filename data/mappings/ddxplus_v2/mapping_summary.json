@@ -1,0 +1,11 @@
+{
+  "num_conditions": 95,
+  "num_condition_auto": 95,
+  "num_evidences": 987,
+  "num_evidence_auto": 725,
+  "num_evidence_negative_filtered": 9,
+  "num_unique_condition_nodes": 47,
+  "num_unique_evidence_nodes": 168,
+  "condition_threshold": 0.82,
+  "evidence_threshold": 0.72
+}

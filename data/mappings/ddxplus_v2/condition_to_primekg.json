@@ -1,0 +1,3061 @@
+{
+  "Spontaneous pneumothorax": {
+    "condition_name": "Pneumothorax spontané",
+    "cond_name_eng": "Spontaneous pneumothorax",
+    "cond_name_fr": "Pneumothorax spontané",
+    "icd10_id": "J93",
+    "selected_primekg_nodes": [
+      "disease|MONDO|8259"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|8259",
+        "node_name": "familial spontaneous pneumothorax",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Spontaneous pneumothorax"
+      },
+      {
+        "node_key": "disease|MONDO|2076",
+        "node_name": "pneumothorax (disease)",
+        "node_type": "disease",
+        "score": 0.9,
+        "matched_label": "Spontaneous pneumothorax"
+      },
+      {
+        "node_key": "disease|MONDO|2075",
+        "node_name": "spontaneous tension pneumothorax",
+        "node_type": "disease",
+        "score": 0.857143,
+        "matched_label": "Spontaneous pneumothorax"
+      },
+      {
+        "node_key": "disease|MONDO|4813",
+        "node_name": "tuberculous pneumothorax",
+        "node_type": "disease",
+        "score": 0.75,
+        "matched_label": "Spontaneous pneumothorax"
+      },
+      {
+        "node_key": "disease|MONDO|22098",
+        "node_name": "catamenial pneumothorax",
+        "node_type": "disease",
+        "score": 0.680851,
+        "matched_label": "Spontaneous pneumothorax"
+      },
+      {
+        "node_key": "disease|MONDO|17577",
+        "node_name": "spontaneous periodic hypothermia",
+        "node_type": "disease",
+        "score": 0.678571,
+        "matched_label": "Spontaneous pneumothorax"
+      },
+      {
+        "node_key": "disease|MONDO|9932",
+        "node_name": "pulmonary bullae causing pneumothorax",
+        "node_type": "disease",
+        "score": 0.655738,
+        "matched_label": "Spontaneous pneumothorax"
+      },
+      {
+        "node_key": "disease|MONDO|1361",
+        "node_name": "spontaneous ocular nystagmus",
+        "node_type": "disease",
+        "score": 0.538462,
+        "matched_label": "Spontaneous pneumothorax"
+      },
+      {
+        "node_key": "disease|MONDO|18624",
+        "node_name": "spontaneous intracranial hypotension",
+        "node_type": "disease",
+        "score": 0.533333,
+        "matched_label": "Spontaneous pneumothorax"
+      },
+      {
+        "node_key": "disease|MONDO|6774",
+        "node_name": "habitual spontaneous abortion",
+        "node_type": "disease",
+        "score": 0.528302,
+        "matched_label": "Spontaneous pneumothorax"
+      }
+    ]
+  },
+  "Pneumothorax spontané": {
+    "alias_of": "Spontaneous pneumothorax",
+    "selected_primekg_nodes": [
+      "disease|MONDO|8259"
+    ],
+    "status": "auto"
+  },
+  "Cluster headache": {
+    "condition_name": "Céphalée en grappe",
+    "cond_name_eng": "Cluster headache",
+    "cond_name_fr": "Céphalée en grappe",
+    "icd10_id": "g44.009",
+    "selected_primekg_nodes": [
+      "disease|MONDO|43537"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|43537",
+        "node_name": "cluster headache syndrome",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Cluster headache"
+      },
+      {
+        "node_key": "disease|MONDO|7344",
+        "node_name": "cluster headache, familial",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Cluster headache"
+      },
+      {
+        "node_key": "disease|MONDO|17181",
+        "node_name": "hypnic headache (disease)",
+        "node_type": "disease",
+        "score": 0.645161,
+        "matched_label": "Cluster headache"
+      },
+      {
+        "node_key": "disease|MONDO|23093",
+        "node_name": "exertional headache",
+        "node_type": "disease",
+        "score": 0.628571,
+        "matched_label": "Cluster headache"
+      },
+      {
+        "node_key": "disease|MONDO|40797",
+        "node_name": "obsolete vascular headache",
+        "node_type": "disease",
+        "score": 0.619048,
+        "matched_label": "Cluster headache"
+      },
+      {
+        "node_key": "disease|MONDO|21146",
+        "node_name": "headache disorder",
+        "node_type": "disease",
+        "score": 0.484848,
+        "matched_label": "Cluster headache"
+      },
+      {
+        "node_key": "disease|MONDO|17836",
+        "node_name": "erythrokeratoderma en cocardes",
+        "node_type": "disease",
+        "score": 0.416667,
+        "matched_label": "Céphalée en grappe"
+      },
+      {
+        "node_key": "disease|MONDO|11848",
+        "node_name": "headache associated with sexual activity",
+        "node_type": "disease",
+        "score": 0.4,
+        "matched_label": "Cluster headache"
+      },
+      {
+        "node_key": "disease|MONDO|32933",
+        "node_name": "chromosome 1p36.33 duplication syndrome, atad3 gene cluster, autosomal dominant",
+        "node_type": "disease",
+        "score": 0.236559,
+        "matched_label": "Cluster headache"
+      }
+    ]
+  },
+  "Céphalée en grappe": {
+    "alias_of": "Cluster headache",
+    "selected_primekg_nodes": [
+      "disease|MONDO|43537"
+    ],
+    "status": "auto"
+  },
+  "Boerhaave": {
+    "condition_name": "Syndrome de Boerhaave",
+    "cond_name_eng": "Boerhaave",
+    "cond_name_fr": "Syndrome de Boerhaave",
+    "icd10_id": "K22.3",
+    "selected_primekg_nodes": [
+      "disease|MONDO|22013"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|22013",
+        "node_name": "Boerhaave syndrome",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Boerhaave"
+      },
+      {
+        "node_key": "disease|MONDO|17569",
+        "node_name": "de Barsy syndrome",
+        "node_type": "disease",
+        "score": 0.6,
+        "matched_label": "Syndrome de Boerhaave"
+      },
+      {
+        "node_key": "disease|MONDO|18558",
+        "node_name": "syndrome with woolly hair",
+        "node_type": "disease",
+        "score": 0.585366,
+        "matched_label": "Syndrome de Boerhaave"
+      },
+      {
+        "node_key": "disease|MONDO|10169",
+        "node_name": "Usher syndrome type 2A",
+        "node_type": "disease",
+        "score": 0.55814,
+        "matched_label": "Syndrome de Boerhaave"
+      },
+      {
+        "node_key": "disease|MONDO|10170",
+        "node_name": "Usher syndrome type 3A",
+        "node_type": "disease",
+        "score": 0.55814,
+        "matched_label": "Syndrome de Boerhaave"
+      },
+      {
+        "node_key": "disease|MONDO|11195",
+        "node_name": "Usher syndrome type 1E",
+        "node_type": "disease",
+        "score": 0.55814,
+        "matched_label": "Syndrome de Boerhaave"
+      },
+      {
+        "node_key": "disease|MONDO|12968",
+        "node_name": "Usher syndrome type 1H",
+        "node_type": "disease",
+        "score": 0.55814,
+        "matched_label": "Syndrome de Boerhaave"
+      },
+      {
+        "node_key": "disease|MONDO|13788",
+        "node_name": "Usher syndrome type 3B",
+        "node_type": "disease",
+        "score": 0.55814,
+        "matched_label": "Syndrome de Boerhaave"
+      },
+      {
+        "node_key": "disease|MONDO|22622",
+        "node_name": "CDG syndrome type 4",
+        "node_type": "disease",
+        "score": 0.55,
+        "matched_label": "Syndrome de Boerhaave"
+      },
+      {
+        "node_key": "disease|MONDO|16337",
+        "node_name": "syndrome associated with dilated cardiomyopathy",
+        "node_type": "disease",
+        "score": 0.538462,
+        "matched_label": "Syndrome de Boerhaave"
+      }
+    ]
+  },
+  "Syndrome de Boerhaave": {
+    "alias_of": "Boerhaave",
+    "selected_primekg_nodes": [
+      "disease|MONDO|22013"
+    ],
+    "status": "auto"
+  },
+  "Spontaneous rib fracture": {
+    "condition_name": "Fracture de côte spontanée",
+    "cond_name_eng": "Spontaneous rib fracture",
+    "cond_name_fr": "Fracture de côte spontanée",
+    "icd10_id": "S22.9",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5315"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5315",
+        "node_name": "bone fracture",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "bone fracture"
+      },
+      {
+        "node_key": "effect/phenotype|HPO|20110",
+        "node_name": "Bone fracture",
+        "node_type": "effect/phenotype",
+        "score": 1.0,
+        "matched_label": "bone fracture"
+      }
+    ]
+  },
+  "Fracture de côte spontanée": {
+    "alias_of": "Spontaneous rib fracture",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5315"
+    ],
+    "status": "auto"
+  },
+  "GERD": {
+    "condition_name": "RGO",
+    "cond_name_eng": "GERD",
+    "cond_name_fr": "RGO",
+    "icd10_id": "K21",
+    "selected_primekg_nodes": [
+      "disease|MONDO|7186"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|7186",
+        "node_name": "gastroesophageal reflux disease",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "gastroesophageal reflux disease"
+      }
+    ]
+  },
+  "RGO": {
+    "alias_of": "GERD",
+    "selected_primekg_nodes": [
+      "disease|MONDO|7186"
+    ],
+    "status": "auto"
+  },
+  "HIV (initial infection)": {
+    "condition_name": "VIH (Primo-infection)",
+    "cond_name_eng": "HIV (initial infection)",
+    "cond_name_fr": "VIH (Primo-infection)",
+    "icd10_id": "B20",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5109"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5109",
+        "node_name": "HIV infectious disease",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "HIV infectious disease"
+      }
+    ]
+  },
+  "VIH (Primo-infection)": {
+    "alias_of": "HIV (initial infection)",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5109"
+    ],
+    "status": "auto"
+  },
+  "Anemia": {
+    "condition_name": "Anémie",
+    "cond_name_eng": "Anemia",
+    "cond_name_fr": "Anémie",
+    "icd10_id": "D64.9",
+    "selected_primekg_nodes": [
+      "disease|MONDO|2280"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|2280",
+        "node_name": "anemia (disease)",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Anemia"
+      },
+      {
+        "node_key": "disease|MONDO|10308",
+        "node_name": "thrombocytopenia, X-linked, with or without dyserythropoietic anemia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anemia"
+      },
+      {
+        "node_key": "disease|MONDO|10351",
+        "node_name": "Fanconi anemia complementation group B",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anemia"
+      },
+      {
+        "node_key": "disease|MONDO|104",
+        "node_name": "anemia, hypochromic microcytic with iron overload",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anemia"
+      },
+      {
+        "node_key": "disease|MONDO|10444",
+        "node_name": "X-linked dyserythropoetic anemia with abnormal platelets and neutropenia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anemia"
+      },
+      {
+        "node_key": "disease|MONDO|10480",
+        "node_name": "anemia, nonspherocytic hemolytic, due to G6PD deficiency",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anemia"
+      },
+      {
+        "node_key": "disease|MONDO|10493",
+        "node_name": "Diamond-Blackfan anemia 14 with mandibulofacial dysostosis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anemia"
+      },
+      {
+        "node_key": "disease|MONDO|105",
+        "node_name": "anemia, nonspherocytic hemolytic",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anemia"
+      },
+      {
+        "node_key": "disease|MONDO|10524",
+        "node_name": "X-linked sideroblastic anemia with ataxia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anemia"
+      },
+      {
+        "node_key": "disease|MONDO|10782",
+        "node_name": "myopathy, lactic acidosis, and sideroblastic anemia 3",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anemia"
+      }
+    ]
+  },
+  "Anémie": {
+    "alias_of": "Anemia",
+    "selected_primekg_nodes": [
+      "disease|MONDO|2280"
+    ],
+    "status": "auto"
+  },
+  "Viral pharyngitis": {
+    "condition_name": "Pharyngite virale",
+    "cond_name_eng": "Viral pharyngitis",
+    "cond_name_fr": "Pharyngite virale",
+    "icd10_id": "J02.9",
+    "selected_primekg_nodes": [
+      "disease|MONDO|2646"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|2646",
+        "node_name": "viral laryngitis",
+        "node_type": "disease",
+        "score": 0.909091,
+        "matched_label": "Viral pharyngitis"
+      },
+      {
+        "node_key": "disease|MONDO|2258",
+        "node_name": "pharyngitis",
+        "node_type": "disease",
+        "score": 0.9,
+        "matched_label": "Viral pharyngitis"
+      },
+      {
+        "node_key": "disease|MONDO|3846",
+        "node_name": "viral esophagitis",
+        "node_type": "disease",
+        "score": 0.823529,
+        "matched_label": "Viral pharyngitis"
+      },
+      {
+        "node_key": "disease|MONDO|20600",
+        "node_name": "acute pharyngitis",
+        "node_type": "disease",
+        "score": 0.764706,
+        "matched_label": "Viral pharyngitis"
+      },
+      {
+        "node_key": "disease|MONDO|2270",
+        "node_name": "viral gastritis",
+        "node_type": "disease",
+        "score": 0.75,
+        "matched_label": "Viral pharyngitis"
+      },
+      {
+        "node_key": "disease|MONDO|6011",
+        "node_name": "viral hepatitis",
+        "node_type": "disease",
+        "score": 0.75,
+        "matched_label": "Viral pharyngitis"
+      },
+      {
+        "node_key": "disease|MONDO|23164",
+        "node_name": "viral pericarditis",
+        "node_type": "disease",
+        "score": 0.742857,
+        "matched_label": "Viral pharyngitis"
+      },
+      {
+        "node_key": "disease|MONDO|6009",
+        "node_name": "viral encephalitis",
+        "node_type": "disease",
+        "score": 0.742857,
+        "matched_label": "Viral pharyngitis"
+      },
+      {
+        "node_key": "disease|MONDO|7015",
+        "node_name": "viral meningitis",
+        "node_type": "disease",
+        "score": 0.727273,
+        "matched_label": "Viral pharyngitis"
+      },
+      {
+        "node_key": "disease|MONDO|16126",
+        "node_name": "viral myositis",
+        "node_type": "disease",
+        "score": 0.709677,
+        "matched_label": "Viral pharyngitis"
+      }
+    ]
+  },
+  "Pharyngite virale": {
+    "alias_of": "Viral pharyngitis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|2646"
+    ],
+    "status": "auto"
+  },
+  "Inguinal hernia": {
+    "condition_name": "Hernie inguinale",
+    "cond_name_eng": "Inguinal hernia",
+    "cond_name_fr": "Hernie inguinale",
+    "icd10_id": "K40",
+    "selected_primekg_nodes": [
+      "disease|MONDO|12390"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|12390",
+        "node_name": "arthrogryposis multiplex with deafness, inguinal hernias, and early death",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Inguinal hernia"
+      },
+      {
+        "node_key": "disease|MONDO|17793",
+        "node_name": "marfanoid habitus-inguinal hernia-advanced bone age syndrome",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Inguinal hernia"
+      },
+      {
+        "node_key": "disease|MONDO|746",
+        "node_name": "obsolete inguinal hernia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Inguinal hernia"
+      },
+      {
+        "node_key": "disease|MONDO|5777",
+        "node_name": "granuloma inguinale",
+        "node_type": "disease",
+        "score": 0.685714,
+        "matched_label": "Hernie inguinale"
+      },
+      {
+        "node_key": "disease|MONDO|7720",
+        "node_name": "hernia, double inguinal",
+        "node_type": "disease",
+        "score": 0.666667,
+        "matched_label": "Inguinal hernia"
+      },
+      {
+        "node_key": "disease|MONDO|7721",
+        "node_name": "hiatus hernia (disease)",
+        "node_type": "disease",
+        "score": 0.642857,
+        "matched_label": "Inguinal hernia"
+      },
+      {
+        "node_key": "disease|MONDO|747",
+        "node_name": "obsolete umbilical hernia",
+        "node_type": "disease",
+        "score": 0.55,
+        "matched_label": "Inguinal hernia"
+      },
+      {
+        "node_key": "disease|MONDO|12431",
+        "node_name": "diaphragmatic hernia 3",
+        "node_type": "disease",
+        "score": 0.540541,
+        "matched_label": "Inguinal hernia"
+      },
+      {
+        "node_key": "disease|MONDO|9103",
+        "node_name": "diaphragmatic hernia 2",
+        "node_type": "disease",
+        "score": 0.540541,
+        "matched_label": "Inguinal hernia"
+      },
+      {
+        "node_key": "disease|MONDO|5711",
+        "node_name": "congenital diaphragmatic hernia",
+        "node_type": "disease",
+        "score": 0.521739,
+        "matched_label": "Inguinal hernia"
+      }
+    ]
+  },
+  "Hernie inguinale": {
+    "alias_of": "Inguinal hernia",
+    "selected_primekg_nodes": [
+      "disease|MONDO|12390"
+    ],
+    "status": "auto"
+  },
+  "Myasthenia gravis": {
+    "condition_name": "Myasthénie grave",
+    "cond_name_eng": "Myasthenia gravis",
+    "cond_name_fr": "Myasthénie grave",
+    "icd10_id": "G70.0",
+    "selected_primekg_nodes": [
+      "disease|MONDO|9688"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|9688",
+        "node_name": "myasthenia gravis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Myasthenia gravis"
+      },
+      {
+        "node_key": "disease|MONDO|11768",
+        "node_name": "myasthenia gravis with thymus hyperplasia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myasthenia gravis"
+      },
+      {
+        "node_key": "disease|MONDO|16100",
+        "node_name": "rippling muscle disease with myasthenia gravis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myasthenia gravis"
+      },
+      {
+        "node_key": "disease|MONDO|18324",
+        "node_name": "adult-onset myasthenia gravis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myasthenia gravis"
+      },
+      {
+        "node_key": "disease|MONDO|18325",
+        "node_name": "juvenile myasthenia gravis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myasthenia gravis"
+      },
+      {
+        "node_key": "disease|MONDO|18326",
+        "node_name": "transient neonatal myasthenia gravis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myasthenia gravis"
+      },
+      {
+        "node_key": "disease|MONDO|6866",
+        "node_name": "neonatal myasthenia gravis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myasthenia gravis"
+      },
+      {
+        "node_key": "disease|MONDO|8036",
+        "node_name": "myasthenia, limb-girdle, autoimmune",
+        "node_type": "disease",
+        "score": 0.6,
+        "matched_label": "Myasthenia gravis"
+      },
+      {
+        "node_key": "disease|MONDO|9687",
+        "node_name": "myasthenia, congenital, refractory to acetylcholinesterase inhibitors",
+        "node_type": "disease",
+        "score": 0.395062,
+        "matched_label": "Myasthenia gravis"
+      }
+    ]
+  },
+  "Myasthénie grave": {
+    "alias_of": "Myasthenia gravis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|9688"
+    ],
+    "status": "auto"
+  },
+  "Whooping cough": {
+    "condition_name": "Coqueluche",
+    "cond_name_eng": "Whooping cough",
+    "cond_name_fr": "Coqueluche",
+    "icd10_id": "A37",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5077"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5077",
+        "node_name": "pertussis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "pertussis"
+      }
+    ]
+  },
+  "Coqueluche": {
+    "alias_of": "Whooping cough",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5077"
+    ],
+    "status": "auto"
+  },
+  "Anaphylaxis": {
+    "condition_name": "Anaphylaxie",
+    "cond_name_eng": "Anaphylaxis",
+    "cond_name_fr": "Anaphylaxie",
+    "icd10_id": "T78.0",
+    "selected_primekg_nodes": [
+      "disease|MONDO|100053"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|100053",
+        "node_name": "anaphylaxis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Anaphylaxis"
+      },
+      {
+        "node_key": "disease|MONDO|100054",
+        "node_name": "idiopathic anaphylaxis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anaphylaxis"
+      },
+      {
+        "node_key": "disease|MONDO|100056",
+        "node_name": "exercise-induced anaphylaxis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anaphylaxis"
+      },
+      {
+        "node_key": "disease|MONDO|100057",
+        "node_name": "food-dependent exercise-induced anaphylaxis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Anaphylaxis"
+      }
+    ]
+  },
+  "Anaphylaxie": {
+    "alias_of": "Anaphylaxis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|100053"
+    ],
+    "status": "auto"
+  },
+  "Epiglottitis": {
+    "condition_name": "Épiglottite",
+    "cond_name_eng": "Epiglottitis",
+    "cond_name_fr": "Épiglottite",
+    "icd10_id": "J05.1",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5753"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5753",
+        "node_name": "epiglottitis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Epiglottitis"
+      },
+      {
+        "node_key": "disease|MONDO|41366",
+        "node_name": "acute epiglottitis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Epiglottitis"
+      }
+    ]
+  },
+  "Épiglottite": {
+    "alias_of": "Epiglottitis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5753"
+    ],
+    "status": "auto"
+  },
+  "Guillain-Barré syndrome": {
+    "condition_name": "Syndrome de Guillain-Barré",
+    "cond_name_eng": "Guillain-Barré syndrome",
+    "cond_name_fr": "Syndrome de Guillain-Barré",
+    "icd10_id": "G61.0",
+    "selected_primekg_nodes": [
+      "disease|MONDO|16218"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|16218",
+        "node_name": "Guillain-Barre syndrome",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Guillain-Barré syndrome"
+      },
+      {
+        "node_key": "disease|MONDO|16493",
+        "node_name": "variant of Guillain-Barre syndrome",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Guillain-Barré syndrome"
+      },
+      {
+        "node_key": "disease|MONDO|16494",
+        "node_name": "regional variant of Guillain-Barre syndrome",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Guillain-Barré syndrome"
+      },
+      {
+        "node_key": "disease|MONDO|16495",
+        "node_name": "functional variant of Guillain-Barre syndrome",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Guillain-Barré syndrome"
+      },
+      {
+        "node_key": "disease|MONDO|16496",
+        "node_name": "pharyngeal-cervical-brachial variant of Guillain-Barre syndrome",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Guillain-Barré syndrome"
+      },
+      {
+        "node_key": "disease|MONDO|16497",
+        "node_name": "paraparetic variant of Guillain-Barre syndrome",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Guillain-Barré syndrome"
+      },
+      {
+        "node_key": "disease|MONDO|22577",
+        "node_name": "Billet bear syndrome",
+        "node_type": "disease",
+        "score": 0.744186,
+        "matched_label": "Guillain-Barré syndrome"
+      },
+      {
+        "node_key": "disease|MONDO|100289",
+        "node_name": "Goldmann-Favre syndrome",
+        "node_type": "disease",
+        "score": 0.73913,
+        "matched_label": "Guillain-Barré syndrome"
+      },
+      {
+        "node_key": "disease|MONDO|7621",
+        "node_name": "floating-Harbor syndrome",
+        "node_type": "disease",
+        "score": 0.723404,
+        "matched_label": "Guillain-Barré syndrome"
+      },
+      {
+        "node_key": "disease|MONDO|7745",
+        "node_name": "Gilbert syndrome",
+        "node_type": "disease",
+        "score": 0.717949,
+        "matched_label": "Guillain-Barré syndrome"
+      }
+    ]
+  },
+  "Syndrome de Guillain-Barré": {
+    "alias_of": "Guillain-Barré syndrome",
+    "selected_primekg_nodes": [
+      "disease|MONDO|16218"
+    ],
+    "status": "auto"
+  },
+  "Acute laryngitis": {
+    "condition_name": "Laryngite aigue",
+    "cond_name_eng": "Acute laryngitis",
+    "cond_name_fr": "Laryngite aigue",
+    "icd10_id": "J04.0",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4777"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|4777",
+        "node_name": "acute laryngitis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Acute laryngitis"
+      },
+      {
+        "node_key": "disease|MONDO|20600",
+        "node_name": "acute pharyngitis",
+        "node_type": "disease",
+        "score": 0.909091,
+        "matched_label": "Acute laryngitis"
+      },
+      {
+        "node_key": "disease|MONDO|2647",
+        "node_name": "laryngitis",
+        "node_type": "disease",
+        "score": 0.9,
+        "matched_label": "Acute laryngitis"
+      },
+      {
+        "node_key": "disease|MONDO|1930",
+        "node_name": "acute cholangitis",
+        "node_type": "disease",
+        "score": 0.848485,
+        "matched_label": "Acute laryngitis"
+      },
+      {
+        "node_key": "disease|MONDO|1218",
+        "node_name": "acute laryngopharyngitis",
+        "node_type": "disease",
+        "score": 0.8,
+        "matched_label": "Acute laryngitis"
+      },
+      {
+        "node_key": "disease|MONDO|1173",
+        "node_name": "acute salpingitis",
+        "node_type": "disease",
+        "score": 0.787879,
+        "matched_label": "Acute laryngitis"
+      },
+      {
+        "node_key": "disease|MONDO|4812",
+        "node_name": "acute dacryoadenitis",
+        "node_type": "disease",
+        "score": 0.777778,
+        "matched_label": "Acute laryngitis"
+      },
+      {
+        "node_key": "disease|MONDO|2646",
+        "node_name": "viral laryngitis",
+        "node_type": "disease",
+        "score": 0.75,
+        "matched_label": "Acute laryngitis"
+      },
+      {
+        "node_key": "disease|MONDO|1802",
+        "node_name": "acute tympanitis",
+        "node_type": "disease",
+        "score": 0.75,
+        "matched_label": "Acute laryngitis"
+      },
+      {
+        "node_key": "disease|MONDO|1650",
+        "node_name": "acute cystitis (disease)",
+        "node_type": "disease",
+        "score": 0.733333,
+        "matched_label": "Acute laryngitis"
+      }
+    ]
+  },
+  "Laryngite aigue": {
+    "alias_of": "Acute laryngitis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4777"
+    ],
+    "status": "auto"
+  },
+  "Croup": {
+    "condition_name": "Laryngo-trachéo-bronchite (Croup)",
+    "cond_name_eng": "Croup",
+    "cond_name_fr": "Laryngo-trachéo-bronchite (Croup)",
+    "icd10_id": "J05.0",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5722"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5722",
+        "node_name": "croup",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Croup"
+      },
+      {
+        "node_key": "disease|MONDO|9513",
+        "node_name": "laryngo-onycho-cutaneous syndrome",
+        "node_type": "disease",
+        "score": 0.5,
+        "matched_label": "Laryngo-trachéo-bronchite (Croup)"
+      },
+      {
+        "node_key": "disease|MONDO|18694",
+        "node_name": "isolated tracheo-esophageal fistula",
+        "node_type": "disease",
+        "score": 0.484848,
+        "matched_label": "Laryngo-trachéo-bronchite (Croup)"
+      }
+    ]
+  },
+  "Laryngo-trachéo-bronchite (Croup)": {
+    "alias_of": "Croup",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5722"
+    ],
+    "status": "auto"
+  },
+  "PSVT": {
+    "condition_name": "TSVP",
+    "cond_name_eng": "PSVT",
+    "cond_name_fr": "TSVP",
+    "icd10_id": "I47.1",
+    "selected_primekg_nodes": [
+      "effect/phenotype|HPO|4763"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "effect/phenotype|HPO|4763",
+        "node_name": "Paroxysmal supraventricular tachycardia",
+        "node_type": "effect/phenotype",
+        "score": 1.0,
+        "matched_label": "Paroxysmal supraventricular tachycardia"
+      }
+    ]
+  },
+  "TSVP": {
+    "alias_of": "PSVT",
+    "selected_primekg_nodes": [
+      "effect/phenotype|HPO|4763"
+    ],
+    "status": "auto"
+  },
+  "Atrial fibrillation": {
+    "condition_name": "Fibrillation auriculaire/Flutter auriculaire",
+    "cond_name_eng": "Atrial fibrillation",
+    "cond_name_fr": "Fibrillation auriculaire/Flutter auriculaire",
+    "icd10_id": "I48.91",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4981"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|4981",
+        "node_name": "atrial fibrillation (disease)",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Atrial fibrillation"
+      },
+      {
+        "node_key": "disease|MONDO|11857",
+        "node_name": "atrial fibrillation, familial, 3",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Atrial fibrillation"
+      },
+      {
+        "node_key": "disease|MONDO|12066",
+        "node_name": "atrial fibrillation, familial, 1",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Atrial fibrillation"
+      },
+      {
+        "node_key": "disease|MONDO|12167",
+        "node_name": "atrial fibrillation, familial, 2",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Atrial fibrillation"
+      },
+      {
+        "node_key": "disease|MONDO|12677",
+        "node_name": "atrial fibrillation, familial, 4",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Atrial fibrillation"
+      },
+      {
+        "node_key": "disease|MONDO|12678",
+        "node_name": "atrial fibrillation, familial, 5",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Atrial fibrillation"
+      },
+      {
+        "node_key": "disease|MONDO|12816",
+        "node_name": "atrial fibrillation, familial, 6",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Atrial fibrillation"
+      },
+      {
+        "node_key": "disease|MONDO|12828",
+        "node_name": "atrial fibrillation, familial, 7",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Atrial fibrillation"
+      },
+      {
+        "node_key": "disease|MONDO|13100",
+        "node_name": "atrial fibrillation, familial, 8",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Atrial fibrillation"
+      },
+      {
+        "node_key": "disease|MONDO|13513",
+        "node_name": "atrial fibrillation, familial, 9",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Atrial fibrillation"
+      }
+    ]
+  },
+  "Fibrillation auriculaire/Flutter auriculaire": {
+    "alias_of": "Atrial fibrillation",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4981"
+    ],
+    "status": "auto"
+  },
+  "Bronchiectasis": {
+    "condition_name": "Bronchiectasies",
+    "cond_name_eng": "Bronchiectasis",
+    "cond_name_fr": "Bronchiectasies",
+    "icd10_id": "J47",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4822"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|4822",
+        "node_name": "bronchiectasis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Bronchiectasis"
+      },
+      {
+        "node_key": "disease|MONDO|13087",
+        "node_name": "bronchiectasis with or without elevated sweat chloride 2",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchiectasis"
+      },
+      {
+        "node_key": "disease|MONDO|13112",
+        "node_name": "bronchiectasis with or without elevated sweat chloride 3",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchiectasis"
+      },
+      {
+        "node_key": "disease|MONDO|18956",
+        "node_name": "idiopathic bronchiectasis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchiectasis"
+      },
+      {
+        "node_key": "disease|MONDO|22610",
+        "node_name": "bronchiectasis oligospermia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchiectasis"
+      },
+      {
+        "node_key": "disease|MONDO|22769",
+        "node_name": "ciliary dyskinesia-bronchiectasis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchiectasis"
+      },
+      {
+        "node_key": "disease|MONDO|8887",
+        "node_name": "bronchiectasis with or without elevated sweat chloride 1",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchiectasis"
+      }
+    ]
+  },
+  "Bronchiectasies": {
+    "alias_of": "Bronchiectasis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4822"
+    ],
+    "status": "auto"
+  },
+  "Allergic sinusitis": {
+    "condition_name": "Rhinite allergique",
+    "cond_name_eng": "Allergic sinusitis",
+    "cond_name_fr": "Rhinite allergique",
+    "icd10_id": "J30",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5961"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5961",
+        "node_name": "sinusitis",
+        "node_type": "disease",
+        "score": 0.9,
+        "matched_label": "Allergic sinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|11786",
+        "node_name": "allergic rhinitis",
+        "node_type": "disease",
+        "score": 0.857143,
+        "matched_label": "Allergic sinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|5842",
+        "node_name": "maxillary sinusitis",
+        "node_type": "disease",
+        "score": 0.756757,
+        "matched_label": "Allergic sinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|1121",
+        "node_name": "frontal sinusitis",
+        "node_type": "disease",
+        "score": 0.685714,
+        "matched_label": "Allergic sinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|5756",
+        "node_name": "ethmoid sinusitis",
+        "node_type": "disease",
+        "score": 0.685714,
+        "matched_label": "Allergic sinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|5324",
+        "node_name": "seasonal allergic rhinitis",
+        "node_type": "disease",
+        "score": 0.681818,
+        "matched_label": "Allergic sinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|1290",
+        "node_name": "allergic cutaneous vasculitis",
+        "node_type": "disease",
+        "score": 0.680851,
+        "matched_label": "Allergic sinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|21202",
+        "node_name": "allergic otitis media",
+        "node_type": "disease",
+        "score": 0.666667,
+        "matched_label": "Allergic sinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|24332",
+        "node_name": "perennial allergic rhinitis",
+        "node_type": "disease",
+        "score": 0.666667,
+        "matched_label": "Allergic sinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|4784",
+        "node_name": "allergic asthma",
+        "node_type": "disease",
+        "score": 0.666667,
+        "matched_label": "Allergic sinusitis"
+      }
+    ]
+  },
+  "Rhinite allergique": {
+    "alias_of": "Allergic sinusitis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5961"
+    ],
+    "status": "auto"
+  },
+  "Chagas": {
+    "condition_name": "Chagas",
+    "cond_name_eng": "Chagas",
+    "cond_name_fr": "Chagas",
+    "icd10_id": "B57",
+    "selected_primekg_nodes": [
+      "disease|MONDO|1444"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|1444",
+        "node_name": "Chagas disease",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Chagas"
+      },
+      {
+        "node_key": "disease|MONDO|5491",
+        "node_name": "Chagas cardiomyopathy",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Chagas"
+      }
+    ]
+  },
+  "Scombroid food poisoning": {
+    "condition_name": "Scombroïde",
+    "cond_name_eng": "Scombroid food poisoning",
+    "cond_name_fr": "Scombroïde",
+    "icd10_id": "T61.1",
+    "selected_primekg_nodes": [
+      "disease|MONDO|29000"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|29000",
+        "node_name": "poisoning",
+        "node_type": "disease",
+        "score": 0.9,
+        "matched_label": "Scombroid food poisoning"
+      },
+      {
+        "node_key": "disease|MONDO|18173",
+        "node_name": "acute opioid poisoning",
+        "node_type": "disease",
+        "score": 0.652174,
+        "matched_label": "Scombroid food poisoning"
+      },
+      {
+        "node_key": "disease|MONDO|18754",
+        "node_name": "cyanide poisoning",
+        "node_type": "disease",
+        "score": 0.634146,
+        "matched_label": "Scombroid food poisoning"
+      },
+      {
+        "node_key": "disease|MONDO|43523",
+        "node_name": "cadmium poisoning",
+        "node_type": "disease",
+        "score": 0.634146,
+        "matched_label": "Scombroid food poisoning"
+      },
+      {
+        "node_key": "disease|MONDO|17859",
+        "node_name": "colchicine poisoning",
+        "node_type": "disease",
+        "score": 0.590909,
+        "matched_label": "Scombroid food poisoning"
+      },
+      {
+        "node_key": "disease|MONDO|18020",
+        "node_name": "mercury poisoning",
+        "node_type": "disease",
+        "score": 0.585366,
+        "matched_label": "Scombroid food poisoning"
+      },
+      {
+        "node_key": "disease|MONDO|16312",
+        "node_name": "5-fluorouracil poisoning",
+        "node_type": "disease",
+        "score": 0.583333,
+        "matched_label": "Scombroid food poisoning"
+      },
+      {
+        "node_key": "disease|MONDO|43230",
+        "node_name": "ciguatera fish poisoning",
+        "node_type": "disease",
+        "score": 0.583333,
+        "matched_label": "Scombroid food poisoning"
+      },
+      {
+        "node_key": "disease|MONDO|18019",
+        "node_name": "lead poisoning",
+        "node_type": "disease",
+        "score": 0.578947,
+        "matched_label": "Scombroid food poisoning"
+      },
+      {
+        "node_key": "disease|MONDO|23176",
+        "node_name": "formaldehyde poisoning",
+        "node_type": "disease",
+        "score": 0.565217,
+        "matched_label": "Scombroid food poisoning"
+      }
+    ]
+  },
+  "Scombroïde": {
+    "alias_of": "Scombroid food poisoning",
+    "selected_primekg_nodes": [
+      "disease|MONDO|29000"
+    ],
+    "status": "auto"
+  },
+  "Myocarditis": {
+    "condition_name": "Myocardite",
+    "cond_name_eng": "Myocarditis",
+    "cond_name_fr": "Myocardite",
+    "icd10_id": "I51.4",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4496"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|4496",
+        "node_name": "myocarditis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Myocarditis"
+      },
+      {
+        "node_key": "disease|MONDO|1113",
+        "node_name": "Fiedler's myocarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myocarditis"
+      },
+      {
+        "node_key": "disease|MONDO|1114",
+        "node_name": "bacterial myocarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myocarditis"
+      },
+      {
+        "node_key": "disease|MONDO|18008",
+        "node_name": "idiopathic giant cell myocarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myocarditis"
+      },
+      {
+        "node_key": "disease|MONDO|22519",
+        "node_name": "autoimmune myocarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myocarditis"
+      },
+      {
+        "node_key": "disease|MONDO|23161",
+        "node_name": "viral myocarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myocarditis"
+      },
+      {
+        "node_key": "disease|MONDO|23232",
+        "node_name": "giant cell myocarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myocarditis"
+      },
+      {
+        "node_key": "disease|MONDO|2815",
+        "node_name": "acute myocarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myocarditis"
+      },
+      {
+        "node_key": "disease|MONDO|41259",
+        "node_name": "diphtheritic myocarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myocarditis"
+      },
+      {
+        "node_key": "disease|MONDO|4485",
+        "node_name": "interstitial myocarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Myocarditis"
+      }
+    ]
+  },
+  "Myocardite": {
+    "alias_of": "Myocarditis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4496"
+    ],
+    "status": "auto"
+  },
+  "Larygospasm": {
+    "condition_name": "Laryngospasme",
+    "cond_name_eng": "Larygospasm",
+    "cond_name_fr": "Laryngospasme",
+    "icd10_id": "J38.5",
+    "selected_primekg_nodes": [
+      "effect/phenotype|HPO|25425"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "effect/phenotype|HPO|25425",
+        "node_name": "Laryngospasm",
+        "node_type": "effect/phenotype",
+        "score": 1.0,
+        "matched_label": "Laryngospasm"
+      }
+    ]
+  },
+  "Laryngospasme": {
+    "alias_of": "Larygospasm",
+    "selected_primekg_nodes": [
+      "effect/phenotype|HPO|25425"
+    ],
+    "status": "auto"
+  },
+  "Acute dystonic reactions": {
+    "condition_name": "Réaction dystonique aïgue",
+    "cond_name_eng": "Acute dystonic reactions",
+    "cond_name_fr": "Réaction dystonique aïgue",
+    "icd10_id": "G24.02",
+    "selected_primekg_nodes": [
+      "disease|MONDO|3441"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|3441",
+        "node_name": "dystonic disorder",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "dystonic disorder"
+      }
+    ]
+  },
+  "Réaction dystonique aïgue": {
+    "alias_of": "Acute dystonic reactions",
+    "selected_primekg_nodes": [
+      "disease|MONDO|3441"
+    ],
+    "status": "auto"
+  },
+  "Localized edema": {
+    "condition_name": "Oedème localisé ou généralisé sans atteinte pulmonaire associée",
+    "cond_name_eng": "Localized edema",
+    "cond_name_fr": "Oedème localisé ou généralisé sans atteinte pulmonaire associée",
+    "icd10_id": "R60.0",
+    "selected_primekg_nodes": [
+      "disease|MONDO|19562"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|19562",
+        "node_name": "localized scleroderma",
+        "node_type": "disease",
+        "score": 0.833333,
+        "matched_label": "Localized edema"
+      },
+      {
+        "node_key": "disease|MONDO|2620",
+        "node_name": "localized osteosarcoma",
+        "node_type": "disease",
+        "score": 0.702703,
+        "matched_label": "Localized edema"
+      },
+      {
+        "node_key": "disease|MONDO|19446",
+        "node_name": "localized lichen myxedematosus",
+        "node_type": "disease",
+        "score": 0.666667,
+        "matched_label": "Localized edema"
+      },
+      {
+        "node_key": "disease|MONDO|3682",
+        "node_name": "localized chondrosarcoma",
+        "node_type": "disease",
+        "score": 0.666667,
+        "matched_label": "Localized edema"
+      },
+      {
+        "node_key": "disease|MONDO|6712",
+        "node_name": "corneal edema",
+        "node_type": "disease",
+        "score": 0.642857,
+        "matched_label": "Localized edema"
+      },
+      {
+        "node_key": "disease|MONDO|19753",
+        "node_name": "localized Castleman disease",
+        "node_type": "disease",
+        "score": 0.619048,
+        "matched_label": "Localized edema"
+      },
+      {
+        "node_key": "disease|MONDO|6684",
+        "node_name": "brain edema",
+        "node_type": "disease",
+        "score": 0.615385,
+        "matched_label": "Localized edema"
+      },
+      {
+        "node_key": "disease|MONDO|6932",
+        "node_name": "pulmonary edema",
+        "node_type": "disease",
+        "score": 0.6,
+        "matched_label": "Localized edema"
+      },
+      {
+        "node_key": "disease|MONDO|1799",
+        "node_name": "localized anterior staphyloma",
+        "node_type": "disease",
+        "score": 0.590909,
+        "matched_label": "Localized edema"
+      },
+      {
+        "node_key": "disease|MONDO|19194",
+        "node_name": "localized lipodystrophy",
+        "node_type": "disease",
+        "score": 0.578947,
+        "matched_label": "Localized edema"
+      }
+    ]
+  },
+  "Oedème localisé ou généralisé sans atteinte pulmonaire associée": {
+    "alias_of": "Localized edema",
+    "selected_primekg_nodes": [
+      "disease|MONDO|19562"
+    ],
+    "status": "auto"
+  },
+  "SLE": {
+    "condition_name": "Lupus érythémateux disséminé (LED)",
+    "cond_name_eng": "SLE",
+    "cond_name_fr": "Lupus érythémateux disséminé (LED)",
+    "icd10_id": "M32",
+    "selected_primekg_nodes": [
+      "disease|MONDO|7915"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|7915",
+        "node_name": "systemic lupus erythematosus (disease)",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "systemic lupus erythematosus (disease)"
+      }
+    ]
+  },
+  "Lupus érythémateux disséminé (LED)": {
+    "alias_of": "SLE",
+    "selected_primekg_nodes": [
+      "disease|MONDO|7915"
+    ],
+    "status": "auto"
+  },
+  "Tuberculosis": {
+    "condition_name": "Tuberculose",
+    "cond_name_eng": "Tuberculosis",
+    "cond_name_fr": "Tuberculose",
+    "icd10_id": "a15",
+    "selected_primekg_nodes": [
+      "disease|MONDO|18076"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|18076",
+        "node_name": "tuberculosis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Tuberculosis"
+      },
+      {
+        "node_key": "disease|MONDO|10282",
+        "node_name": "mycobacterium tuberculosis, susceptibility to, X-linked",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Tuberculosis"
+      },
+      {
+        "node_key": "disease|MONDO|11940",
+        "node_name": "mycobacterium tuberculosis, susceptibility to",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Tuberculosis"
+      },
+      {
+        "node_key": "disease|MONDO|11941",
+        "node_name": "mycobacterium tuberculosis, susceptibility to, 1",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Tuberculosis"
+      },
+      {
+        "node_key": "disease|MONDO|12606",
+        "node_name": "mycobacterium tuberculosis, susceptibility to, 2",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Tuberculosis"
+      },
+      {
+        "node_key": "disease|MONDO|13045",
+        "node_name": "mycobacterium tuberculosis, susceptibility to, 3",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Tuberculosis"
+      },
+      {
+        "node_key": "disease|MONDO|1678",
+        "node_name": "intestinal tuberculosis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Tuberculosis"
+      },
+      {
+        "node_key": "disease|MONDO|21948",
+        "node_name": "cutaneous tuberculosis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Tuberculosis"
+      },
+      {
+        "node_key": "disease|MONDO|25135",
+        "node_name": "tuberculosis, avian",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Tuberculosis"
+      },
+      {
+        "node_key": "disease|MONDO|25136",
+        "node_name": "tuberculosis, bovine",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Tuberculosis"
+      }
+    ]
+  },
+  "Tuberculose": {
+    "alias_of": "Tuberculosis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|18076"
+    ],
+    "status": "auto"
+  },
+  "Unstable angina": {
+    "condition_name": "Angine instable",
+    "cond_name_eng": "Unstable angina",
+    "cond_name_fr": "Angine instable",
+    "icd10_id": "I20.0",
+    "selected_primekg_nodes": [
+      "effect/phenotype|HPO|1681"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "effect/phenotype|HPO|1681",
+        "node_name": "Angina pectoris",
+        "node_type": "effect/phenotype",
+        "score": 1.0,
+        "matched_label": "Angina pectoris"
+      }
+    ]
+  },
+  "Angine instable": {
+    "alias_of": "Unstable angina",
+    "selected_primekg_nodes": [
+      "effect/phenotype|HPO|1681"
+    ],
+    "status": "auto"
+  },
+  "Stable angina": {
+    "condition_name": "Angine stable",
+    "cond_name_eng": "Stable angina",
+    "cond_name_fr": "Angine stable",
+    "icd10_id": "I20.9",
+    "selected_primekg_nodes": [
+      "effect/phenotype|HPO|1681"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "effect/phenotype|HPO|1681",
+        "node_name": "Angina pectoris",
+        "node_type": "effect/phenotype",
+        "score": 1.0,
+        "matched_label": "Angina pectoris"
+      }
+    ]
+  },
+  "Angine stable": {
+    "alias_of": "Stable angina",
+    "selected_primekg_nodes": [
+      "effect/phenotype|HPO|1681"
+    ],
+    "status": "auto"
+  },
+  "Ebola": {
+    "condition_name": "Ebola",
+    "cond_name_eng": "Ebola",
+    "cond_name_fr": "Ebola",
+    "icd10_id": "a98.4",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5737"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5737",
+        "node_name": "Ebola hemorrhagic fever",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Ebola"
+      }
+    ]
+  },
+  "Acute otitis media": {
+    "condition_name": "Otite moyenne aigue (OMA)",
+    "cond_name_eng": "Acute otitis media",
+    "cond_name_fr": "Otite moyenne aigue (OMA)",
+    "icd10_id": "H66.90",
+    "selected_primekg_nodes": [
+      "disease|MONDO|1031"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|1031",
+        "node_name": "purulent acute otitis media",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Acute otitis media"
+      },
+      {
+        "node_key": "disease|MONDO|5441",
+        "node_name": "otitis media (disease)",
+        "node_type": "disease",
+        "score": 0.9,
+        "matched_label": "Acute otitis media"
+      },
+      {
+        "node_key": "disease|MONDO|1312",
+        "node_name": "acute serous otitis media",
+        "node_type": "disease",
+        "score": 0.837209,
+        "matched_label": "Acute otitis media"
+      },
+      {
+        "node_key": "disease|MONDO|1051",
+        "node_name": "acute otitis externa",
+        "node_type": "disease",
+        "score": 0.789474,
+        "matched_label": "Acute otitis media"
+      },
+      {
+        "node_key": "disease|MONDO|1234",
+        "node_name": "adhesive otitis media",
+        "node_type": "disease",
+        "score": 0.769231,
+        "matched_label": "Acute otitis media"
+      },
+      {
+        "node_key": "disease|MONDO|21202",
+        "node_name": "allergic otitis media",
+        "node_type": "disease",
+        "score": 0.769231,
+        "matched_label": "Acute otitis media"
+      },
+      {
+        "node_key": "disease|MONDO|2737",
+        "node_name": "acute sanguinous otitis media",
+        "node_type": "disease",
+        "score": 0.765957,
+        "matched_label": "Acute otitis media"
+      },
+      {
+        "node_key": "disease|MONDO|5975",
+        "node_name": "suppurative otitis media",
+        "node_type": "disease",
+        "score": 0.761905,
+        "matched_label": "Acute otitis media"
+      },
+      {
+        "node_key": "disease|MONDO|21203",
+        "node_name": "serous otitis media",
+        "node_type": "disease",
+        "score": 0.756757,
+        "matched_label": "Acute otitis media"
+      },
+      {
+        "node_key": "disease|MONDO|2738",
+        "node_name": "acute transudative otitis media",
+        "node_type": "disease",
+        "score": 0.75,
+        "matched_label": "Acute otitis media"
+      }
+    ]
+  },
+  "Otite moyenne aigue (OMA)": {
+    "alias_of": "Acute otitis media",
+    "selected_primekg_nodes": [
+      "disease|MONDO|1031"
+    ],
+    "status": "auto"
+  },
+  "Panic attack": {
+    "condition_name": "Attaque de panique",
+    "cond_name_eng": "Panic attack",
+    "cond_name_fr": "Attaque de panique",
+    "icd10_id": "f41",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5383"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5383",
+        "node_name": "panic disorder",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "panic disorder"
+      }
+    ]
+  },
+  "Attaque de panique": {
+    "alias_of": "Panic attack",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5383"
+    ],
+    "status": "auto"
+  },
+  "Bronchospasm / acute asthma exacerbation": {
+    "condition_name": "Asthme exacerbé ou bronchospasme",
+    "cond_name_eng": "Bronchospasm / acute asthma exacerbation",
+    "cond_name_fr": "Asthme exacerbé ou bronchospasme",
+    "icd10_id": "J45",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4979"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|4979",
+        "node_name": "asthma",
+        "node_type": "disease",
+        "score": 0.88,
+        "matched_label": "Bronchospasm / acute asthma exacerbation"
+      },
+      {
+        "node_key": "disease|MONDO|166",
+        "node_name": "encephalopathy, acute, infection-induced",
+        "node_type": "disease",
+        "score": 0.5,
+        "matched_label": "Bronchospasm / acute asthma exacerbation"
+      },
+      {
+        "node_key": "disease|MONDO|15595",
+        "node_name": "posttransplant acute limbic encephalitis",
+        "node_type": "disease",
+        "score": 0.487179,
+        "matched_label": "Bronchospasm / acute asthma exacerbation"
+      },
+      {
+        "node_key": "disease|MONDO|4780",
+        "node_name": "strictly posterior acute myocardial infarction",
+        "node_type": "disease",
+        "score": 0.47619,
+        "matched_label": "Bronchospasm / acute asthma exacerbation"
+      },
+      {
+        "node_key": "disease|MONDO|15596",
+        "node_name": "non-herpetic acute limbic encephalitis",
+        "node_type": "disease",
+        "score": 0.473684,
+        "matched_label": "Bronchospasm / acute asthma exacerbation"
+      },
+      {
+        "node_key": "disease|MONDO|19140",
+        "node_name": "acute ackee fruit intoxication",
+        "node_type": "disease",
+        "score": 0.470588,
+        "matched_label": "Bronchospasm / acute asthma exacerbation"
+      },
+      {
+        "node_key": "disease|MONDO|4781",
+        "node_name": "acute myocardial infarction",
+        "node_type": "disease",
+        "score": 0.461538,
+        "matched_label": "Bronchospasm / acute asthma exacerbation"
+      },
+      {
+        "node_key": "disease|MONDO|1028",
+        "node_name": "acute pericementitis",
+        "node_type": "disease",
+        "score": 0.45,
+        "matched_label": "Bronchospasm / acute asthma exacerbation"
+      },
+      {
+        "node_key": "disease|MONDO|10643",
+        "node_name": "acute leukemia (disease)",
+        "node_type": "disease",
+        "score": 0.45,
+        "matched_label": "Bronchospasm / acute asthma exacerbation"
+      },
+      {
+        "node_key": "disease|MONDO|1081",
+        "node_name": "acute cervicitis",
+        "node_type": "disease",
+        "score": 0.45,
+        "matched_label": "Bronchospasm / acute asthma exacerbation"
+      }
+    ]
+  },
+  "Asthme exacerbé ou bronchospasme": {
+    "alias_of": "Bronchospasm / acute asthma exacerbation",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4979"
+    ],
+    "status": "auto"
+  },
+  "Bronchitis": {
+    "condition_name": "Bronchite",
+    "cond_name_eng": "Bronchitis",
+    "cond_name_fr": "Bronchite",
+    "icd10_id": "j40",
+    "selected_primekg_nodes": [
+      "disease|MONDO|3781"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|3781",
+        "node_name": "bronchitis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Bronchitis"
+      },
+      {
+        "node_key": "disease|MONDO|18597",
+        "node_name": "plastic bronchitis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchitis"
+      },
+      {
+        "node_key": "disease|MONDO|5607",
+        "node_name": "chronic bronchitis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchitis"
+      }
+    ]
+  },
+  "Bronchite": {
+    "alias_of": "Bronchitis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|3781"
+    ],
+    "status": "auto"
+  },
+  "Acute COPD exacerbation / infection": {
+    "condition_name": "Exacerbation aigue de MPOC et/ou surinfection associée",
+    "cond_name_eng": "Acute COPD exacerbation / infection",
+    "cond_name_fr": "Exacerbation aigue de MPOC et/ou surinfection associée",
+    "icd10_id": "j44.1",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5002"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5002",
+        "node_name": "chronic obstructive pulmonary disease",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "chronic obstructive pulmonary disease"
+      }
+    ]
+  },
+  "Exacerbation aigue de MPOC et/ou surinfection associée": {
+    "alias_of": "Acute COPD exacerbation / infection",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5002"
+    ],
+    "status": "auto"
+  },
+  "Pulmonary embolism": {
+    "condition_name": "Embolie pulmonaire",
+    "cond_name_eng": "Pulmonary embolism",
+    "cond_name_fr": "Embolie pulmonaire",
+    "icd10_id": "i26",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5279"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5279",
+        "node_name": "pulmonary embolism (disease)",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Pulmonary embolism"
+      },
+      {
+        "node_key": "disease|MONDO|4594",
+        "node_name": "puerperal pulmonary embolism",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pulmonary embolism"
+      },
+      {
+        "node_key": "disease|MONDO|4597",
+        "node_name": "pulmonary embolism and infarction",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pulmonary embolism"
+      },
+      {
+        "node_key": "disease|MONDO|2771",
+        "node_name": "pulmonary fibrosis",
+        "node_type": "disease",
+        "score": 0.777778,
+        "matched_label": "Pulmonary embolism"
+      },
+      {
+        "node_key": "disease|MONDO|4849",
+        "node_name": "pulmonary emphysema",
+        "node_type": "disease",
+        "score": 0.756757,
+        "matched_label": "Pulmonary embolism"
+      },
+      {
+        "node_key": "disease|MONDO|8346",
+        "node_name": "pulmonary hemosiderosis",
+        "node_type": "disease",
+        "score": 0.731707,
+        "matched_label": "Pulmonary embolism"
+      },
+      {
+        "node_key": "disease|MONDO|6932",
+        "node_name": "pulmonary edema",
+        "node_type": "disease",
+        "score": 0.727273,
+        "matched_label": "Pulmonary embolism"
+      },
+      {
+        "node_key": "disease|MONDO|20110",
+        "node_name": "pulmonary agenesis",
+        "node_type": "disease",
+        "score": 0.722222,
+        "matched_label": "Pulmonary embolism"
+      },
+      {
+        "node_key": "disease|MONDO|4802",
+        "node_name": "pulmonary eosinophilia",
+        "node_type": "disease",
+        "score": 0.7,
+        "matched_label": "Pulmonary embolism"
+      },
+      {
+        "node_key": "disease|MONDO|6052",
+        "node_name": "pulmonary tuberculosis",
+        "node_type": "disease",
+        "score": 0.7,
+        "matched_label": "Pulmonary embolism"
+      }
+    ]
+  },
+  "Embolie pulmonaire": {
+    "alias_of": "Pulmonary embolism",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5279"
+    ],
+    "status": "auto"
+  },
+  "URTI": {
+    "condition_name": "IVRS ou virémie",
+    "cond_name_eng": "URTI",
+    "cond_name_fr": "IVRS ou virémie",
+    "icd10_id": "j06.9",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4867"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|4867",
+        "node_name": "upper respiratory tract disease",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "upper respiratory tract disease"
+      }
+    ]
+  },
+  "IVRS ou virémie": {
+    "alias_of": "URTI",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4867"
+    ],
+    "status": "auto"
+  },
+  "Influenza": {
+    "condition_name": "Possible influenza ou syndrome virémique typique",
+    "cond_name_eng": "Influenza",
+    "cond_name_fr": "Possible influenza ou syndrome virémique typique",
+    "icd10_id": "j11.1",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5812"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5812",
+        "node_name": "influenza",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Influenza"
+      },
+      {
+        "node_key": "disease|MONDO|13855",
+        "node_name": "influenza, severe, susceptibility to",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Influenza"
+      },
+      {
+        "node_key": "disease|MONDO|18695",
+        "node_name": "avian influenza",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Influenza"
+      },
+      {
+        "node_key": "disease|MONDO|5460",
+        "node_name": "swine influenza",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Influenza"
+      },
+      {
+        "node_key": "disease|MONDO|8396",
+        "node_name": "oculodental syndrome, Rutherfurd type",
+        "node_type": "disease",
+        "score": 0.547619,
+        "matched_label": "Possible influenza ou syndrome virémique typique"
+      },
+      {
+        "node_key": "disease|MONDO|23102",
+        "node_name": "facio skeletal genital syndrome rippberger type",
+        "node_type": "disease",
+        "score": 0.547368,
+        "matched_label": "Possible influenza ou syndrome virémique typique"
+      },
+      {
+        "node_key": "disease|MONDO|22608",
+        "node_name": "brittle bone syndrome lethal type",
+        "node_type": "disease",
+        "score": 0.54321,
+        "matched_label": "Possible influenza ou syndrome virémique typique"
+      },
+      {
+        "node_key": "disease|MONDO|9732",
+        "node_name": "congenital nephrotic syndrome, Finnish type",
+        "node_type": "disease",
+        "score": 0.533333,
+        "matched_label": "Possible influenza ou syndrome virémique typique"
+      },
+      {
+        "node_key": "disease|MONDO|11133",
+        "node_name": "deaf blind hypopigmentation syndrome, Yemenite type",
+        "node_type": "disease",
+        "score": 0.530612,
+        "matched_label": "Possible influenza ou syndrome virémique typique"
+      },
+      {
+        "node_key": "disease|MONDO|21670",
+        "node_name": "post-infectious syndrome",
+        "node_type": "disease",
+        "score": 0.527778,
+        "matched_label": "Possible influenza ou syndrome virémique typique"
+      }
+    ]
+  },
+  "Possible influenza ou syndrome virémique typique": {
+    "alias_of": "Influenza",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5812"
+    ],
+    "status": "auto"
+  },
+  "Pneumonia": {
+    "condition_name": "Pneumonie",
+    "cond_name_eng": "Pneumonia",
+    "cond_name_fr": "Pneumonie",
+    "icd10_id": "j17, j18",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5249"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5249",
+        "node_name": "pneumonia",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Pneumonia"
+      },
+      {
+        "node_key": "disease|MONDO|15264",
+        "node_name": "cryptogenic organizing pneumonia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pneumonia"
+      },
+      {
+        "node_key": "disease|MONDO|15927",
+        "node_name": "idiopathic eosinophilic pneumonia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pneumonia"
+      },
+      {
+        "node_key": "disease|MONDO|17363",
+        "node_name": "idiopathic chronic eosinophilic pneumonia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pneumonia"
+      },
+      {
+        "node_key": "disease|MONDO|18183",
+        "node_name": "staphylococcal necrotizing pneumonia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pneumonia"
+      },
+      {
+        "node_key": "disease|MONDO|19122",
+        "node_name": "idiopathic acute eosinophilic pneumonia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pneumonia"
+      },
+      {
+        "node_key": "disease|MONDO|19203",
+        "node_name": "acute interstitial pneumonia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pneumonia"
+      },
+      {
+        "node_key": "disease|MONDO|19622",
+        "node_name": "non-specific interstitial pneumonia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pneumonia"
+      },
+      {
+        "node_key": "disease|MONDO|2429",
+        "node_name": "idiopathic interstitial pneumonia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pneumonia"
+      },
+      {
+        "node_key": "disease|MONDO|24354",
+        "node_name": "cytomegalovirus pneumonia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pneumonia"
+      }
+    ]
+  },
+  "Pneumonie": {
+    "alias_of": "Pneumonia",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5249"
+    ],
+    "status": "auto"
+  },
+  "Acute rhinosinusitis": {
+    "condition_name": "Rhinosinusite aigue",
+    "cond_name_eng": "Acute rhinosinusitis",
+    "cond_name_fr": "Rhinosinusite aigue",
+    "icd10_id": "j01",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5961"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5961",
+        "node_name": "sinusitis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "sinusitis"
+      },
+      {
+        "node_key": "effect/phenotype|HPO|246",
+        "node_name": "Sinusitis",
+        "node_type": "effect/phenotype",
+        "score": 1.0,
+        "matched_label": "sinusitis"
+      }
+    ]
+  },
+  "Rhinosinusite aigue": {
+    "alias_of": "Acute rhinosinusitis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5961"
+    ],
+    "status": "auto"
+  },
+  "Chronic rhinosinusitis": {
+    "condition_name": "Rhinosinusite chronique",
+    "cond_name_eng": "Chronic rhinosinusitis",
+    "cond_name_fr": "Rhinosinusite chronique",
+    "icd10_id": "j32",
+    "selected_primekg_nodes": [
+      "disease|MONDO|6031"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|6031",
+        "node_name": "chronic rhinosinusitis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Chronic rhinosinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|4514",
+        "node_name": "chronic rhinitis",
+        "node_type": "disease",
+        "score": 0.842105,
+        "matched_label": "Chronic rhinosinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|1120",
+        "node_name": "chronic frontal sinusitis",
+        "node_type": "disease",
+        "score": 0.808511,
+        "matched_label": "Chronic rhinosinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|1123",
+        "node_name": "chronic sphenoidal sinusitis",
+        "node_type": "disease",
+        "score": 0.8,
+        "matched_label": "Chronic rhinosinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|4757",
+        "node_name": "chronic ethmoidal sinusitis",
+        "node_type": "disease",
+        "score": 0.77551,
+        "matched_label": "Chronic rhinosinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|20782",
+        "node_name": "chronic gingivitis",
+        "node_type": "disease",
+        "score": 0.75,
+        "matched_label": "Chronic rhinosinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|1122",
+        "node_name": "chronic maxillary sinusitis",
+        "node_type": "disease",
+        "score": 0.734694,
+        "matched_label": "Chronic rhinosinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|22103",
+        "node_name": "chronic prostatitis",
+        "node_type": "disease",
+        "score": 0.731707,
+        "matched_label": "Chronic rhinosinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|22196",
+        "node_name": "chronic erosive gastritis",
+        "node_type": "disease",
+        "score": 0.723404,
+        "matched_label": "Chronic rhinosinusitis"
+      },
+      {
+        "node_key": "disease|MONDO|1007",
+        "node_name": "chronic meningitis",
+        "node_type": "disease",
+        "score": 0.7,
+        "matched_label": "Chronic rhinosinusitis"
+      }
+    ]
+  },
+  "Rhinosinusite chronique": {
+    "alias_of": "Chronic rhinosinusitis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|6031"
+    ],
+    "status": "auto"
+  },
+  "Bronchiolitis": {
+    "condition_name": "Bronchiolite",
+    "cond_name_eng": "Bronchiolitis",
+    "cond_name_fr": "Bronchiolite",
+    "icd10_id": "j21",
+    "selected_primekg_nodes": [
+      "disease|MONDO|2465"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|2465",
+        "node_name": "bronchiolitis (disease)",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Bronchiolitis"
+      },
+      {
+        "node_key": "disease|MONDO|100286",
+        "node_name": "respiratory syncytial virus bronchiolitis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchiolitis"
+      },
+      {
+        "node_key": "disease|MONDO|15265",
+        "node_name": "bronchiolitis obliterans with obstructive pulmonary disease",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchiolitis"
+      },
+      {
+        "node_key": "disease|MONDO|19204",
+        "node_name": "respiratory bronchiolitis-interstitial lung disease syndrome",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchiolitis"
+      },
+      {
+        "node_key": "disease|MONDO|20680",
+        "node_name": "acute bronchiolitis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchiolitis"
+      },
+      {
+        "node_key": "disease|MONDO|56821",
+        "node_name": "bronchiolitis obliterans organizing pneumonia",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Bronchiolitis"
+      }
+    ]
+  },
+  "Bronchiolite": {
+    "alias_of": "Bronchiolitis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|2465"
+    ],
+    "status": "auto"
+  },
+  "Pulmonary neoplasm": {
+    "condition_name": "néoplasie pulmonaire",
+    "cond_name_eng": "Pulmonary neoplasm",
+    "cond_name_fr": "néoplasie pulmonaire",
+    "icd10_id": "c34",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5070"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5070",
+        "node_name": "neoplasm (disease)",
+        "node_type": "disease",
+        "score": 0.9,
+        "matched_label": "Pulmonary neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|24813",
+        "node_name": "pulmonary sulcus neoplasm",
+        "node_type": "disease",
+        "score": 0.837209,
+        "matched_label": "Pulmonary neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|5279",
+        "node_name": "pulmonary embolism (disease)",
+        "node_type": "disease",
+        "score": 0.833333,
+        "matched_label": "Pulmonary neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|21049",
+        "node_name": "vulvar neoplasm",
+        "node_type": "disease",
+        "score": 0.787879,
+        "matched_label": "Pulmonary neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|24882",
+        "node_name": "secondary neoplasm",
+        "node_type": "disease",
+        "score": 0.777778,
+        "matched_label": "Pulmonary neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|5933",
+        "node_name": "pulmonary blastoma",
+        "node_type": "disease",
+        "score": 0.777778,
+        "matched_label": "Pulmonary neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|21246",
+        "node_name": "pharynx neoplasm",
+        "node_type": "disease",
+        "score": 0.764706,
+        "matched_label": "Pulmonary neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|4802",
+        "node_name": "pulmonary eosinophilia",
+        "node_type": "disease",
+        "score": 0.75,
+        "matched_label": "Pulmonary neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|21218",
+        "node_name": "placenta neoplasm",
+        "node_type": "disease",
+        "score": 0.742857,
+        "matched_label": "Pulmonary neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|24296",
+        "node_name": "vascular neoplasm",
+        "node_type": "disease",
+        "score": 0.742857,
+        "matched_label": "Pulmonary neoplasm"
+      }
+    ]
+  },
+  "néoplasie pulmonaire": {
+    "alias_of": "Pulmonary neoplasm",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5070"
+    ],
+    "status": "auto"
+  },
+  "Possible NSTEMI / STEMI": {
+    "condition_name": "Possible NSTEMI / STEMI",
+    "cond_name_eng": "Possible NSTEMI / STEMI",
+    "cond_name_fr": "Possible NSTEMI / STEMI",
+    "icd10_id": "I21",
+    "selected_primekg_nodes": [
+      "disease|MONDO|4781"
+    ],
+    "status": "auto",
+    "selection_method": "clinical_alias",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|4781",
+        "node_name": "acute myocardial infarction",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "acute myocardial infarction"
+      }
+    ]
+  },
+  "Sarcoidosis": {
+    "condition_name": "Sarcoïdose",
+    "cond_name_eng": "Sarcoidosis",
+    "cond_name_fr": "Sarcoïdose",
+    "icd10_id": "d86",
+    "selected_primekg_nodes": [
+      "disease|MONDO|19338"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|19338",
+        "node_name": "sarcoidosis",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Sarcoidosis"
+      },
+      {
+        "node_key": "disease|MONDO|12888",
+        "node_name": "sarcoidosis, susceptibility to, 2",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Sarcoidosis"
+      },
+      {
+        "node_key": "disease|MONDO|12889",
+        "node_name": "sarcoidosis, susceptibility to, 3",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Sarcoidosis"
+      },
+      {
+        "node_key": "disease|MONDO|1706",
+        "node_name": "cerebral sarcoidosis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Sarcoidosis"
+      },
+      {
+        "node_key": "disease|MONDO|1707",
+        "node_name": "cardiac sarcoidosis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Sarcoidosis"
+      },
+      {
+        "node_key": "disease|MONDO|1708",
+        "node_name": "pulmonary sarcoidosis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Sarcoidosis"
+      },
+      {
+        "node_key": "disease|MONDO|1709",
+        "node_name": "hypercalcemic sarcoidosis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Sarcoidosis"
+      },
+      {
+        "node_key": "disease|MONDO|6611",
+        "node_name": "skin sarcoidosis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Sarcoidosis"
+      },
+      {
+        "node_key": "disease|MONDO|8399",
+        "node_name": "sarcoidosis, susceptibility to, 1",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Sarcoidosis"
+      }
+    ]
+  },
+  "Sarcoïdose": {
+    "alias_of": "Sarcoidosis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|19338"
+    ],
+    "status": "auto"
+  },
+  "Pancreatic neoplasm": {
+    "condition_name": "Néoplasie du pancréas",
+    "cond_name_eng": "Pancreatic neoplasm",
+    "cond_name_fr": "Néoplasie du pancréas",
+    "icd10_id": "c25",
+    "selected_primekg_nodes": [
+      "disease|MONDO|21040"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|21040",
+        "node_name": "pancreatic neoplasm",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Pancreatic neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|9831",
+        "node_name": "malignant pancreatic neoplasm",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pancreatic neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|5070",
+        "node_name": "neoplasm (disease)",
+        "node_type": "disease",
+        "score": 0.9,
+        "matched_label": "Pancreatic neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|21076",
+        "node_name": "pancreatic exocrine neoplasm",
+        "node_type": "disease",
+        "score": 0.808511,
+        "matched_label": "Pancreatic neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|21143",
+        "node_name": "melanocytic neoplasm",
+        "node_type": "disease",
+        "score": 0.769231,
+        "matched_label": "Pancreatic neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|21077",
+        "node_name": "cystic neoplasm",
+        "node_type": "disease",
+        "score": 0.764706,
+        "matched_label": "Pancreatic neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|21100",
+        "node_name": "breast neoplasm",
+        "node_type": "disease",
+        "score": 0.764706,
+        "matched_label": "Pancreatic neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|21231",
+        "node_name": "retina neoplasm",
+        "node_type": "disease",
+        "score": 0.764706,
+        "matched_label": "Pancreatic neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|10795",
+        "node_name": "oncocytic neoplasm",
+        "node_type": "disease",
+        "score": 0.756757,
+        "matched_label": "Pancreatic neoplasm"
+      },
+      {
+        "node_key": "disease|MONDO|2604",
+        "node_name": "pericytic neoplasm",
+        "node_type": "disease",
+        "score": 0.756757,
+        "matched_label": "Pancreatic neoplasm"
+      }
+    ]
+  },
+  "Néoplasie du pancréas": {
+    "alias_of": "Pancreatic neoplasm",
+    "selected_primekg_nodes": [
+      "disease|MONDO|21040"
+    ],
+    "status": "auto"
+  },
+  "Acute pulmonary edema": {
+    "condition_name": "OAP/Surcharge pulmonaire",
+    "cond_name_eng": "Acute pulmonary edema",
+    "cond_name_fr": "OAP/Surcharge pulmonaire",
+    "icd10_id": "J81.0",
+    "selected_primekg_nodes": [
+      "disease|MONDO|6932"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|6932",
+        "node_name": "pulmonary edema",
+        "node_type": "disease",
+        "score": 0.9,
+        "matched_label": "Acute pulmonary edema"
+      },
+      {
+        "node_key": "disease|MONDO|4595",
+        "node_name": "acute pulmonary heart disease",
+        "node_type": "disease",
+        "score": 0.8,
+        "matched_label": "Acute pulmonary edema"
+      },
+      {
+        "node_key": "disease|MONDO|4849",
+        "node_name": "pulmonary emphysema",
+        "node_type": "disease",
+        "score": 0.7,
+        "matched_label": "Acute pulmonary edema"
+      },
+      {
+        "node_key": "disease|MONDO|4598",
+        "node_name": "acute cor pulmonale",
+        "node_type": "disease",
+        "score": 0.7,
+        "matched_label": "Acute pulmonary edema"
+      },
+      {
+        "node_key": "disease|MONDO|20007",
+        "node_name": "absence of the pulmonary artery",
+        "node_type": "disease",
+        "score": 0.666667,
+        "matched_label": "Acute pulmonary edema"
+      },
+      {
+        "node_key": "disease|MONDO|7896",
+        "node_name": "acute monocytic leukemia",
+        "node_type": "disease",
+        "score": 0.666667,
+        "matched_label": "Acute pulmonary edema"
+      },
+      {
+        "node_key": "disease|MONDO|3128",
+        "node_name": "classic pulmonary blastoma",
+        "node_type": "disease",
+        "score": 0.638298,
+        "matched_label": "Acute pulmonary edema"
+      },
+      {
+        "node_key": "disease|MONDO|3628",
+        "node_name": "pulmonary valve disease",
+        "node_type": "disease",
+        "score": 0.636364,
+        "matched_label": "Acute pulmonary edema"
+      },
+      {
+        "node_key": "disease|MONDO|3627",
+        "node_name": "rheumatic pulmonary valve disease",
+        "node_type": "disease",
+        "score": 0.62963,
+        "matched_label": "Acute pulmonary edema"
+      },
+      {
+        "node_key": "disease|MONDO|1493",
+        "node_name": "chronic pulmonary heart disease",
+        "node_type": "disease",
+        "score": 0.615385,
+        "matched_label": "Acute pulmonary edema"
+      }
+    ]
+  },
+  "OAP/Surcharge pulmonaire": {
+    "alias_of": "Acute pulmonary edema",
+    "selected_primekg_nodes": [
+      "disease|MONDO|6932"
+    ],
+    "status": "auto"
+  },
+  "Pericarditis": {
+    "condition_name": "Péricardite",
+    "cond_name_eng": "Pericarditis",
+    "cond_name_fr": "Péricardite",
+    "icd10_id": "I30",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5904"
+    ],
+    "status": "auto",
+    "selection_method": "lexical",
+    "candidates": [
+      {
+        "node_key": "disease|MONDO|5904",
+        "node_name": "pericarditis (disease)",
+        "node_type": "disease",
+        "score": 1.0,
+        "matched_label": "Pericarditis"
+      },
+      {
+        "node_key": "disease|MONDO|16662",
+        "node_name": "idiopathic recurrent pericarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pericarditis"
+      },
+      {
+        "node_key": "disease|MONDO|2133",
+        "node_name": "chronic rheumatic pericarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pericarditis"
+      },
+      {
+        "node_key": "disease|MONDO|23164",
+        "node_name": "viral pericarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pericarditis"
+      },
+      {
+        "node_key": "disease|MONDO|24655",
+        "node_name": "rheumatic pericarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pericarditis"
+      },
+      {
+        "node_key": "disease|MONDO|6711",
+        "node_name": "constrictive pericarditis (disease)",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pericarditis"
+      },
+      {
+        "node_key": "disease|MONDO|8828",
+        "node_name": "camptodactyly-arthropathy-coxa vara-pericarditis syndrome",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pericarditis"
+      },
+      {
+        "node_key": "disease|MONDO|981",
+        "node_name": "Histoplasma pericarditis",
+        "node_type": "disease",
+        "score": 0.92,
+        "matched_label": "Pericarditis"
+      }
+    ]
+  },
+  "Péricardite": {
+    "alias_of": "Pericarditis",
+    "selected_primekg_nodes": [
+      "disease|MONDO|5904"
+    ],
+    "status": "auto"
+  }
+}

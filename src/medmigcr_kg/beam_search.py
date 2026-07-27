@@ -80,10 +80,12 @@ class SemanticBeamSearch:
         beam_width: int = 32,
         topk_paths: int = 100,
         avoid_cycles: bool = True,
+        target_node_ids: Optional[Set[int]] = None,
     ) -> List[BeamItem]:
         beam: List[BeamItem] = [BeamItem(int(node_id), (int(node_id),), 0.0) for node_id in seed_node_ids]
         visited_paths: Set[Tuple[int, ...]] = set(item.path for item in beam)
         global_paths: List[BeamItem] = []
+        target_paths: dict[int, BeamItem] = {}
 
         for _hop in range(max_hops):
             candidates: List[BeamItem] = []
@@ -108,7 +110,12 @@ class SemanticBeamSearch:
                         continue
                     visited_paths.add(path)
                     cumulative_score = item.score + float(expansion_score)
-                    candidates.append(BeamItem(int(neighbor_id), path, cumulative_score))
+                    candidate = BeamItem(int(neighbor_id), path, cumulative_score)
+                    candidates.append(candidate)
+                    if target_node_ids is not None and int(neighbor_id) in target_node_ids:
+                        existing = target_paths.get(int(neighbor_id))
+                        if existing is None or candidate.score > existing.score:
+                            target_paths[int(neighbor_id)] = candidate
 
             if not candidates:
                 break
@@ -119,5 +126,12 @@ class SemanticBeamSearch:
 
         global_paths.sort(key=lambda item: item.score, reverse=True)
         if topk_paths is not None:
-            return global_paths[:topk_paths]
+            global_paths = global_paths[:topk_paths]
+        if target_paths:
+            by_path = {item.path: item for item in global_paths}
+            for item in target_paths.values():
+                existing = by_path.get(item.path)
+                if existing is None or item.score > existing.score:
+                    by_path[item.path] = item
+            return sorted(by_path.values(), key=lambda item: item.score, reverse=True)
         return global_paths
