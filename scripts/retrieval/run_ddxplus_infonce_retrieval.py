@@ -1,0 +1,249 @@
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+import sys
+from pathlib import Path
+from typing import Dict, Iterable, List, Sequence, Tuple
+
+import numpy as np
+import torch
+
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SRC_DIR = REPO_ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+from medmigcr_kg.graph_store import GraphStore  # noqa: E402
+from medmigcr_kg.retrieval_engine import RetrievalEngine  # noqa: E402
+from medmigcr_mind.contrastive_model import ProjectedClinicalMIND, average_pairwise_cosine  # noqa: E402
+
+
+PAD_SYM = 0
+UNK_SYM = 1
+
+
+def split_nodes(cell: str) -> List[str]:
+    return [token.strip() for token in str(cell or "").split(";") if token.strip()]
+
+
+def load_queries(path: Path, limit: int | None = None) -> List[Dict[str, str]]:
+    with path.open("r", newline="", encoding="utf-8-sig") as handle:
+        rows = list(csv.DictReader(handle))
+    return rows[:limit] if limit is not None else rows
+
+
+def load_checkpoint(path: Path, device: torch.device) -> dict:
+    try:
+        return torch.load(path, map_location=device, weights_only=False)
+    except TypeError:
+        return torch.load(path, map_location=device)
+
+
+def load_model(path: Path, device: torch.device) -> Tuple[ProjectedClinicalMIND, dict, Dict[str, int]]:
+    ckpt = load_checkpoint(path, device)
+    hp = ckpt["hparams"]
+    model = ProjectedClinicalMIND(
+        num_symptoms=hp["num_symptoms"],
+        mind_dim=hp["D"],
+        graph_dim=hp["graph_dim"],
+        num_interests=hp["K"],
+        max_seq_len=hp["max_seq_len"],
+        num_routing_iters=hp["R"],
+        symptom_padding_idx=PAD_SYM,
+    )
+    model.load_state_dict(ckpt["model_state"])
+    model.to(device)
+    model.eval()
+    return model, hp, ckpt["symptom_str2id"]
+
+
+def encode_seed_nodes(seed_node_keys: Sequence[str], vocab: Dict[str, int], max_len: int) -> List[int]:
+    ids = [vocab.get(key, UNK_SYM) for key in seed_node_keys]
+    ids = ids[:max_len]
+    ids.extend([PAD_SYM] * (max_len - len(ids)))
+    return ids
+
+
+def resolve_seed_ids(graph_store: GraphStore, seed_node_keys: Sequence[str]) -> List[int]:
+    ids: List[int] = []
+    for key in seed_node_keys:
+        node_id = graph_store.lookup_node_id(key)
+        if node_id is not None:
+            ids.append(node_id)
+    return sorted(set(ids))
+
+
+def load_target_universe(path: Path | None) -> set[str] | None:
+    if path is None:
+        return None
+    with path.open("r", encoding="utf-8-sig") as handle:
+        mapping = json.load(handle)
+    return {
+        node
+        for entry in mapping.values()
+        for node in entry.get("selected_primekg_nodes", [])
+    }
+
+
+def target_endpoint_scores(
+    result,
+    graph_store: GraphStore,
+    top_k: int,
+    target_universe: set[str] | None,
+) -> List[Tuple[str, float]]:
+    scores: Dict[str, float] = {}
+    for item in result.paths:
+        node_name = graph_store.lookup_node_name(item.current_node)
+        if not node_name:
+            continue
+        if target_universe is not None and node_name not in target_universe:
+            continue
+        if target_universe is None and not node_name.startswith("disease|"):
+            continue
+        current = scores.get(node_name)
+        if current is None or item.score > current:
+            scores[node_name] = float(item.score)
+    return sorted(scores.items(), key=lambda pair: pair[1], reverse=True)[:top_k]
+
+
+def write_predictions(path: Path, rows: Iterable[Dict[str, object]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=["patient_index", "candidate", "score", "rank"])
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run InfoNCE MIND retrieval on DDXPlus queries.")
+    parser.add_argument("--test_queries_csv", type=Path, default=Path("data/processed/ddxplus_v2/test_queries.csv"))
+    parser.add_argument("--graph_dir", type=Path, default=Path("data/processed/primekg_graph"))
+    parser.add_argument("--checkpoint", type=Path, required=True)
+    parser.add_argument("--condition_map", type=Path, default=Path("data/mappings/ddxplus_v2/condition_to_primekg.json"))
+    parser.add_argument("--output_csv", type=Path, required=True)
+    parser.add_argument("--summary_json", type=Path, default=None)
+    parser.add_argument("--interest_count", type=int, default=None)
+    parser.add_argument("--max_hops", type=int, default=5)
+    parser.add_argument("--beam_width", type=int, default=1024)
+    parser.add_argument("--paths_per_interest", type=int, default=4096)
+    parser.add_argument("--top_k", type=int, default=50)
+    parser.add_argument("--alpha", type=float, default=1.0)
+    parser.add_argument("--beta", type=float, default=0.4)
+    parser.add_argument("--limit_patients", type=int, default=None)
+    parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument("--graph_device", type=str, default="auto")
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    device = torch.device(args.device)
+    model, hp, seed_vocab = load_model(args.checkpoint, device)
+    use_interests = int(args.interest_count or hp["K"])
+    if use_interests < 1 or use_interests > int(hp["K"]):
+        raise ValueError(f"--interest_count must be between 1 and checkpoint K={hp['K']}")
+
+    graph_store = GraphStore.load(
+        graph_npz=args.graph_dir / "graph_csr.npz",
+        node_embeddings_npy=args.graph_dir / "node_embeddings.npy",
+        out_degree_npy=args.graph_dir / "out_degree.npy",
+        in_degree_npy=args.graph_dir / "in_degree.npy",
+        mapping_dir=args.graph_dir / "mappings",
+        device=args.graph_device,
+    )
+    engine = RetrievalEngine(graph_store)
+    queries = load_queries(args.test_queries_csv, limit=args.limit_patients)
+    target_universe = load_target_universe(args.condition_map)
+    target_node_ids = None
+    if target_universe is not None:
+        target_node_ids = {
+            node_id
+            for node_key in target_universe
+            for node_id in [graph_store.lookup_node_id(node_key)]
+            if node_id is not None
+        }
+
+    rows: List[Dict[str, object]] = []
+    skipped_missing_seed = 0
+    no_target_candidates = 0
+    unk_seed_queries = 0
+    cosine_values: List[float] = []
+    for query in queries:
+        patient_index = int(query["patient_index"])
+        seed_keys = split_nodes(query.get("seed_node_keys", ""))
+        seed_ids = resolve_seed_ids(graph_store, seed_keys)
+        if not seed_ids:
+            skipped_missing_seed += 1
+            continue
+        encoded = encode_seed_nodes(seed_keys, seed_vocab, int(hp["max_seq_len"]))
+        if any(seed_vocab.get(key, UNK_SYM) == UNK_SYM for key in seed_keys):
+            unk_seed_queries += 1
+        x = torch.tensor([encoded], dtype=torch.long, device=device)
+        with torch.no_grad():
+            projected, _latent, active_mask = model(x)
+            z = projected[0, :use_interests, :].detach().cpu().numpy()
+            cosine_mean, _ = average_pairwise_cosine(projected[:, :use_interests, :], active_mask[:, :use_interests])
+            cosine_values.append(cosine_mean)
+        result = engine.retrieve(
+            seed_node_ids=seed_ids,
+            max_hops=args.max_hops,
+            beam_width=args.beam_width,
+            topk_paths=args.paths_per_interest,
+            alpha=args.alpha,
+            beta=args.beta,
+            interest_vectors=z,
+            max_paths_per_interest=args.paths_per_interest,
+            target_node_ids=target_node_ids,
+        )
+        ranked = target_endpoint_scores(result, graph_store, top_k=args.top_k, target_universe=target_universe)
+        if not ranked:
+            no_target_candidates += 1
+            continue
+        for rank, (candidate, score) in enumerate(ranked, start=1):
+            rows.append(
+                {
+                    "patient_index": patient_index,
+                    "candidate": candidate,
+                    "score": f"{score:.8f}",
+                    "rank": rank,
+                }
+            )
+
+    write_predictions(args.output_csv, rows)
+    summary = {
+        "test_queries_csv": str(args.test_queries_csv),
+        "graph_dir": str(args.graph_dir),
+        "checkpoint": str(args.checkpoint),
+        "condition_map": str(args.condition_map) if args.condition_map else None,
+        "target_universe_size": len(target_universe) if target_universe is not None else None,
+        "target_aware_candidate_collection": target_node_ids is not None,
+        "output_csv": str(args.output_csv),
+        "num_queries_loaded": len(queries),
+        "num_prediction_rows": len(rows),
+        "skipped_missing_seed": skipped_missing_seed,
+        "no_target_candidates": no_target_candidates,
+        "queries_with_unknown_seed_tokens": unk_seed_queries,
+        "checkpoint_k": int(hp["K"]),
+        "interest_count_used": use_interests,
+        "latent_cosine_mean": float(np.mean(cosine_values)) if cosine_values else 0.0,
+        "max_hops": args.max_hops,
+        "beam_width": args.beam_width,
+        "paths_per_interest": args.paths_per_interest,
+        "top_k": args.top_k,
+        "alpha": args.alpha,
+        "beta": args.beta,
+        "uses_ols_projection": False,
+    }
+    summary_path = args.summary_json or args.output_csv.with_suffix(".summary.json")
+    summary_path.parent.mkdir(parents=True, exist_ok=True)
+    with summary_path.open("w", encoding="utf-8") as handle:
+        json.dump(summary, handle, indent=2, ensure_ascii=False)
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main()

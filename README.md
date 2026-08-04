@@ -1,72 +1,79 @@
 # MedMIG-CR
 
-MedMIG-CR is a research workspace for evaluating knowledge-graph retrieval methods for clinical diagnosis. The current benchmark direction is:
+MedMIG-CR is a research workspace for clinical knowledge-graph retrieval over
+PrimeKG using DDXPlus patient cases. The current project focus is evaluating
+whether a graph-grounded multi-interest query encoder improves disease retrieval.
 
-- **DDXPlus** provides patient cases, observed evidences, and ground-truth diagnoses.
-- **PrimeKG** provides biomedical graph knowledge for retrieval.
-- A retrieval agent produces ranked disease candidates for each DDXPlus patient.
-- The evaluation harness computes Recall@5, Recall@10, Recall@20, Recall@50, and MRR.
+## Current Pipeline
 
-The repository now treats retrieval as a replaceable component. Proposed methods and baselines only need to emit a common prediction format; the evaluator handles DDXPlus targets and metrics.
+The active workflow is:
 
-The latest mapping/query-building v2 experiment and old-vs-new results are documented in [`reports/mapping_query_v2_experiment.md`](reports/mapping_query_v2_experiment.md).
+```text
+DDXPlus patient evidences
+-> map evidences/pathologies to PrimeKG nodes
+-> build train/valid/test query CSVs
+-> train ClinicalMIND query encoder
+-> run PrimeKG beam search
+-> evaluate MRR and Recall@5/10/20/50
+```
 
-## Current Research Task
+There are two main model branches:
 
-RQ3 asks whether multi-interest KG retrieval improves clinical disease retrieval compared with single-vector and other baseline methods. The immediate engineering goal is a reliable evaluation harness before adding new retrieval models.
+- `MIND + OLS baseline`: trains ClinicalMIND in its own embedding space, then fits
+  a ridge/OLS projection from MIND disease embeddings to PrimeKG node embeddings.
+- `InfoNCE MIND proposed`: trains ClinicalMIND outputs directly into the frozen
+  PrimeKG node2vec space using target-node InfoNCE, evidence-node InfoNCE, and
+  multi-interest diversity regularization.
 
-The first benchmark target is DDXPlus test-set diagnosis retrieval:
+Latest reports:
 
-- Input query: `EVIDENCES` from `release_test_patients.csv`
-- Ground truth: `PATHOLOGY`
-- Knowledge source: PrimeKG
-- Metrics: Recall@5, Recall@10, Recall@20, Recall@50, MRR
+- `reports/mapping_query_v2_experiment.md`
+- `reports/infonce_hop6_beam64_experiment.md`
 
 ## Repository Layout
 
 ```text
-Benchmark data/DDXPlus/        DDXPlus release files
-src/medmigcr_kg/               Active KG graph store, scoring, and beam search modules
-src/medmigcr_mind/             Active Clinical MIND model and DDXPlus trainer
-scripts/preprocess/            PrimeKG indexing utilities
-scripts/mapping/               DDXPlus to PrimeKG mapping builders
-scripts/evaluation/            Retrieval metric scripts
-scripts/retrieval/             Retrieval runners that emit prediction CSV files
-scripts/alignment/             MIND-to-PrimeKG vector-space alignment
-artifacts/checkpoints/         Trained checkpoints and projection files
-legacy/                        Older prototype code kept for reference
-medmigcr/                      Legacy synthetic MedMIG-CR dataset utilities
-Papers/                        Local research papers
-data/processed/                Generated PrimeKG indexes (ignored)
-data/mappings/                 DDXPlus-to-PrimeKG mapping artifacts
-results/                       Evaluation outputs (ignored)
+Benchmark data/DDXPlus/       DDXPlus metadata and patient CSVs
+data/mappings/                DDXPlus-to-PrimeKG mapping JSONs
+data/processed/               Generated query files and PrimeKG graph artifacts
+src/medmigcr_kg/              GraphStore, scoring, beam search, retrieval engine
+src/medmigcr_mind/            ClinicalMIND, InfoNCE model, training scripts
+scripts/mapping/              DDXPlus-to-PrimeKG mapping builders
+scripts/preprocess/           PrimeKG and DDXPlus preprocessing utilities
+scripts/alignment/            OLS/ridge MIND-to-PrimeKG alignment baseline
+scripts/retrieval/            Retrieval runners that write prediction CSVs
+scripts/evaluation/           Recall@K and MRR evaluation harness
+scripts/experiments/          End-to-end experiment runners
+scripts/reporting/            Markdown report builders
+artifacts/checkpoints/        Generated model checkpoints
+results/                      Generated predictions and metric outputs
+reports/                      Human-readable experiment reports
 ```
 
-Legacy generated artifacts from the previous synthetic-query pipeline are no longer part of the primary DDXPlus evaluation path.
+Generated data, checkpoints, and results are ignored by Git. Keep raw data local.
 
 ## Setup
 
-Install the project dependencies:
+Install dependencies:
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-Place the PrimeKG CSV at the repository root as:
+Expected local files:
 
 ```text
 kg_giant.csv
+Benchmark data/DDXPlus/release_conditions.json
+Benchmark data/DDXPlus/release_evidences.json
+Benchmark data/DDXPlus/release_train_patients.csv
+Benchmark data/DDXPlus/release_validate_patients.csv
+Benchmark data/DDXPlus/release_test_patients.csv
 ```
 
-The DDXPlus files are expected under:
+## Preprocessing
 
-```text
-Benchmark data/DDXPlus/
-```
-
-## 1. Build a PrimeKG Node Index
-
-Create a typed node index from `kg_giant.csv`. This keeps stable keys such as `disease|MONDO|4979` and `effect/phenotype|HPO|2090`, which are safer than raw IDs.
+Build PrimeKG node index:
 
 ```bash
 python scripts/preprocess/build_primekg_node_index.py ^
@@ -74,18 +81,7 @@ python scripts/preprocess/build_primekg_node_index.py ^
   --output_dir data/processed/primekg
 ```
 
-Outputs:
-
-- `data/processed/primekg/node_metadata.csv`
-- `data/processed/primekg/disease_nodes.csv`
-- `data/processed/primekg/phenotype_nodes.csv`
-- `data/processed/primekg/index_metadata.json`
-
-This node index is enough for DDXPlus concept mapping, but not enough for beam search. Beam search also needs CSR graph arrays, degrees, mappings, and node embeddings.
-
-## 1b. Build Retrieval-Ready PrimeKG Graph Artifacts
-
-Create graph artifacts for the legacy seed-SVD beam-search baseline:
+Build retrieval-ready graph artifacts:
 
 ```bash
 python scripts/preprocess/build_primekg_retrieval_graph.py ^
@@ -94,183 +90,162 @@ python scripts/preprocess/build_primekg_retrieval_graph.py ^
   --embedding_method node2vec
 ```
 
-For quick smoke tests, use deterministic random embeddings:
-
-```bash
-python scripts/preprocess/build_primekg_retrieval_graph.py ^
-  --primekg_csv kg_giant.csv ^
-  --output_dir data/processed/primekg_graph ^
-  --embedding_method random
-```
-
-Outputs:
-
-- `data/processed/primekg_graph/graph_csr.npz`
-- `data/processed/primekg_graph/node_embeddings.npy`
-- `data/processed/primekg_graph/out_degree.npy`
-- `data/processed/primekg_graph/in_degree.npy`
-- `data/processed/primekg_graph/mappings/*.json`
-
-## 2. Map DDXPlus Concepts to PrimeKG
-
-Build candidate mappings from DDXPlus pathologies and evidences to PrimeKG disease and HPO phenotype nodes.
+Build DDXPlus-to-PrimeKG mappings:
 
 ```bash
 python scripts/mapping/build_ddxplus_primekg_mappings.py ^
   --conditions_json "Benchmark data/DDXPlus/release_conditions.json" ^
   --evidences_json "Benchmark data/DDXPlus/release_evidences.json" ^
   --primekg_index_dir data/processed/primekg ^
-  --output_dir data/mappings/ddxplus
+  --output_dir data/mappings/ddxplus_v2
 ```
 
-Outputs:
-
-- `data/mappings/ddxplus/condition_to_primekg.json`
-- `data/mappings/ddxplus/evidence_to_primekg.json`
-- `data/mappings/ddxplus/mapping_summary.json`
-
-Mappings with high fuzzy-match confidence are marked as `auto`; uncertain mappings are marked as `needs_review`.
-
-## 3. Evaluate Retrieval Predictions
-
-The evaluator does not run retrieval. It assumes a retrieval agent has already produced ranked candidates.
-
-Recommended CSV prediction format:
-
-```csv
-patient_index,candidate,score
-0,disease|MONDO|1234,0.98
-0,disease|MONDO|5678,0.91
-1,disease|MONDO|4979,0.87
-```
-
-`patient_index` is the zero-based row index in `release_test_patients.csv`. `candidate` can be a PrimeKG node key. A `rank` column may be used instead of `score`.
-
-Run evaluation:
-
-```bash
-python scripts/evaluation/evaluate_ddxplus_retrieval.py ^
-  --patients_csv "Benchmark data/DDXPlus/release_test_patients.csv" ^
-  --condition_map data/mappings/ddxplus/condition_to_primekg.json ^
-  --predictions results/my_retriever/predictions.csv ^
-  --output_dir results/my_retriever/evaluation
-```
-
-Outputs:
-
-- `summary.json`
-- `by_patient.csv`
-
-The summary includes Recall@5, Recall@10, Recall@20, Recall@50, MRR, and skip counts for missing mappings or missing predictions.
-
-## Prediction Contract for Future Methods
-
-Any baseline or proposed method can be evaluated if it emits ranked candidates per DDXPlus patient:
-
-- Required: `patient_index`
-- Required: one candidate column among `candidate`, `node_key`, `disease_node`, `prediction`, or `disease`
-- Optional: `score`
-- Optional: `rank`
-
-This makes the evaluation harness independent from a specific retriever implementation.
-
-## Legacy Baseline: Seed-SVD Beam Search
-
-Build DDXPlus test queries from the mapped evidences and pathologies:
-
-```bash
-python scripts/preprocess/build_ddxplus_test_queries.py ^
-  --patients_csv "Benchmark data/DDXPlus/release_test_patients.csv" ^
-  --evidence_map data/mappings/ddxplus/evidence_to_primekg.json ^
-  --condition_map data/mappings/ddxplus/condition_to_primekg.json ^
-  --output_csv data/processed/ddxplus/test_queries.csv
-```
-
-Run the old beam-search method as a baseline:
-
-```bash
-python scripts/retrieval/run_ddxplus_seed_svd_retrieval.py ^
-  --test_queries_csv data/processed/ddxplus/test_queries.csv ^
-  --graph_dir data/processed/primekg_graph ^
-  --output_csv results/seed_svd_k1/predictions.csv ^
-  --interest_count 1
-```
-
-For a K=3 heuristic multi-interest run:
-
-```bash
-python scripts/retrieval/run_ddxplus_seed_svd_retrieval.py ^
-  --test_queries_csv data/processed/ddxplus/test_queries.csv ^
-  --graph_dir data/processed/primekg_graph ^
-  --output_csv results/seed_svd_k3/predictions.csv ^
-  --interest_count 3
-```
-
-In this baseline, K is selected at inference time because interest vectors are derived from seed-node embeddings with mean/SVD. For Clinical MIND, K is part of the model architecture and must be chosen before training.
-
-## MIND Baseline: K=1, K=2, K=3
-
-Build train/valid query files from DDXPlus before retraining MIND:
+Build train/valid/test query files:
 
 ```bash
 python scripts/preprocess/build_ddxplus_test_queries.py ^
   --patients_csv "Benchmark data/DDXPlus/release_train_patients.csv" ^
-  --evidence_map data/mappings/ddxplus/evidence_to_primekg.json ^
-  --condition_map data/mappings/ddxplus/condition_to_primekg.json ^
-  --output_csv data/processed/ddxplus/train_queries.csv ^
-  --summary_json data/processed/ddxplus/train_query_summary.json
+  --evidence_map data/mappings/ddxplus_v2/evidence_to_primekg.json ^
+  --condition_map data/mappings/ddxplus_v2/condition_to_primekg.json ^
+  --output_csv data/processed/ddxplus_v2/train_queries.csv ^
+  --summary_json data/processed/ddxplus_v2/train_query_summary.json
 
 python scripts/preprocess/build_ddxplus_test_queries.py ^
   --patients_csv "Benchmark data/DDXPlus/release_validate_patients.csv" ^
-  --evidence_map data/mappings/ddxplus/evidence_to_primekg.json ^
-  --condition_map data/mappings/ddxplus/condition_to_primekg.json ^
-  --output_csv data/processed/ddxplus/valid_queries.csv ^
-  --summary_json data/processed/ddxplus/valid_query_summary.json
+  --evidence_map data/mappings/ddxplus_v2/evidence_to_primekg.json ^
+  --condition_map data/mappings/ddxplus_v2/condition_to_primekg.json ^
+  --output_csv data/processed/ddxplus_v2/valid_queries.csv ^
+  --summary_json data/processed/ddxplus_v2/valid_query_summary.json
+
+python scripts/preprocess/build_ddxplus_test_queries.py ^
+  --patients_csv "Benchmark data/DDXPlus/release_test_patients.csv" ^
+  --evidence_map data/mappings/ddxplus_v2/evidence_to_primekg.json ^
+  --condition_map data/mappings/ddxplus_v2/condition_to_primekg.json ^
+  --output_csv data/processed/ddxplus_v2/test_queries.csv ^
+  --summary_json data/processed/ddxplus_v2/test_query_summary.json
 ```
 
-Train separate MIND checkpoints for each K:
+The current 5,000-query comparison cohort is under:
+
+```text
+data/processed/comparison_cohort/new_queries.csv
+```
+
+## Proposed InfoNCE Experiment
+
+Run the current full experiment for `K=1,2,3`:
 
 ```bash
-python src/medmigcr_mind/train_mind_ddxplus.py --K 1 --epochs 5 --out_dir artifacts/checkpoints/ddxplus
-python src/medmigcr_mind/train_mind_ddxplus.py --K 2 --epochs 5 --out_dir artifacts/checkpoints/ddxplus
-python src/medmigcr_mind/train_mind_ddxplus.py --K 3 --epochs 5 --out_dir artifacts/checkpoints/ddxplus
+python scripts/experiments/run_infonce_full_pipeline.py ^
+  --ks 1 2 3 ^
+  --epochs 3 ^
+  --batch_size 256 ^
+  --test_queries_csv data/processed/comparison_cohort/new_queries.csv ^
+  --max_hops 6 ^
+  --beam_width 64 ^
+  --paths_per_interest 4096 ^
+  --alpha 1.0 ^
+  --beta 0.1 ^
+  --device cpu ^
+  --graph_device auto ^
+  --checkpoint_root artifacts/checkpoints/ddxplus_infonce_beam64_hop6 ^
+  --results_root results/infonce_hop6_beam64_eval5000 ^
+  --report_md reports/infonce_hop6_beam64_experiment.md
 ```
 
-For quick smoke tests, add `--max_train_samples 5000 --max_valid_samples 1000 --epochs 1`.
+PowerShell shortcut:
 
-Fit a ridge-regularized linear projection from each MIND disease embedding space into PrimeKG node embedding space:
+```powershell
+.\scripts\experiments\run_infonce_k123_cpu.ps1
+```
+
+Main outputs:
+
+```text
+artifacts/checkpoints/ddxplus_infonce_beam64_hop6/k1
+artifacts/checkpoints/ddxplus_infonce_beam64_hop6/k2
+artifacts/checkpoints/ddxplus_infonce_beam64_hop6/k3
+results/infonce_hop6_beam64_eval5000/k1
+results/infonce_hop6_beam64_eval5000/k2
+results/infonce_hop6_beam64_eval5000/k3
+reports/infonce_hop6_beam64_experiment.md
+```
+
+Current 5,000-query results:
+
+| Method | MRR | Recall@5 | Recall@10 | Recall@20 | Recall@50 |
+|---|---:|---:|---:|---:|---:|
+| InfoNCE hop6 K=1 | 0.3214 | 0.3602 | 0.3606 | 0.3606 | 0.3606 |
+| InfoNCE hop6 K=2 | 0.2876 | 0.3222 | 0.3500 | 0.3646 | 0.3646 |
+| InfoNCE hop6 K=3 | 0.2931 | 0.3274 | 0.3800 | 0.4182 | 0.4202 |
+
+## MIND + OLS Baseline
+
+Train ClinicalMIND:
+
+```bash
+python src/medmigcr_mind/train_mind_ddxplus.py ^
+  --train_csv data/processed/ddxplus_v2/train_queries.csv ^
+  --valid_csv data/processed/ddxplus_v2/valid_queries.csv ^
+  --out_dir artifacts/checkpoints/ddxplus_v2 ^
+  --K 3 ^
+  --epochs 3
+```
+
+Fit OLS/ridge projection:
 
 ```bash
 python scripts/alignment/align_mind_to_primekg.py ^
-  --checkpoint artifacts/checkpoints/ddxplus/clinical_mind_ddxplus_k3.pt ^
+  --checkpoint artifacts/checkpoints/ddxplus_v2/clinical_mind_ddxplus_k3.pt ^
   --graph_dir data/processed/primekg_graph ^
-  --output_npz artifacts/checkpoints/ddxplus/alignment_k3_to_primekg.npz
+  --output_npz artifacts/checkpoints/ddxplus_v2/alignment_k3_to_primekg.npz
 ```
 
-Run MIND-driven beam search:
+Run retrieval:
 
 ```bash
 python scripts/retrieval/run_ddxplus_mind_retrieval.py ^
-  --test_queries_csv data/processed/ddxplus/test_queries.csv ^
+  --test_queries_csv data/processed/comparison_cohort/new_queries.csv ^
   --graph_dir data/processed/primekg_graph ^
-  --checkpoint artifacts/checkpoints/ddxplus/clinical_mind_ddxplus_k3.pt ^
-  --projection artifacts/checkpoints/ddxplus/alignment_k3_to_primekg.npz ^
-  --output_csv results/mind_k3/predictions.csv ^
+  --checkpoint artifacts/checkpoints/ddxplus_v2/clinical_mind_ddxplus_k3.pt ^
+  --projection artifacts/checkpoints/ddxplus_v2/alignment_k3_to_primekg.npz ^
+  --condition_map data/mappings/ddxplus_v2/condition_to_primekg.json ^
+  --output_csv results/mind_v2_targetaware_k3_eval5000/predictions.csv ^
   --interest_count 3
 ```
 
-Then evaluate:
+## Evaluation Contract
+
+Any retrieval method can be evaluated if it writes:
+
+```csv
+patient_index,candidate,score,rank
+0,disease|MONDO|1234,0.98,1
+0,disease|MONDO|5678,0.91,2
+```
+
+Evaluate predictions:
 
 ```bash
 python scripts/evaluation/evaluate_ddxplus_retrieval.py ^
-  --patients_csv "Benchmark data/DDXPlus/release_test_patients.csv" ^
-  --condition_map data/mappings/ddxplus/condition_to_primekg.json ^
-  --predictions results/mind_k3/predictions.csv ^
-  --output_dir results/mind_k3/evaluation
+  --queries_csv data/processed/comparison_cohort/new_queries.csv ^
+  --condition_map data/mappings/ddxplus_v2/condition_to_primekg.json ^
+  --predictions results/my_run/predictions.csv ^
+  --output_dir results/my_run/evaluation ^
+  --topk 5 10 20 50
 ```
 
-## Notes
+Outputs:
 
-- Older prototype code has been moved under `legacy/`.
-- Active importable code lives under `src/`; CLI-style experiment scripts live under `scripts/`.
-- Generated model artifacts should live under `artifacts/checkpoints/`; generated retrieval outputs should live under `results/`.
+```text
+summary.json
+by_patient.csv
+```
+
+## Active Research Next Steps
+
+- Run controlled retrieval comparisons to separate model improvements from hop/scoring changes.
+- Run InfoNCE ablations: target-only, target+evidence, target+evidence+diversity.
+- Add depth-stratified reporting for hop 2/3/4/5/6.
+- Improve ranking after candidate generation with a lightweight reranker.
+- Run final evaluation on the full DDXPlus test set after hyperparameters are fixed.

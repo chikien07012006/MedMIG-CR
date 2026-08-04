@@ -39,5 +39,6 @@ __pycache__/
 
 # Logs and OS/editor noise
 *.log
+.vscode/
 .DS_Store
 Thumbs.db
