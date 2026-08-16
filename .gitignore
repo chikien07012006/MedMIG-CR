@@ -13,28 +13,20 @@ __pycache__/
 /.env
 /.env.*
 
-# Large/raw local datasets
+# Large files that should be transferred manually or with Git LFS.
+# Keep smaller metadata, mappings, processed graph artifacts, test/valid queries,
+# reports, and experiment summaries trackable for moving the project to a new laptop.
 /kg_giant.csv
-/Benchmark data/DDXPlus/*.csv
-/processed_medmigcr_dataset/
-/types.csv
-
-# Generated processed data and mappings for retrieval runs
-/data/processed/
-
-# Model checkpoints, projections, and run outputs
-/artifacts/checkpoints/
-/checkpoints/
-/results/
+/Benchmark data/DDXPlus/release_train_patients.csv
+/data/processed/ddxplus/train_queries.csv
+/data/processed/ddxplus_v2/train_queries.csv
 
 # Obsolete/generated folders from pre-reorg experiments
 /multi-interest/
 /Subgraph retrieval/
 /legacy/
 
-# Local reports or generated HTML
-/db.html
-/medmigcr-survey.html
+# Local/generated documents that are not needed for reproducing the pipeline
 /Papers/
 
 # Logs and OS/editor noise

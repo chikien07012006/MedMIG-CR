@@ -1,0 +1,18 @@
+{
+  "test_queries_csv": "data\\processed\\ddxplus\\test_queries.csv",
+  "graph_dir": "data\\processed\\primekg_graph",
+  "checkpoint": "multi-interest\\checkpoints\\ddxplus_full\\clinical_mind_ddxplus_k3.pt",
+  "projection": "multi-interest\\checkpoints\\ddxplus_full\\alignment_k3_to_primekg.npz",
+  "output_csv": "results\\mind_full_k3_eval5000\\predictions.csv",
+  "num_queries_loaded": 5000,
+  "num_prediction_rows": 48860,
+  "skipped_missing_seed": 0,
+  "no_disease_candidates": 8,
+  "queries_with_unknown_seed_tokens": 0,
+  "checkpoint_k": 3,
+  "interest_count_used": 3,
+  "max_hops": 2,
+  "beam_width": 16,
+  "paths_per_interest": 50,
+  "top_k": 50
+}

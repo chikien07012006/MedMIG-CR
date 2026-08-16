@@ -1,0 +1,48 @@
+{
+  "checkpoint": "artifacts\\checkpoints\\ddxplus_infonce_beam64_hop6\\k1\\clinical_mind_infonce_k1.pt",
+  "train_csv": "data\\processed\\ddxplus_v2\\train_queries.csv",
+  "valid_csv": "data\\processed\\ddxplus_v2\\valid_queries.csv",
+  "graph_dir": "data\\processed\\primekg_graph",
+  "device": "cpu",
+  "num_train_rows": 1023037,
+  "num_valid_rows": 132190,
+  "num_train_examples": 1023037,
+  "num_valid_examples": 132190,
+  "num_symptoms": 136,
+  "num_target_nodes": 47,
+  "num_evidence_nodes": 134,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.3496172905065192,
+      "valid_loss": 0.1353281479710767,
+      "valid_target_loss": 0.08269157678580608,
+      "valid_evidence_loss": 0.26318285108419637,
+      "valid_diversity_loss": 0.0,
+      "valid_latent_cosine_mean": 0.0
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.12492517124295742,
+      "valid_loss": 0.11939066736391481,
+      "valid_target_loss": 0.0754210607615269,
+      "valid_evidence_loss": 0.21984802855167906,
+      "valid_diversity_loss": 0.0,
+      "valid_latent_cosine_mean": 0.0
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.11609525505284653,
+      "valid_loss": 0.11593918175196971,
+      "valid_target_loss": 0.07455018963989021,
+      "valid_evidence_loss": 0.20694495593440831,
+      "valid_diversity_loss": 0.0,
+      "valid_latent_cosine_mean": 0.0
+    }
+  ],
+  "best_valid_loss": 0.11593918175196971,
+  "cosine_export": {
+    "path": null,
+    "num_rows": 0
+  }
+}

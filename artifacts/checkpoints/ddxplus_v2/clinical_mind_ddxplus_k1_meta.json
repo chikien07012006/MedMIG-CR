@@ -1,0 +1,11 @@
+{
+  "D": 64,
+  "K": 1,
+  "R": 3,
+  "max_seq_len": 32,
+  "num_symptoms": 136,
+  "num_diseases": 48,
+  "temperature": 0.07,
+  "input_space": "primekg_seed_node_keys",
+  "target_space": "primekg_disease_node_keys"
+}

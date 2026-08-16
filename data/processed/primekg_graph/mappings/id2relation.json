@@ -1,0 +1,20 @@
+{
+  "0": "anatomy_anatomy",
+  "1": "anatomy_protein_absent",
+  "2": "anatomy_protein_present",
+  "3": "contraindication",
+  "4": "disease_disease",
+  "5": "disease_phenotype_negative",
+  "6": "disease_phenotype_positive",
+  "7": "disease_protein",
+  "8": "drug_drug",
+  "9": "drug_effect",
+  "10": "drug_protein",
+  "11": "indication",
+  "12": "off-label use",
+  "13": "pathway_pathway",
+  "14": "pathway_protein",
+  "15": "phenotype_phenotype",
+  "16": "phenotype_protein",
+  "17": "protein_protein"
+}

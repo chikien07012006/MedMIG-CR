@@ -1,0 +1,6 @@
+patient_index,pathology,num_targets,num_predictions,first_hit_rank,mrr,recall@5,recall@10,recall@20,recall@50
+0,GERD,1,38,26,0.038461538461538464,0.0,0.0,0.0,1.0
+1,Bronchitis,1,33,14,0.07142857142857142,0.0,0.0,1.0,1.0
+2,Acute dystonic reactions,1,35,35,0.02857142857142857,0.0,0.0,0.0,1.0
+3,Acute laryngitis,1,34,31,0.03225806451612903,0.0,0.0,0.0,1.0
+4,URTI,1,28,,0.0,0.0,0.0,0.0,0.0

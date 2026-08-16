@@ -1,0 +1,40 @@
+{
+  "primekg_csv": "kg_giant.csv",
+  "node_types": [
+    "disease",
+    "effect/phenotype",
+    "drug",
+    "gene/protein",
+    "pathway",
+    "anatomy"
+  ],
+  "relation_caps": {
+    "drug_drug": 500000,
+    "anatomy_protein_present": 500000
+  },
+  "relation_counts_raw": {
+    "protein_protein": 642150,
+    "drug_protein": 51306,
+    "contraindication": 67968,
+    "indication": 20122,
+    "off-label use": 5518,
+    "drug_drug": 2672628,
+    "phenotype_protein": 6660,
+    "phenotype_phenotype": 37472,
+    "disease_phenotype_negative": 2690,
+    "disease_phenotype_positive": 352766,
+    "disease_protein": 185160,
+    "disease_disease": 75618,
+    "drug_effect": 129568,
+    "pathway_pathway": 5070,
+    "pathway_protein": 85292,
+    "anatomy_anatomy": 28064,
+    "anatomy_protein_present": 3036406,
+    "anatomy_protein_absent": 39774
+  },
+  "embedding_method": "node2vec",
+  "num_nodes": 82240,
+  "num_relations": 18,
+  "num_edges": 2734346,
+  "embedding_dim": 64
+}

@@ -1,0 +1,35 @@
+{
+  "checkpoint": "artifacts\\checkpoints\\ddxplus_infonce_smoke\\k3\\clinical_mind_infonce_k3.pt",
+  "train_csv": "data\\processed\\ddxplus_v2\\train_queries.csv",
+  "valid_csv": "data\\processed\\ddxplus_v2\\valid_queries.csv",
+  "graph_dir": "data\\processed\\primekg_graph",
+  "device": "cpu",
+  "num_train_rows": 40,
+  "num_valid_rows": 20,
+  "num_train_examples": 40,
+  "num_valid_examples": 20,
+  "num_symptoms": 108,
+  "num_target_nodes": 32,
+  "num_evidence_nodes": 106,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 4.687197685241699,
+      "valid_loss": 4.265525023142497,
+      "valid_target_loss": 3.594111124674479,
+      "valid_evidence_loss": 3.1070688565572104,
+      "valid_diversity_loss": 1.00000003973643,
+      "valid_latent_cosine_mean": 1.0000000132454767
+    }
+  ],
+  "best_valid_loss": 4.265525023142497,
+  "cosine_export": {
+    "path": "artifacts\\checkpoints\\ddxplus_infonce_smoke\\k3\\latent_cosine_k3.csv",
+    "num_rows": 10,
+    "pair_means": {
+      "0-1": 1.000000035762787,
+      "0-2": 1.0000000476837159,
+      "1-2": 1.0000000476837159
+    }
+  }
+}

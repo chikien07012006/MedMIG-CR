@@ -1,0 +1,20 @@
+{
+  "num_evaluated": 500,
+  "skipped": {},
+  "mrr": 0.0784191634320272,
+  "recall@5": 0.056,
+  "recall@10": 0.192,
+  "recall@20": 0.408,
+  "recall@50": 0.442,
+  "patients_csv": "Benchmark data\\DDXPlus\\release_test_patients.csv",
+  "predictions": "results\\infonce_tuning_k1_beta0p0\\predictions.csv",
+  "condition_map": "data\\mappings\\ddxplus_v2\\condition_to_primekg.json",
+  "queries_csv": "data\\processed\\ddxplus_v2\\test_queries.csv",
+  "target_mode": "pathology",
+  "topk": [
+    5,
+    10,
+    20,
+    50
+  ]
+}

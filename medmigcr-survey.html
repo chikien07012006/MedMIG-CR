@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedMIG-CR Survey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Inter:wght@300..600&display=swap" rel="stylesheet">
+<style>
+/* ─── Design Tokens ─── */
+:root,[data-theme="light"]{
+  --color-bg:#f7f6f2;--color-surface:#f9f8f5;--color-surface-2:#fbfbf9;
+  --color-surface-offset:#f0ede8;--color-surface-dynamic:#e6e4df;
+  --color-divider:#dcd9d5;--color-border:oklch(from #28251d l c h / 0.12);
+  --color-text:#28251d;--color-text-muted:#6b6a66;--color-text-faint:#b0afa9;
+  --color-primary:#01696f;--color-primary-hover:#0c4e54;
+  --color-primary-highlight:#cedcd8;
+  --color-accent-rq1:#437a22;--color-accent-rq2:#006494;--color-accent-rq3:#964219;
+  --color-tag-bg:#e8f0ef;--color-tag-text:#01696f;
+  --shadow-sm:0 1px 3px oklch(0.2 0.01 80 / 0.07);
+  --shadow-md:0 4px 16px oklch(0.2 0.01 80 / 0.09);
+  --shadow-lg:0 12px 40px oklch(0.2 0.01 80 / 0.12);
+  --radius-sm:0.375rem;--radius-md:0.5rem;--radius-lg:0.75rem;--radius-xl:1.25rem;
+  --font-display:'Source Serif 4',Georgia,serif;
+  --font-body:'Inter','Helvetica Neue',sans-serif;
+  --text-xs:clamp(0.75rem,0.7rem + 0.25vw,0.875rem);
+  --text-sm:clamp(0.875rem,0.82rem + 0.28vw,1rem);
+  --text-base:clamp(1rem,0.95rem + 0.25vw,1.125rem);
+  --text-lg:clamp(1.125rem,1rem + 0.6vw,1.4rem);
+  --text-xl:clamp(1.4rem,1.1rem + 1.2vw,2rem);
+  --text-2xl:clamp(2rem,1.3rem + 2.5vw,3.2rem);
+  --text-hero:clamp(2.6rem,1rem + 5.5vw,5.5rem);
+  --space-1:0.25rem;--space-2:0.5rem;--space-3:0.75rem;--space-4:1rem;
+  --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;
+  --space-12:3rem;--space-16:4rem;--space-20:5rem;--space-24:6rem;
+  --transition:180ms cubic-bezier(0.16,1,0.3,1);
+  --content:900px;
+}
+[data-theme="dark"]{
+  --color-bg:#151412;--color-surface:#1c1b19;--color-surface-2:#212019;
+  --color-surface-offset:#252421;--color-surface-dynamic:#2d2c2a;
+  --color-divider:#2a2927;--color-border:oklch(from #cdccca l c h / 0.10);
+  --color-text:#cfceca;--color-text-muted:#807e7b;--color-text-faint:#555451;
+  --color-primary:#4f98a3;--color-primary-hover:#227f8b;
+  --color-primary-highlight:#1e3638;
+  --color-accent-rq1:#6daa45;--color-accent-rq2:#5591c7;--color-accent-rq3:#bb653b;
+  --color-tag-bg:#1e3638;--color-tag-text:#4f98a3;
+  --shadow-sm:0 1px 3px oklch(0 0 0 / 0.22);
+  --shadow-md:0 4px 16px oklch(0 0 0 / 0.30);
+  --shadow-lg:0 12px 40px oklch(0 0 0 / 0.40);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){
+  --color-bg:#151412;--color-surface:#1c1b19;--color-surface-2:#212019;
+  --color-surface-offset:#252421;--color-surface-dynamic:#2d2c2a;
+  --color-divider:#2a2927;--color-border:oklch(from #cdccca l c h / 0.10);
+  --color-text:#cfceca;--color-text-muted:#807e7b;--color-text-faint:#555451;
+  --color-primary:#4f98a3;--color-primary-hover:#227f8b;--color-primary-highlight:#1e3638;
+  --color-accent-rq1:#6daa45;--color-accent-rq2:#5591c7;--color-accent-rq3:#bb653b;
+  --color-tag-bg:#1e3638;--color-tag-text:#4f98a3;
+  --shadow-sm:0 1px 3px oklch(0 0 0 / 0.22);
+  --shadow-md:0 4px 16px oklch(0 0 0 / 0.30);
+  --shadow-lg:0 12px 40px oklch(0 0 0 / 0.40);
+}}
+
+/* ─── Reset & Base ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth;scroll-padding-top:5rem}
+body{min-height:100dvh;line-height:1.65;font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);transition:background var(--transition),color var(--transition)}
+img,picture,svg{display:block;max-width:100%;height:auto}
+h1,h2,h3,h4{text-wrap:balance;line-height:1.2;font-family:var(--font-display)}
+p,li{text-wrap:pretty;max-width:72ch}
+a{color:var(--color-primary);text-decoration:none;transition:color var(--transition)}
+a:hover{color:var(--color-primary-hover);text-decoration:underline}
+a:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+::selection{background:oklch(from var(--color-primary) l c h / 0.2);color:var(--color-text)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms !important;transition-duration:0.01ms !important}}
+
+/* ─── Skip Link ─── */
+.skip-link{position:absolute;left:-9999px;top:0;padding:var(--space-2) var(--space-4);background:var(--color-primary);color:#fff;font-size:var(--text-sm);z-index:999}
+.skip-link:focus{left:var(--space-4)}
+
+/* ─── Header / Nav ─── */
+.site-header{position:sticky;top:0;z-index:100;background:color-mix(in oklch,var(--color-bg) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--color-divider)}
+.header-inner{max-width:var(--content);margin:auto;padding:var(--space-3) var(--space-6);display:flex;align-items:center;justify-content:space-between;gap:var(--space-4)}
+.site-logo{display:flex;align-items:center;gap:var(--space-2);text-decoration:none;color:var(--color-text)}
+.site-logo svg{flex-shrink:0}
+.logo-text{font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;letter-spacing:-0.01em}
+.logo-sub{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:400}
+nav{display:flex;align-items:center;gap:var(--space-1)}
+.nav-link{font-size:var(--text-sm);color:var(--color-text-muted);padding:var(--space-1) var(--space-3);border-radius:var(--radius-md);transition:color var(--transition),background var(--transition)}
+.nav-link:hover{color:var(--color-text);background:var(--color-surface-dynamic);text-decoration:none}
+.theme-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-md);color:var(--color-text-muted);transition:color var(--transition),background var(--transition)}
+.theme-btn:hover{color:var(--color-text);background:var(--color-surface-dynamic)}
+@media(max-width:600px){nav .nav-link{display:none}}
+
+/* ─── Hero ─── */
+.hero{padding:clamp(var(--space-16),10vw,var(--space-24)) var(--space-6) clamp(var(--space-12),7vw,var(--space-20));text-align:center;border-bottom:1px solid var(--color-divider)}
+.hero-inner{max-width:var(--content);margin:auto}
+.hero-kicker{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-xs);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-primary);background:var(--color-tag-bg);padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);margin-bottom:var(--space-6)}
+.hero h1{font-size:var(--text-hero);font-weight:700;letter-spacing:-0.03em;color:var(--color-text);margin-bottom:var(--space-4);line-height:1.05}
+.hero-sub{font-size:var(--text-lg);color:var(--color-text-muted);max-width:58ch;margin:0 auto var(--space-8);font-family:var(--font-body);font-weight:300;line-height:1.5}
+.hero-meta{display:flex;align-items:center;justify-content:center;gap:var(--space-6);flex-wrap:wrap;font-size:var(--text-xs);color:var(--color-text-faint)}
+.hero-meta span{display:flex;align-items:center;gap:var(--space-1)}
+
+/* ─── Table of Contents ─── */
+.toc-section{padding:var(--space-8) var(--space-6);border-bottom:1px solid var(--color-divider);background:var(--color-surface)}
+.toc-inner{max-width:var(--content);margin:auto}
+.toc-label{font-size:var(--text-xs);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-faint);margin-bottom:var(--space-4)}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--space-3)}
+.toc-item{display:flex;align-items:flex-start;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-surface-2);border-radius:var(--radius-lg);border:1px solid var(--color-border);text-decoration:none;color:var(--color-text);transition:box-shadow var(--transition),background var(--transition)}
+.toc-item:hover{background:var(--color-surface-offset);box-shadow:var(--shadow-sm);text-decoration:none}
+.toc-num{font-size:var(--text-xs);font-weight:700;color:var(--color-primary);min-width:20px;padding-top:2px}
+.toc-item-text strong{display:block;font-size:var(--text-sm);font-weight:600;margin-bottom:2px}
+.toc-item-text span{font-size:var(--text-xs);color:var(--color-text-muted)}
+
+/* ─── Article Layout ─── */
+.article-body{max-width:var(--content);margin:0 auto;padding:var(--space-16) var(--space-6)}
+.content-section{margin-bottom:clamp(var(--space-16),8vw,var(--space-24))}
+
+/* ─── Section headers ─── */
+.section-eyebrow{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-xs);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-primary);margin-bottom:var(--space-4)}
+.section-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
+h2.section-title{font-size:var(--text-xl);font-weight:700;letter-spacing:-0.02em;color:var(--color-text);margin-bottom:var(--space-6);line-height:1.15}
+h3.subsection{font-size:var(--text-lg);font-weight:600;color:var(--color-text);margin:var(--space-8) 0 var(--space-4);letter-spacing:-0.01em}
+p{margin-bottom:var(--space-5);color:var(--color-text-muted);line-height:1.75}
+p strong{color:var(--color-text)}
+
+/* ─── Callout / Gap Box ─── */
+.gap-box{border-left:3px solid var(--color-primary);background:var(--color-primary-highlight);padding:var(--space-4) var(--space-6);border-radius:0 var(--radius-lg) var(--radius-lg) 0;margin:var(--space-6) 0}
+.gap-box p{margin:0;font-size:var(--text-sm);color:var(--color-text)}
+.gap-box .gap-label{font-size:var(--text-xs);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--color-primary);margin-bottom:var(--space-2)}
+
+/* ─── RQ Cards ─── */
+.rq-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-8);margin-bottom:var(--space-8);box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.rq-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--rq-accent,var(--color-primary))}
+.rq-card.rq1{--rq-accent:var(--color-accent-rq1)}
+.rq-card.rq2{--rq-accent:var(--color-primary)}
+.rq-card.rq3{--rq-accent:var(--color-accent-rq3)}
+.rq-header{display:flex;align-items:flex-start;gap:var(--space-4);margin-bottom:var(--space-5)}
+.rq-badge{font-size:var(--text-xs);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;background:var(--rq-accent,var(--color-primary));padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);white-space:nowrap;flex-shrink:0;margin-top:3px}
+.rq-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--color-text);line-height:1.25}
+.rq-question{font-family:var(--font-display);font-size:var(--text-base);font-style:italic;color:var(--color-text);line-height:1.6;border-left:2px solid var(--color-divider);padding-left:var(--space-5);margin:var(--space-5) 0;font-weight:400}
+
+/* ─── Formula Block ─── */
+.formula-block{background:var(--color-surface-offset);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5) var(--space-6);margin:var(--space-5) 0;overflow-x:auto}
+.formula-block .f-label{font-size:var(--text-xs);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--color-text-faint);margin-bottom:var(--space-3)}
+.formula{font-family:'Courier New',Courier,monospace;font-size:var(--text-sm);color:var(--color-text);white-space:pre;line-height:1.8}
+
+/* ─── Sub-question list ─── */
+.subq-list{list-style:none;margin:var(--space-5) 0;display:flex;flex-direction:column;gap:var(--space-3)}
+.subq-list li{display:flex;gap:var(--space-3);font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.6}
+.subq-list li::before{content:'Q';font-size:var(--text-xs);font-weight:800;color:var(--color-primary);background:var(--color-tag-bg);padding:1px 6px;border-radius:var(--radius-sm);flex-shrink:0;margin-top:2px;letter-spacing:0.05em}
+
+/* ─── Comparison Table ─── */
+.table-wrap{overflow-x:auto;margin:var(--space-6) 0;border-radius:var(--radius-lg);border:1px solid var(--color-border)}
+table{border-collapse:collapse;width:100%;font-size:var(--text-sm)}
+thead{background:var(--color-surface-offset)}
+th{font-family:var(--font-body);font-weight:600;font-size:var(--text-xs);letter-spacing:0.05em;text-transform:uppercase;color:var(--color-text-muted);padding:var(--space-3) var(--space-4);text-align:left;border-bottom:1px solid var(--color-divider)}
+td{padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-divider);color:var(--color-text-muted);line-height:1.5;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--color-surface-offset)}
+td strong{color:var(--color-text)}
+td a{font-size:var(--text-xs);color:var(--color-primary)}
+td a:hover{color:var(--color-primary-hover)}
+
+/* ─── Dependency Flow ─── */
+.dep-flow{background:var(--color-surface-offset);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-8);margin:var(--space-8) 0}
+.dep-flow-title{font-size:var(--text-xs);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-faint);margin-bottom:var(--space-6)}
+.dep-steps{display:flex;flex-direction:column;gap:0}
+.dep-step{display:flex;gap:var(--space-4);position:relative}
+.dep-step:not(:last-child)::after{content:'';position:absolute;left:23px;top:48px;bottom:-24px;width:2px;background:var(--color-divider)}
+.dep-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--text-sm);font-weight:800;flex-shrink:0;border:2px solid var(--color-divider)}
+.dep-step:nth-child(1) .dep-icon{background:color-mix(in oklch,var(--color-accent-rq3) 15%,var(--color-surface));border-color:var(--color-accent-rq3);color:var(--color-accent-rq3)}
+.dep-step:nth-child(2) .dep-icon{background:color-mix(in oklch,var(--color-accent-rq1) 15%,var(--color-surface));border-color:var(--color-accent-rq1);color:var(--color-accent-rq1)}
+.dep-step:nth-child(3) .dep-icon{background:color-mix(in oklch,var(--color-primary) 15%,var(--color-surface));border-color:var(--color-primary);color:var(--color-primary)}
+.dep-content{padding:var(--space-3) 0 var(--space-8)}
+.dep-content strong{display:block;font-size:var(--text-sm);font-weight:700;color:var(--color-text);margin-bottom:var(--space-1)}
+.dep-content span{font-size:var(--text-sm);color:var(--color-text-muted)}
+
+/* ─── References / Papers ─── */
+.papers-section{background:var(--color-surface);border-top:1px solid var(--color-divider);padding:var(--space-12) var(--space-6) var(--space-16)}
+.papers-inner{max-width:var(--content);margin:auto}
+.papers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--space-4);margin-top:var(--space-6)}
+.paper-card{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);display:flex;flex-direction:column;gap:var(--space-2);text-decoration:none;color:var(--color-text);transition:box-shadow var(--transition),background var(--transition)}
+.paper-card:hover{background:var(--color-surface-offset);box-shadow:var(--shadow-md);text-decoration:none}
+.paper-venue{font-size:var(--text-xs);font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--color-primary)}
+.paper-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text);line-height:1.4}
+.paper-authors{font-size:var(--text-xs);color:var(--color-text-faint);line-height:1.4}
+.paper-arrow{display:flex;align-items:center;gap:4px;font-size:var(--text-xs);color:var(--color-primary);margin-top:auto;padding-top:var(--space-2)}
+
+/* ─── Footer ─── */
+footer{text-align:center;padding:var(--space-8) var(--space-6);border-top:1px solid var(--color-divider);font-size:var(--text-xs);color:var(--color-text-faint)}
+
+/* ─── Divider ─── */
+.divider{border:none;border-top:1px solid var(--color-divider);margin:var(--space-10) 0}
+
+/* ─── Scroll Reveal ─── */
+.fade-in{opacity:1}
+@supports(animation-timeline:scroll()){
+  .fade-in{opacity:0;animation:fade-reveal linear both;animation-timeline:view();animation-range:entry 0% entry 70%}
+  @keyframes fade-reveal{to{opacity:1}}
+}
+
+/* ─── Inline cite ─── */
+cite.ref{font-style:normal;font-size:var(--text-xs);font-weight:600;color:var(--color-primary);background:var(--color-tag-bg);padding:1px 5px;border-radius:var(--radius-sm);cursor:default;transition:background var(--transition)}
+cite.ref:hover{background:var(--color-primary-highlight)}
+
+/* ─── Mobile ─── */
+@media(max-width:680px){
+  .article-body{padding-inline:var(--space-4)}
+  .rq-card{padding:var(--space-5)}
+  .dep-flow{padding:var(--space-5)}
+  h2.section-title{font-size:var(--text-xl)}
+  .papers-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- HEADER -->
+<header class="site-header" role="banner">
+  <div class="header-inner">
+    <a class="site-logo" href="#" aria-label="MedMIG-CR Survey Home">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect width="32" height="32" rx="8" fill="var(--color-primary)" opacity="0.12"/>
+        <circle cx="16" cy="16" r="6" stroke="var(--color-primary)" stroke-width="2" fill="none"/>
+        <path d="M16 10 L16 7M16 22 L16 25M10 16 L7 16M22 16 L25 16" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="16" cy="16" r="2.5" fill="var(--color-primary)"/>
+      </svg>
+      <div>
+        <div class="logo-text">MedMIG-CR</div>
+        <div class="logo-sub">Research Survey</div>
+      </div>
+    </a>
+    <nav aria-label="Page sections">
+      <a href="#problem" class="nav-link">Problem</a>
+      <a href="#primekg" class="nav-link">PrimeKG</a>
+      <a href="#rqs" class="nav-link">Research Qs</a>
+      <a href="#papers" class="nav-link">Papers</a>
+      <button class="theme-btn" data-theme-toggle aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker">
+      <span>Survey · May 2026</span>
+    </div>
+    <h1>MedMIG-CR</h1>
+    <p class="hero-sub">Multi-Interest Graph Retrieval for Clinical Reasoning — Problem, Knowledge Graph, and Three Open Research Questions</p>
+    <div class="hero-meta">
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+        ~20 min read
+      </span>
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        8 primary sources
+      </span>
+      <span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        3 research questions
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc-section" aria-label="Table of contents">
+  <div class="toc-inner">
+    <div class="toc-label">Contents</div>
+    <div class="toc-grid">
+      <a href="#problem" class="toc-item">
+        <span class="toc-num">01</span>
+        <div class="toc-item-text">
+          <strong>The Problem</strong>
+          <span>Symptom-to-disease retrieval &amp; differential diagnosis</span>
+        </div>
+      </a>
+      <a href="#primekg" class="toc-item">
+        <span class="toc-num">02</span>
+        <div class="toc-item-text">
+          <strong>PrimeKG</strong>
+          <span>17K diseases · 4M edges · 10 biological scales</span>
+        </div>
+      </a>
+      <a href="#rqs" class="toc-item">
+        <span class="toc-num">03</span>
+        <div class="toc-item-text">
+          <strong>Three Research Questions</strong>
+          <span>Alignment · Path coherence · Evaluation</span>
+        </div>
+      </a>
+      <a href="#sota" class="toc-item">
+        <span class="toc-num">04</span>
+        <div class="toc-item-text">
+          <strong>State of the Art</strong>
+          <span>COMIC, LogosKG, MedKGI, TxGNN</span>
+        </div>
+      </a>
+      <a href="#dependency" class="toc-item">
+        <span class="toc-num">05</span>
+        <div class="toc-item-text">
+          <strong>Dependency Map</strong>
+          <span>Minimum viable paper structure</span>
+        </div>
+      </a>
+      <a href="#papers" class="toc-item">
+        <span class="toc-num">06</span>
+        <div class="toc-item-text">
+          <strong>All Papers</strong>
+          <span>8 primary references with links</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<main id="main">
+<div class="article-body">
+
+  <!-- ─── SECTION 1: THE PROBLEM ─── -->
+  <section id="problem" class="content-section">
+    <div class="section-eyebrow"><span class="dot"></span> Section 01</div>
+    <h2 class="section-title">The Problem</h2>
+
+    <p>When a clinician or automated system observes a patient's symptoms, the task is to retrieve a ranked list of plausible diagnoses from a large disease space. This is not straightforward classification: the number of candidate diseases exceeds 17,000 in modern biomedical databases, symptom presentations are incomplete and overlapping, and the reasoning chain from symptom to diagnosis often requires traversing multiple biological concepts — phenotypes, genes, pathways — before reaching a specific conclusion. <cite class="ref" title="PrimeKG, Chandak et al. 2023">PrimeKG</cite></p>
+
+    <p>A patient presenting with <strong>fever, joint pain, and rash</strong> does not map to a single disease prototype. The same triad appears in rheumatic fever, lupus, Lyme disease, and adult-onset Still's disease, among others. The fundamental challenge is that a query with K semantically distinct signals should generate K distinct retrieval hypotheses — not collapse them into a single blurred centroid.</p>
+
+    <div class="gap-box fade-in">
+      <div class="gap-label">Core Gap</div>
+      <p>Existing systems either use a single dense vector (losing multi-hypothesis capacity) or rely on rigid rule-based traversal (failing on novel symptom combinations). No system simultaneously encodes <em>multiple clinical hypotheses per query</em>, grounds them in a structured biomedical knowledge graph, and retrieves diagnoses via multi-hop reasoning across biological scales.</p>
+    </div>
+
+    <h3 class="subsection">Why Multi-Interest Encoding</h3>
+    <p>The <strong>MIND architecture</strong> (Multi-Interest Network with Dynamic Routing), originally proposed for large-scale e-commerce retrieval at Tmall, demonstrated that representing one user as K distinct capsule vectors — each learned by dynamic routing over interaction history — substantially outperforms single-vector models. <cite class="ref" title="MIND, Li et al. CIKM 2019">MIND '19</cite> Industrial deployment showed multi-interest representations improve HitRate and Recall on billion-scale item sets. MedMIG-CR asks whether the same architecture can provide analogous gains on a 17,000-disease, 4-million-edge biomedical knowledge graph — with each capsule serving as a beam-search anchor into the KG rather than a nearest-neighbor query over an item catalogue.</p>
+
+    <p>The key architectural novelty is the application of capsule routing not to user behavior sequences, but to <em>symptom co-occurrence patterns</em> across clinical interaction data. Each resulting interest vector should encode a distinct clinical hypothesis cluster (infectious, rheumatologic, metabolic, etc.) that drives a separate beam of KG traversal.</p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ─── SECTION 2: PRIMEKG ─── -->
+  <section id="primekg" class="content-section">
+    <div class="section-eyebrow"><span class="dot"></span> Section 02</div>
+    <h2 class="section-title">PrimeKG — The Reasoning Substrate</h2>
+
+    <p><strong>PrimeKG</strong> (Precision Medicine Knowledge Graph) is a multimodal knowledge graph for precision medicine published in <em>Scientific Data</em> (2023) by Chandak, Huang, and Zitnik at Harvard Medical School. <cite class="ref" title="Chandak et al. Scientific Data 2023">PrimeKG '23</cite> It integrates 20 high-quality biomedical resources to describe <strong>17,080 diseases</strong> across <strong>4,050,249 relationships</strong> spanning ten major biological scales. These scales span disease-associated protein perturbations, biological processes and pathways, anatomical and phenotypic scales, and the complete range of approved and experimental drugs — including indication, contraindication, and off-label-use edges that are absent from most competing graphs.</p>
+
+    <div class="table-wrap fade-in">
+      <table>
+        <thead>
+          <tr><th>Property</th><th>Value</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Disease nodes</strong></td><td>17,080</td><td>Clinically recognized diseases from multiple ontologies</td></tr>
+          <tr><td><strong>Total relationships</strong></td><td>4,050,249</td><td>Across 10 biological scales</td></tr>
+          <tr><td><strong>Source databases</strong></td><td>20</td><td>OMIM, DrugBank, UniProt, HPO, Reactome, etc.</td></tr>
+          <tr><td><strong>Drug candidates</strong></td><td>7,957</td><td>Used by TxGNN for therapeutic prediction</td></tr>
+          <tr><td><strong>Unique relation types</strong></td><td>~30</td><td>Including phenotype–disease, gene–disease, drug–indication</td></tr>
+          <tr><td><strong>Max relevant hop depth</strong></td><td>4–5 hops</td><td>Long-tail distribution confirmed by LogosKG analysis <cite class="ref" title="LogosKG 2026">LogosKG</cite></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection">Two Structural Challenges</h3>
+
+    <p><strong>Hub nodes.</strong> High-connectivity nodes — well-studied genes like TP53, generic anatomical terms, central metabolic pathways — act as hubs with tens of thousands of one-hop neighbors. Naive two-hop expansion from any symptom node can reach billions of candidate edges, <cite class="ref" title="LogosKG 2026">LogosKG</cite> overwhelming retrieval systems that do not penalize hub inflation. Research in biomedical KG embedding confirms that models are systematically biased toward high-degree nodes regardless of biological signal. <cite class="ref" title="Node-degree aware sampling, Bioinformatics Advances 2024">NDAS '24</cite></p>
+
+    <p><strong>Embedding-space fragmentation.</strong> PrimeKG node embeddings encode graph-structural position (via TransE, SVD, or GNN aggregation), while clinical sequence encoders produce embeddings in a language-model representation space. These two spaces are not aligned by default. Every cosine similarity computed during beam search depends entirely on how well the query encoder's output maps into KG embedding space — making alignment the highest-leverage architectural intervention.</p>
+
+    <div class="gap-box fade-in">
+      <div class="gap-label">Why PrimeKG Is the Right Graph</div>
+      <p>For symptom-to-disease retrieval, the critical properties are: coverage of phenotype–disease relationships bridging observable symptoms to diagnoses, multi-scale connectivity enabling multi-hop reasoning from molecular to clinical levels, and a scale large enough to stress-test retrieval systems. PrimeKG satisfies all three, and it is the exact substrate used by both COMIC and LogosKG — the two most relevant 2025–2026 competitors.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ─── SECTION 3: STATE OF ART ─── -->
+  <section id="sota" class="content-section">
+    <div class="section-eyebrow"><span class="dot"></span> Section 03</div>
+    <h2 class="section-title">State of the Art (2024–2026)</h2>
+
+    <p>Three systems define the current landscape for knowledge-graph-based clinical reasoning, each setting a direct benchmark for MedMIG-CR to surpass or differentiate from.</p>
+
+    <div class="table-wrap fade-in">
+      <table>
+        <thead>
+          <tr><th>System</th><th>Core Contribution</th><th>Benchmark</th><th>Paper</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>COMIC</strong><br><span style="font-size:var(--text-xs);color:var(--color-text-faint)">BMC Bioinformatics 2026</span></td>
+            <td>Dual-branch contrastive masking (feature masking + <em>path masking</em>) on PrimeKG; +14.82% over TxGNN on contraindication ranking</td>
+            <td>PrimeKG indication / contraindication</td>
+            <td><a href="https://doi.org/10.1186/s12859-025-06337-4" target="_blank" rel="noopener noreferrer">doi:10.1186/s12859-025-06337-4 ↗</a></td>
+          </tr>
+          <tr>
+            <td><strong>LogosKG</strong><br><span style="font-size:var(--text-xs);color:var(--color-text-faint)">arXiv Apr 2026</span></td>
+            <td>Hardware-aligned SUB/OBJ/REL matrix decomposition; degree-aware partitioning; scales to billion-edge KGs</td>
+            <td>PrimeKG + DDXPlus + ProbSum</td>
+            <td><a href="https://arxiv.org/abs/2604.18913" target="_blank" rel="noopener noreferrer">arXiv:2604.18913 ↗</a></td>
+          </tr>
+          <tr>
+            <td><strong>MedKGI</strong><br><span style="font-size:var(--text-xs);color:var(--color-text-faint)">arXiv Dec 2024</span></td>
+            <td>Iterative hypothesis-narrowing differential diagnosis via KG-guided active inquiry</td>
+            <td>Clinical note datasets</td>
+            <td><a href="https://arxiv.org/pdf/2512.24181" target="_blank" rel="noopener noreferrer">arXiv:2512.24181 ↗</a></td>
+          </tr>
+          <tr>
+            <td><strong>TxGNN</strong><br><span style="font-size:var(--text-xs);color:var(--color-text-faint)">Harvard / Zitnik Lab</span></td>
+            <td>GNN pre-trained on PrimeKG for zero-shot drug repurposing; prior state of the art (+49.2% over earlier methods)</td>
+            <td>PrimeKG indication / contraindication</td>
+            <td><a href="https://zitniklab.hms.harvard.edu/projects/TxGNN/" target="_blank" rel="noopener noreferrer">zitniklab.hms.harvard.edu ↗</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>COMIC proves that contrastive path scoring over PrimeKG works and provides a blueprint for path explainability. <cite class="ref" title="COMIC 2026">COMIC</cite> LogosKG is the direct competitor using the exact same benchmarks (DDXPlus + ProbSum + PrimeKG) that MedMIG-CR should target. <cite class="ref" title="LogosKG 2026">LogosKG</cite> Neither system models multi-interest queries — that is MedMIG-CR's distinguishing claim.</p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ─── SECTION 4: THREE RQs ─── -->
+  <section id="rqs" class="content-section">
+    <div class="section-eyebrow"><span class="dot"></span> Section 04</div>
+    <h2 class="section-title">Three Research Questions</h2>
+    <p style="margin-bottom:var(--space-8)">The three RQs form a sequentially dependent chain. RQ3 (evaluation harness) must be built first — it defines the measurement platform for all empirical claims. RQ1 (alignment) is the highest-leverage architectural fix. RQ2 (path reranker) sits on top, requiring aligned interest vectors as input. Together they constitute the minimum viable paper.</p>
+
+    <!-- RQ3 (Eval — first by priority) -->
+    <div class="rq-card rq3 fade-in">
+      <div class="rq-header">
+        <span class="rq-badge" style="--rq-accent:var(--color-accent-rq3)">RQ3 · Priority 1 — Evaluation Harness</span>
+      </div>
+      <div class="rq-title">How does multi-interest (K=3) retrieval compare to single-vector (K=1) retrieval and to LogosKG on standard clinical benchmarks?</div>
+      <div class="rq-question">"Does a K-capsule query encoder improve Recall@{5,10,20,50} and MRR on DDXPlus and ProbSum over PrimeKG, and does the performance gap grow with query symptom heterogeneity?"</div>
+
+      <div class="gap-box" style="margin-top:var(--space-4)">
+        <div class="gap-label">The Gap</div>
+        <p>The MedMIG-CR repository contains <strong>no evaluation script</strong>. No Recall@K, MRR, or NDCG is computed anywhere. LogosKG (Apr 2026) uses <a href="https://arxiv.org/abs/2205.09148" target="_blank" rel="noopener noreferrer">DDXPlus</a> (~1.3M synthetic patients) <cite class="ref" title="DDXPlus, NeurIPS 2022">DDXPlus '22</cite> and ProbSum on PrimeKG as its exact evaluation setup — making these the natural comparison targets. <cite class="ref" title="LogosKG 2026">LogosKG</cite></p>
+      </div>
+
+      <ul class="subq-list">
+        <li>Does K=3 outperform K=1 on Recall@20 and MRR, and does the gap grow monotonically with the number of symptoms per query (stratified by DDXPlus disease category)?</li>
+        <li>Does symptom-overlap hard-negative sampling (in <code>interactions.py:44–53</code>) produce harder negatives than random, and does negative difficulty correlate with retrieval performance? COMIC found degree-based negatives outperform random by 10.2%. <cite class="ref" title="COMIC 2026">COMIC</cite></li>
+        <li>Does depth-stratified reporting (Recall@K at 2-hop, 3-hop, 4-hop) reveal distinct performance profiles for shallow vs. deep paths?</li>
+      </ul>
+
+      <p style="margin-top:var(--space-4);font-size:var(--text-sm)"><strong>Implementation scope:</strong> Wrap the existing beam search in an evaluation loop over <code>interactions_test.csv</code>. Estimated engineering effort: &lt;1 week. This is the prerequisite gating all other RQs.</p>
+    </div>
+
+    <!-- RQ1 (Alignment — second by priority) -->
+    <div class="rq-card rq1 fade-in">
+      <div class="rq-header">
+        <span class="rq-badge" style="--rq-accent:var(--color-accent-rq1)">RQ1 · Priority 2 — Cross-Space Alignment</span>
+      </div>
+      <div class="rq-title">Can a contrastive InfoNCE objective ground each K interest capsule in PrimeKG embedding space — without collapsing them to a single attractor?</div>
+      <div class="rq-question">"Does InfoNCE alignment between each capsule and its most-relevant PrimeKG disease node outperform fixed-projection beam search, and does a diversity regularizer prevent capsule collapse?"</div>
+
+      <div class="gap-box" style="margin-top:var(--space-4)">
+        <div class="gap-label">The Gap</div>
+        <p>The placeholder linear projection in <code>retrieval_engine.py:38–40</code> maps interest vectors into PrimeKG embedding space with <strong>no learned parameters and no training signal</strong>. BALI (2025) demonstrates that an InfoNCE alignment loss between LM entity representations and UMLS KG subgraph embeddings (via a 5-layer GAT) yields 13.1–24.2% zero-shot entity linking gains. <cite class="ref" title="BALI 2025">BALI '25</cite> BALI aligns a single text representation per concept; MedMIG-CR must align K capsule vectors per query — a novel extension.</p>
+      </div>
+
+      <p style="font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin:var(--space-4) 0 var(--space-2)">Per-capsule InfoNCE alignment loss:</p>
+      <div class="formula-block">
+        <div class="f-label">Eq. 1 — Per-capsule alignment objective</div>
+        <div class="formula">ℒ_align = -(1/K) Σ_k log [
+  Σ_{d ∈ D⁺} exp( cos(v_k, g_d) / τ )
+  ────────────────────────────────────────
+  Σ_{d' ∈ D}  exp( cos(v_k, g_d') / τ )
+]
+
+where v_k = k-th interest capsule vector
+      g_d = PrimeKG node embedding of disease d
+      τ   = temperature (learnable or fixed)
+      D⁺  = ground-truth disease set for query</div>
+      </div>
+
+      <ul class="subq-list">
+        <li>Does InfoNCE (Eq. 1) outperform single-anchor BCE alignment? BALI ablations confirm InfoNCE beats classification-based alignment because temperature normalization distributes gradient signal rather than collapsing to one attractor. <cite class="ref" title="BALI 2025">BALI '25</cite></li>
+        <li>Does the alignment objective cause capsule collapse (avg. pairwise cosine similarity among K vectors → 1.0), and does the diversity regularizer in <code>mind_medmigcr_model.py:46–55</code> prevent it?</li>
+        <li>What is the optimal weighting λ in the combined loss ℒ_total = ℒ_BCE + λ · ℒ_align?</li>
+      </ul>
+    </div>
+
+    <!-- RQ2 (Path Coherence — third by priority) -->
+    <div class="rq-card rq2 fade-in">
+      <div class="rq-header">
+        <span class="rq-badge">RQ2 · Priority 3 — Path Coherence Encoding</span>
+      </div>
+      <div class="rq-title">Does a GRU over relation-type sequences, applied post-hoc as a path reranker, outperform the stateless additive per-hop score?</div>
+      <div class="rq-question">"Can a 1-layer GRU over PrimeKG relation-type sequences replace the additive cumulative score as a path reranker, within 2× beam search latency overhead — and does the gain concentrate on paths of length ≥3 hops?"</div>
+
+      <div class="gap-box" style="margin-top:var(--space-4)">
+        <div class="gap-label">The Gap</div>
+        <p>MedMIG-CR's current per-hop score (<code>score += α·cos_sim − β·log(degree+1)</code>) is stateless: it assigns no meaning to the <em>sequence</em> of relations traversed. A 4-hop chain of clinically specific relations and a 4-hop chain of molecular noise relations receive the same score if per-hop cosine similarities cancel. COMIC's path masking branch yields +14.82% over single-step approaches <cite class="ref" title="COMIC 2026">COMIC</cite>; GRAPE (ICLR 2026) shows lightweight relation-sequence encoders match LLM-based reasoning at 85% lower latency. <cite class="ref" title="GRAPE 2026">GRAPE</cite></p>
+      </div>
+
+      <p style="font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin:var(--space-4) 0 var(--space-2)">GRU Reranker Architecture:</p>
+      <div class="formula-block">
+        <div class="f-label">Architecture — Post-hoc path reranker</div>
+        <div class="formula">Input:  (r₁, r₂, …, r_L) — PrimeKG relation-type IDs (30 types)
+Encoder: 1-layer GRU, hidden dim = 64
+         input = learned relation-type embedding table (30 × 32)
+Output: h_L  →  linear head  →  scalar re-score
+
+Training: BPR pairwise ranking loss
+          paths → ground-truth diseases (positive)
+          paths → non-associated diseases (negative)
+
+Constraint: beam search unchanged;
+            reranker adds O(K × L) cost post-hoc
+            (K=50 paths × L=5 hops = 250 GRU steps)</div>
+      </div>
+
+      <ul class="subq-list">
+        <li>Does relation-type-aware reranking improve Recall@20 over the additive baseline, and by how much relative to COMIC's +14.82% path-masking gain? <cite class="ref" title="COMIC 2026">COMIC</cite></li>
+        <li>Does the gain concentrate on long paths (≥3 hops)? PrimeKG has a long-tail hop distribution extending to 4–5 hops; <cite class="ref" title="LogosKG 2026">LogosKG</cite> an additive scorer over 4 hops accumulates compounding noise where a GRU encoding the chain as a sequence does not.</li>
+        <li>Does the reranker's learned scoring function act as a proxy for clinical interpretability — preferring paths with higher fractions of <em>disease_phenotype</em>, <em>drug_indication</em>, and <em>phenotype_phenotype</em> edges over purely molecular edges?</li>
+      </ul>
+
+      <p style="margin-top:var(--space-4);font-size:var(--text-sm)"><strong>Latency fallback:</strong> If the GRU exceeds 2× overhead, replace with a linear model over relation-type frequency histograms — slower than additive but faster than GRU, providing graceful degradation.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ─── SECTION 5: DEPENDENCY MAP ─── -->
+  <section id="dependency" class="content-section">
+    <div class="section-eyebrow"><span class="dot"></span> Section 05</div>
+    <h2 class="section-title">Dependency Map &amp; Minimum Viable Paper</h2>
+
+    <div class="dep-flow fade-in">
+      <div class="dep-flow-title">Sequential dependency — build in this order</div>
+      <div class="dep-steps">
+        <div class="dep-step">
+          <div class="dep-icon">RQ3</div>
+          <div class="dep-content">
+            <strong>Evaluation Harness (build first)</strong>
+            <span>Wraps beam search in a loop over interactions_test.csv. Computes Recall@{5,10,20,50} and MRR on DDXPlus + ProbSum + PrimeKG. Establishes K=1 vs. K=3 baseline. <em>All other RQs are blocked until this exists.</em></span>
+          </div>
+        </div>
+        <div class="dep-step">
+          <div class="dep-icon">RQ1</div>
+          <div class="dep-content">
+            <strong>Cross-Space Alignment (highest architectural impact)</strong>
+            <span>Replaces the untrained placeholder projection with a learned InfoNCE-aligned linear layer. Provides aligned interest vectors as input to beam search. Without this, hub penalty and path scoring improvements are built on an ungrounded encoder.</span>
+          </div>
+        </div>
+        <div class="dep-step">
+          <div class="dep-icon">RQ2</div>
+          <div class="dep-content">
+            <strong>Path Coherence Reranker (highest novelty)</strong>
+            <span>GRU over relation-type sequences applied post-hoc on top of the aligned retrieval system. Independent ablation point in the shared evaluation harness. Connects to clinical explainability (future work).</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:var(--space-6)">The <strong>minimum viable paper</strong> combines all three contributions: (1) first evaluation of multi-interest KG retrieval on DDXPlus + ProbSum + PrimeKG with K=1 vs. K=3 ablation; (2) InfoNCE-trained projection replacing the placeholder, with collapse diagnostic; (3) GRU path reranker as post-hoc reranking on top-K beam paths. Each contribution has a clean, independent ablation point, and together they answer: <em>does a properly aligned, path-coherent multi-interest retrieval system outperform the heuristic baseline and compare favorably to LogosKG?</em></p>
+
+    <div class="table-wrap fade-in" style="margin-top:var(--space-6)">
+      <table>
+        <thead>
+          <tr><th>Contribution</th><th>RQ</th><th>Key Ablation</th><th>Primary Metric</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Benchmark on DDXPlus + ProbSum</strong></td><td>RQ3</td><td>K=1 vs. K=3, depth-stratified</td><td>Recall@{5,10,20,50}, MRR</td></tr>
+          <tr><td><strong>InfoNCE alignment module</strong></td><td>RQ1</td><td>Fixed proj. → learned proj. → InfoNCE</td><td>Recall@20 + collapse diagnostic</td></tr>
+          <tr><td><strong>GRU path reranker</strong></td><td>RQ2</td><td>Additive vs. GRU, by path depth</td><td>Recall@20, latency ratio</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<!-- ─── PAPERS SECTION ─── -->
+<section id="papers" class="papers-section" aria-label="Primary references">
+  <div class="papers-inner">
+    <div class="section-eyebrow" style="margin-bottom:var(--space-2)"><span class="dot"></span> Section 06</div>
+    <h2 class="section-title" style="margin-bottom:var(--space-2)">Primary References</h2>
+    <p style="color:var(--color-text-muted);font-size:var(--text-sm);margin-bottom:0">All 8 sources cited in this survey. Click any card to open the paper.</p>
+
+    <div class="papers-grid">
+
+      <a href="https://doi.org/10.1186/s12859-025-06337-4" target="_blank" rel="noopener noreferrer" class="paper-card">
+        <div class="paper-venue">BMC Bioinformatics · 2026</div>
+        <div class="paper-title">COMIC: Explainable Drug Repurposing via Contrastive Masking for Interpretable Connections</div>
+        <div class="paper-authors">Aamer, Asim et al.</div>
+        <div class="paper-arrow">doi:10.1186/s12859-025-06337-4 ↗</div>
+      </a>
+
+      <a href="https://arxiv.org/abs/2604.18913" target="_blank" rel="noopener noreferrer" class="paper-card">
+        <div class="paper-venue">arXiv · Apr 2026</div>
+        <div class="paper-title">LogosKG: Hardware-Optimized Scalable and Interpretable Knowledge Graph Retrieval</div>
+        <div class="paper-authors">LogosKG team</div>
+        <div class="paper-arrow">arXiv:2604.18913 ↗</div>
+      </a>
+
+      <a href="https://arxiv.org/pdf/2512.24181" target="_blank" rel="noopener noreferrer" class="paper-card">
+        <div class="paper-venue">arXiv · Dec 2024</div>
+        <div class="paper-title">MedKGI: Iterative Differential Diagnosis with Medical Knowledge Graph-Guided Inquiry</div>
+        <div class="paper-authors">MedKGI authors</div>
+        <div class="paper-arrow">arXiv:2512.24181 ↗</div>
+      </a>
+
+      <a href="https://aclanthology.org/2025.emnlp-main.1793/" target="_blank" rel="noopener noreferrer" class="paper-card">
+        <div class="paper-venue">EMNLP · 2025</div>
+        <div class="paper-title">D-RAG: Differentiable Retrieval-Augmented Generation for Knowledge Graph QA</div>
+        <div class="paper-authors">D-RAG team</div>
+        <div class="paper-arrow">ACL Anthology ↗</div>
+      </a>
+
+      <a href="https://arxiv.org/pdf/2509.07588" target="_blank" rel="noopener noreferrer" class="paper-card">
+        <div class="paper-venue">arXiv · Sep 2025</div>
+        <div class="paper-title">BALI: Enhancing Biomedical Language Representations through KG and Language Model Alignment</div>
+        <div class="paper-authors">Andorei et al.</div>
+        <div class="paper-arrow">arXiv:2509.07588 ↗</div>
+      </a>
+
+      <a href="https://www.nature.com/articles/s41597-023-01960-3" target="_blank" rel="noopener noreferrer" class="paper-card">
+        <div class="paper-venue">Scientific Data · 2023</div>
+        <div class="paper-title">Building a Knowledge Graph to Enable Precision Medicine (PrimeKG)</div>
+        <div class="paper-authors">Chandak, Huang, Zitnik — Harvard Medical School</div>
+        <div class="paper-arrow">nature.com/articles/s41597-023-01960-3 ↗</div>
+      </a>
+
+      <a href="https://arxiv.org/abs/2205.09148" target="_blank" rel="noopener noreferrer" class="paper-card">
+        <div class="paper-venue">NeurIPS Datasets · 2022</div>
+        <div class="paper-title">DDXPlus: A New Dataset for Automatic Medical Diagnosis (1.3M Patients)</div>
+        <div class="paper-authors">Fansi Tchango et al. — Mila / McGill</div>
+        <div class="paper-arrow">arXiv:2205.09148 ↗</div>
+      </a>
+
+      <a href="https://academic.oup.com/bioinformaticsadvances/article/4/1/vbae036/7619101" target="_blank" rel="noopener noreferrer" class="paper-card">
+        <div class="paper-venue">Bioinformatics Advances · 2024</div>
+        <div class="paper-title">Node-Degree Aware Edge Sampling Mitigates Inflated Classification in Biomedical KG Representation Learning</div>
+        <div class="paper-authors">Bioinformatics Advances team</div>
+        <div class="paper-arrow">OUP Bioinformatics Advances ↗</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>MedMIG-CR Survey · May 2026 · Research summary for multi-interest KG retrieval for clinical reasoning</p>
+</footer>
+
+<script>
+// ─── Theme Toggle ───
+(function(){
+  const btn=document.querySelector('[data-theme-toggle]');
+  const html=document.documentElement;
+  let dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  function apply(d){
+    html.setAttribute('data-theme',d?'dark':'light');
+    if(btn){
+      btn.setAttribute('aria-label','Switch to '+(d?'light':'dark')+' mode');
+      btn.innerHTML=d
+        ?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+        :'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    }
+  }
+  apply(dark);
+  if(btn) btn.addEventListener('click',()=>{dark=!dark;apply(dark);});
+})();
+
+// ─── Active nav link highlight ───
+(function(){
+  const sections=document.querySelectorAll('section[id],div[id]');
+  const links=document.querySelectorAll('.nav-link');
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(l=>l.classList.remove('active'));
+        const active=[...links].find(l=>l.getAttribute('href')==='#'+e.target.id);
+        if(active){active.classList.add('active');active.style.color='var(--color-text)';active.style.background='var(--color-surface-dynamic)'}
+        links.forEach(l=>{if(l!==active){l.style.color='';l.style.background=''}});
+      }
+    });
+  },{threshold:0.3,rootMargin:'-80px 0px -40% 0px'});
+  sections.forEach(s=>obs.observe(s));
+})();
+</script>
+
+</body>
+</html>

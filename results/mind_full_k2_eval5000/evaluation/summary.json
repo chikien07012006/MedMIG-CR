@@ -1,0 +1,22 @@
+{
+  "num_evaluated": 4893,
+  "skipped": {
+    "missing_target_mapping": 30600,
+    "missing_prediction": 99036
+  },
+  "mrr": 0.0,
+  "recall@5": 0.0,
+  "recall@10": 0.0,
+  "recall@20": 0.0,
+  "recall@50": 0.0,
+  "patients_csv": "Benchmark data\\DDXPlus\\release_test_patients.csv",
+  "predictions": "results\\mind_full_k2_eval5000\\predictions.csv",
+  "condition_map": "data\\mappings\\ddxplus\\condition_to_primekg.json",
+  "target_mode": "pathology",
+  "topk": [
+    5,
+    10,
+    20,
+    50
+  ]
+}

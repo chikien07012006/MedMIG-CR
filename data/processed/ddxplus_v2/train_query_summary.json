@@ -1,0 +1,182 @@
+{
+  "patients_total": 1025602,
+  "patients_written": 1023037,
+  "evidence_mentions_total": 20184802,
+  "evidence_mentions_mapped": 14920526,
+  "queries_with_target_seed_overlap_removed": 19868,
+  "target_seed_nodes_removed": 19868,
+  "skipped_too_few_seed_nodes": 2565,
+  "min_seed_nodes": 1,
+  "missing_evidence_top20": [
+    [
+      "E_204_@_V_10",
+      948236
+    ],
+    [
+      "E_131_@_V_10",
+      174484
+    ],
+    [
+      "E_135_@_V_12",
+      141875
+    ],
+    [
+      "E_45",
+      100801
+    ],
+    [
+      "E_48",
+      99971
+    ],
+    [
+      "E_49",
+      98263
+    ],
+    [
+      "E_97",
+      94506
+    ],
+    [
+      "E_136_@_0",
+      93599
+    ],
+    [
+      "E_41",
+      92055
+    ],
+    [
+      "E_89",
+      90409
+    ],
+    [
+      "E_59_@_0",
+      87740
+    ],
+    [
+      "E_222",
+      70030
+    ],
+    [
+      "E_208",
+      65503
+    ],
+    [
+      "E_227",
+      65306
+    ],
+    [
+      "E_116",
+      58569
+    ],
+    [
+      "E_76",
+      58469
+    ],
+    [
+      "E_132_@_0",
+      58220
+    ],
+    [
+      "E_135_@_V_10",
+      58197
+    ],
+    [
+      "E_209",
+      57592
+    ],
+    [
+      "E_161",
+      55769
+    ]
+  ],
+  "missing_pathology_top20": [],
+  "num_unique_mapped_evidences": 344,
+  "num_unique_seed_nodes": 132,
+  "num_unique_target_nodes": 47,
+  "mean_seed_nodes": 9.54900946886574,
+  "median_seed_nodes": 9,
+  "mean_evidences": 19.73027564007949,
+  "evidence_mention_coverage": 0.7391960545364775,
+  "top_seed_nodes": [
+    [
+      "effect/phenotype|HPO|12531",
+      840628
+    ],
+    [
+      "effect/phenotype|HPO|2094",
+      403065
+    ],
+    [
+      "effect/phenotype|HPO|12735",
+      350626
+    ],
+    [
+      "effect/phenotype|HPO|12904",
+      308543
+    ],
+    [
+      "effect/phenotype|HPO|25647",
+      308543
+    ],
+    [
+      "effect/phenotype|HPO|100749",
+      292496
+    ],
+    [
+      "effect/phenotype|HPO|25223",
+      287363
+    ],
+    [
+      "effect/phenotype|HPO|1945",
+      234367
+    ],
+    [
+      "effect/phenotype|HPO|25281",
+      222016
+    ],
+    [
+      "effect/phenotype|HPO|31417",
+      202756
+    ],
+    [
+      "effect/phenotype|HPO|32320",
+      182828
+    ],
+    [
+      "effect/phenotype|HPO|11220",
+      180822
+    ],
+    [
+      "effect/phenotype|HPO|11221",
+      180822
+    ],
+    [
+      "effect/phenotype|HPO|11355",
+      167463
+    ],
+    [
+      "effect/phenotype|HPO|11010",
+      162856
+    ],
+    [
+      "effect/phenotype|HPO|32143",
+      160033
+    ],
+    [
+      "effect/phenotype|HPO|12828",
+      153035
+    ],
+    [
+      "effect/phenotype|HPO|12597",
+      147293
+    ],
+    [
+      "effect/phenotype|HPO|20194",
+      147293
+    ],
+    [
+      "effect/phenotype|HPO|20034",
+      135608
+    ]
+  ]
+}

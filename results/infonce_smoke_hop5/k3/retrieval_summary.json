@@ -1,0 +1,22 @@
+{
+  "test_queries_csv": "data\\processed\\ddxplus_v2\\test_queries.csv",
+  "graph_dir": "data\\processed\\primekg_graph",
+  "checkpoint": "artifacts\\checkpoints\\ddxplus_infonce_smoke\\k3\\clinical_mind_infonce_k3.pt",
+  "condition_map": "data\\mappings\\ddxplus_v2\\condition_to_primekg.json",
+  "target_universe_size": 47,
+  "target_aware_candidate_collection": true,
+  "output_csv": "results\\infonce_smoke_hop5\\k3\\predictions.csv",
+  "num_queries_loaded": 3,
+  "num_prediction_rows": 13,
+  "skipped_missing_seed": 0,
+  "no_target_candidates": 0,
+  "queries_with_unknown_seed_tokens": 2,
+  "checkpoint_k": 3,
+  "interest_count_used": 3,
+  "latent_cosine_mean": 0.6666666534211901,
+  "max_hops": 5,
+  "beam_width": 64,
+  "paths_per_interest": 256,
+  "top_k": 50,
+  "uses_ols_projection": false
+}

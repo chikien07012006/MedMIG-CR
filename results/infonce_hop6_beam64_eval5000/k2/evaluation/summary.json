@@ -1,0 +1,20 @@
+{
+  "num_evaluated": 5000,
+  "skipped": {},
+  "mrr": 0.28763043373293373,
+  "recall@5": 0.3222,
+  "recall@10": 0.35,
+  "recall@20": 0.3646,
+  "recall@50": 0.3646,
+  "patients_csv": "Benchmark data\\DDXPlus\\release_test_patients.csv",
+  "predictions": "results\\infonce_hop6_beam64_eval5000\\k2\\predictions.csv",
+  "condition_map": "data\\mappings\\ddxplus_v2\\condition_to_primekg.json",
+  "queries_csv": "data\\processed\\comparison_cohort\\new_queries.csv",
+  "target_mode": "pathology",
+  "topk": [
+    5,
+    10,
+    20,
+    50
+  ]
+}

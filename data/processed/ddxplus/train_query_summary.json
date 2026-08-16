@@ -1,0 +1,143 @@
+{
+  "patients_total": 1025602,
+  "patients_written": 786229,
+  "skipped_missing_pathology_mapping": 236581,
+  "skipped_too_few_seed_nodes": 2792,
+  "min_seed_nodes": 1,
+  "missing_evidence_top20": [
+    [
+      "E_204_@_V_10",
+      948236
+    ],
+    [
+      "E_66",
+      399695
+    ],
+    [
+      "E_79",
+      287363
+    ],
+    [
+      "E_181",
+      202756
+    ],
+    [
+      "E_131_@_V_10",
+      174484
+    ],
+    [
+      "E_129",
+      167463
+    ],
+    [
+      "E_135_@_V_12",
+      141875
+    ],
+    [
+      "E_124",
+      138319
+    ],
+    [
+      "E_50",
+      129081
+    ],
+    [
+      "E_78",
+      118289
+    ],
+    [
+      "E_48",
+      99971
+    ],
+    [
+      "E_151",
+      99055
+    ],
+    [
+      "E_49",
+      98263
+    ],
+    [
+      "E_130_@_V_156",
+      95039
+    ],
+    [
+      "E_97",
+      94506
+    ],
+    [
+      "E_41",
+      92055
+    ],
+    [
+      "E_82",
+      91388
+    ],
+    [
+      "E_104",
+      81355
+    ],
+    [
+      "E_226",
+      79709
+    ],
+    [
+      "E_88",
+      71436
+    ]
+  ],
+  "missing_pathology_top20": [
+    [
+      "HIV (initial infection)",
+      29013
+    ],
+    [
+      "Acute dystonic reactions",
+      25982
+    ],
+    [
+      "GERD",
+      25979
+    ],
+    [
+      "Panic attack",
+      25019
+    ],
+    [
+      "Possible NSTEMI / STEMI",
+      21260
+    ],
+    [
+      "Unstable angina",
+      21244
+    ],
+    [
+      "PSVT",
+      18781
+    ],
+    [
+      "Acute COPD exacerbation / infection",
+      17661
+    ],
+    [
+      "Stable angina",
+      16995
+    ],
+    [
+      "SLE",
+      11867
+    ],
+    [
+      "Larygospasm",
+      10998
+    ],
+    [
+      "Whooping cough",
+      6070
+    ],
+    [
+      "Spontaneous rib fracture",
+      5712
+    ]
+  ]
+}

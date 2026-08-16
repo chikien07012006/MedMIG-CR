@@ -1,0 +1,20 @@
+{
+  "num_evaluated": 5000,
+  "skipped": {},
+  "mrr": 0.05654452380952381,
+  "recall@5": 0.1036,
+  "recall@10": 0.1082,
+  "recall@20": 0.1082,
+  "recall@50": 0.1082,
+  "patients_csv": "Benchmark data\\DDXPlus\\release_test_patients.csv",
+  "predictions": "results\\mind_v2_targetaware_k3_eval5000\\predictions.csv",
+  "condition_map": "data\\mappings\\ddxplus_v2\\condition_to_primekg.json",
+  "queries_csv": "data\\processed\\comparison_cohort\\new_queries.csv",
+  "target_mode": "pathology",
+  "topk": [
+    5,
+    10,
+    20,
+    50
+  ]
+}
