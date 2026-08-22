@@ -1,0 +1,33 @@
+{
+  "queries_csv": "data/processed/ddxplus_v2/train_queries.csv",
+  "checkpoint": "artifacts/checkpoints/ddxplus_infonce_beam64_hop6/k3/clinical_mind_infonce_k3.pt",
+  "graph_dir": "data/processed/primekg_graph",
+  "condition_map": "data/mappings/ddxplus_v2/condition_to_primekg.json",
+  "candidate_universe_size": 47,
+  "candidate_endpoint_filter": "disease endpoints in condition_map target universe",
+  "output_jsonl": "data/processed/reranker/infonce_k3_train_paths_5k.jsonl",
+  "num_relations": 18,
+  "node_type2id": {
+    "anatomy": 1,
+    "disease": 2,
+    "drug": 3,
+    "effect/phenotype": 4,
+    "gene/protein": 5,
+    "pathway": 6
+  },
+  "checkpoint_k": 3,
+  "interest_count_used": 3,
+  "max_hops": 6,
+  "beam_width": 64,
+  "paths_per_interest": 4096,
+  "max_paths_per_patient": 512,
+  "alpha": 1.0,
+  "beta": 0.1,
+  "counts": {
+    "queries_with_positive": 1832,
+    "queries_without_positive": 3168,
+    "negative_paths": 81551,
+    "queries_processed": 5000,
+    "positive_paths": 3685
+  }
+}

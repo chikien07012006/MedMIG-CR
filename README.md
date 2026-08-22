@@ -125,11 +125,13 @@ python scripts/preprocess/build_ddxplus_test_queries.py ^
   --summary_json data/processed/ddxplus_v2/test_query_summary.json
 ```
 
-The current 5,000-query comparison cohort is under:
+The optional 5,000-query comparison cohort can be regenerated with `scripts/preprocess/build_common_query_cohort.py` if old-vs-new mapping comparisons are needed:
 
 ```text
 data/processed/comparison_cohort/new_queries.csv
 ```
+
+Use `data/processed/ddxplus_v2/test_queries.csv` for the official held-out DDXPlus v2 evaluation.
 
 ## Proposed InfoNCE Experiment
 
@@ -140,7 +142,7 @@ python scripts/experiments/run_infonce_full_pipeline.py ^
   --ks 1 2 3 ^
   --epochs 3 ^
   --batch_size 256 ^
-  --test_queries_csv data/processed/comparison_cohort/new_queries.csv ^
+  --test_queries_csv data/processed/ddxplus_v2/test_queries.csv ^
   --max_hops 6 ^
   --beam_width 64 ^
   --paths_per_interest 4096 ^
@@ -205,7 +207,7 @@ Run retrieval:
 
 ```bash
 python scripts/retrieval/run_ddxplus_mind_retrieval.py ^
-  --test_queries_csv data/processed/comparison_cohort/new_queries.csv ^
+  --test_queries_csv data/processed/ddxplus_v2/test_queries.csv ^
   --graph_dir data/processed/primekg_graph ^
   --checkpoint artifacts/checkpoints/ddxplus_v2/clinical_mind_ddxplus_k3.pt ^
   --projection artifacts/checkpoints/ddxplus_v2/alignment_k3_to_primekg.npz ^
@@ -228,7 +230,7 @@ Evaluate predictions:
 
 ```bash
 python scripts/evaluation/evaluate_ddxplus_retrieval.py ^
-  --queries_csv data/processed/comparison_cohort/new_queries.csv ^
+  --queries_csv data/processed/ddxplus_v2/test_queries.csv ^
   --condition_map data/mappings/ddxplus_v2/condition_to_primekg.json ^
   --predictions results/my_run/predictions.csv ^
   --output_dir results/my_run/evaluation ^

@@ -52,6 +52,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max_train_samples", type=int, default=None)
     parser.add_argument("--max_valid_samples", type=int, default=None)
     parser.add_argument("--cosine_export_limit", type=int, default=5000)
+    parser.add_argument("--early_stopping_patience", type=int, default=None)
+    parser.add_argument("--early_stopping_min_delta", type=float, default=0.0)
     return parser.parse_args()
 
 
@@ -327,6 +329,7 @@ def main() -> None:
     history = []
     best_state = None
     best_valid = float("inf")
+    epochs_without_improvement = 0
     for epoch in range(1, args.epochs + 1):
         model.train()
         epoch_losses = []
@@ -355,12 +358,29 @@ def main() -> None:
         valid_metrics = evaluate(model, valid_loader, target_embeddings, evidence_embeddings, args, device) if valid_loader else {}
         train_loss = float(np.mean(epoch_losses)) if epoch_losses else 0.0
         valid_loss = float(valid_metrics.get("loss", train_loss))
-        if valid_loss < best_valid:
+        improved = valid_loss < (best_valid - args.early_stopping_min_delta)
+        if improved:
             best_valid = valid_loss
             best_state = {key: value.detach().cpu() for key, value in model.state_dict().items()}
+            epochs_without_improvement = 0
+        else:
+            epochs_without_improvement += 1
         record = {"epoch": epoch, "train_loss": train_loss, **{f"valid_{k}": v for k, v in valid_metrics.items()}}
         history.append(record)
         print(json.dumps(record, ensure_ascii=False))
+        if args.early_stopping_patience is not None and epochs_without_improvement >= args.early_stopping_patience:
+            print(
+                json.dumps(
+                    {
+                        "early_stopped": True,
+                        "epoch": epoch,
+                        "best_valid_loss": best_valid,
+                        "patience": args.early_stopping_patience,
+                    },
+                    ensure_ascii=False,
+                )
+            )
+            break
 
     if best_state is not None:
         model.load_state_dict(best_state)
@@ -416,6 +436,8 @@ def main() -> None:
         "num_evidence_nodes": len(evidence_nodes),
         "history": history,
         "best_valid_loss": best_valid,
+        "early_stopping_patience": args.early_stopping_patience,
+        "early_stopping_min_delta": args.early_stopping_min_delta,
         "cosine_export": cosine_export,
     }
     summary_path = args.out_dir / f"training_summary_k{args.K}.json"

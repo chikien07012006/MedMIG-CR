@@ -162,6 +162,29 @@ class GraphStore:
     def lookup_node_name(self, node_id: int) -> Optional[str]:
         return self.id2node.get(int(node_id))
 
+    def get_canonical_relation_step(self, source_node: int, target_node: int) -> tuple[int, int]:
+        """Return a deterministic relation id and traversal direction for a path hop."""
+        row_start = int(self.indptr[source_node])
+        row_end = int(self.indptr[source_node + 1])
+        if row_start < row_end:
+            positions = np.where(self.indices[row_start:row_end] == target_node)[0]
+            if positions.size:
+                rel_ids = self.edge_relids[row_start:row_end][positions]
+                return int(np.min(rel_ids)), 1
+
+        self._ensure_reverse_csr()
+        assert self._reverse_indptr is not None and self._reverse_indices is not None
+        assert self._reverse_edge_relids is not None
+        row_start = int(self._reverse_indptr[source_node])
+        row_end = int(self._reverse_indptr[source_node + 1])
+        if row_start < row_end:
+            positions = np.where(self._reverse_indices[row_start:row_end] == target_node)[0]
+            if positions.size:
+                rel_ids = self._reverse_edge_relids[row_start:row_end][positions]
+                return int(np.min(rel_ids)), -1
+
+        return -1, 0
+
     def get_edge_relations(self, source_node: int, target_node: int) -> List[str]:
         row_start = int(self.indptr[source_node])
         row_end = int(self.indptr[source_node + 1])

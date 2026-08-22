@@ -14,6 +14,8 @@ class BeamItem:
     current_node: int
     path: Tuple[int, ...]
     score: float
+    relation_path: Tuple[int, ...] = ()
+    direction_path: Tuple[int, ...] = ()
 
 
 class SemanticBeamSearch:
@@ -109,8 +111,18 @@ class SemanticBeamSearch:
                     if path in visited_paths:
                         continue
                     visited_paths.add(path)
+                    step_rel_id, step_direction = self.graph_store.get_canonical_relation_step(
+                        item.current_node,
+                        int(neighbor_id),
+                    )
                     cumulative_score = item.score + float(expansion_score)
-                    candidate = BeamItem(int(neighbor_id), path, cumulative_score)
+                    candidate = BeamItem(
+                        int(neighbor_id),
+                        path,
+                        cumulative_score,
+                        item.relation_path + (step_rel_id,),
+                        item.direction_path + (step_direction,),
+                    )
                     candidates.append(candidate)
                     if target_node_ids is not None and int(neighbor_id) in target_node_ids:
                         existing = target_paths.get(int(neighbor_id))

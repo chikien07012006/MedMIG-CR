@@ -1,0 +1,59 @@
+{
+  "config": {
+    "num_relations": 18,
+    "num_node_types": 6,
+    "graph_dim": 64,
+    "relation_dim": 32,
+    "direction_dim": 8,
+    "node_type_dim": 8,
+    "node_projection_dim": 32,
+    "hidden_dim": 64,
+    "dropout": 0.1,
+    "use_score_features": false
+  },
+  "node_type2id": {
+    "anatomy": 1,
+    "disease": 2,
+    "drug": 3,
+    "effect/phenotype": 4,
+    "gene/protein": 5,
+    "pathway": 6
+  },
+  "train_jsonl": "data/processed/reranker/infonce_e6_k3_hop8_train_paths_10k.jsonl",
+  "metadata_json": "data/processed/reranker/infonce_e6_k3_hop8_train_paths_10k.metadata.json",
+  "history": [
+    {
+      "epoch": 1.0,
+      "loss": 0.19772327273339033,
+      "pair_accuracy": 0.966796875,
+      "mean_margin": 7.047358512878418
+    },
+    {
+      "epoch": 2.0,
+      "loss": 0.08074258362781256,
+      "pair_accuracy": 0.97216796875,
+      "mean_margin": 9.586718559265137
+    },
+    {
+      "epoch": 3.0,
+      "loss": 0.06747011392656714,
+      "pair_accuracy": 0.97509765625,
+      "mean_margin": 10.028068542480469
+    },
+    {
+      "epoch": 4.0,
+      "loss": 0.06315115091204643,
+      "pair_accuracy": 0.9775390625,
+      "mean_margin": 11.338174819946289
+    },
+    {
+      "epoch": 5.0,
+      "loss": 0.059904478691518305,
+      "pair_accuracy": 0.9765625,
+      "mean_margin": 11.963882446289062
+    }
+  ],
+  "num_records": 198029,
+  "num_bpr_patients": 3769,
+  "hard_negative_top_k": 32
+}
