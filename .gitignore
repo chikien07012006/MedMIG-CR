@@ -21,6 +21,21 @@ __pycache__/
 /data/processed/ddxplus/train_queries.csv
 /data/processed/ddxplus_v2/train_queries.csv
 
+# Generated reranker training dumps can be large; keep metadata JSON trackable.
+/data/processed/reranker/*.jsonl
+
+# Model weights / numeric checkpoint blobs should not live in normal Git.
+# Keep small *.json summaries and reports trackable.
+/artifacts/checkpoints/**/*.pt
+/artifacts/checkpoints/**/*.pth
+/artifacts/checkpoints/**/*.ckpt
+/artifacts/checkpoints/**/*.npz
+
+# Large per-patient prediction dumps from retrieval/evaluation runs.
+# Keep small summary JSON files trackable.
+/results/**/predictions.csv
+/results/**/by_patient.csv
+
 # Obsolete/generated folders from pre-reorg experiments
 /multi-interest/
 /Subgraph retrieval/
