@@ -51,6 +51,65 @@ class GRUPathReranker(nn.Module):
             nn.Linear(config.hidden_dim, 1),
         )
 
+    def encode_tokens(
+        self,
+        relation_ids: torch.Tensor,
+        direction_ids: torch.Tensor,
+        node_type_ids: torch.Tensor,
+        dst_node_ids: torch.Tensor,
+    ) -> torch.Tensor:
+        relation_emb = self.relation_embedding(relation_ids)
+        direction_emb = self.direction_embedding(direction_ids)
+        node_type_emb = self.node_type_embedding(node_type_ids)
+        node_emb = self.node_projection(self.node_embeddings(dst_node_ids))
+        tokens = torch.cat([relation_emb, direction_emb, node_type_emb, node_emb], dim=-1)
+        return self.input_dropout(tokens)
+
+    def score_hidden(
+        self,
+        hidden: torch.Tensor,
+        lengths: torch.Tensor,
+        additive_scores: torch.Tensor | None = None,
+        max_len: int = 1,
+    ) -> torch.Tensor:
+        path_repr = hidden[-1]
+        if self.config.use_score_features:
+            if additive_scores is None:
+                raise ValueError("additive_scores is required when use_score_features=True")
+            len_feature = lengths.float().unsqueeze(1) / max(1, max_len)
+            score_feature = additive_scores.float().unsqueeze(1)
+            path_repr = torch.cat([path_repr, score_feature, len_feature], dim=1)
+        return self.head(path_repr).squeeze(1)
+
+    def forward_incremental(
+        self,
+        relation_ids: torch.Tensor,
+        direction_ids: torch.Tensor,
+        node_type_ids: torch.Tensor,
+        dst_node_ids: torch.Tensor,
+        hidden: torch.Tensor | None = None,
+        lengths: torch.Tensor | None = None,
+        additive_scores: torch.Tensor | None = None,
+        max_len: int = 1,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        tokens = self.encode_tokens(
+            relation_ids,
+            direction_ids,
+            node_type_ids,
+            dst_node_ids,
+        ).unsqueeze(1)
+        if hidden is None:
+            hidden = torch.zeros(
+                (1, tokens.shape[0], self.config.hidden_dim),
+                device=tokens.device,
+                dtype=tokens.dtype,
+            )
+        _outputs, new_hidden = self.gru(tokens, hidden)
+        if lengths is None:
+            lengths = torch.ones(tokens.shape[0], dtype=torch.long, device=tokens.device)
+        scores = self.score_hidden(new_hidden, lengths, additive_scores, max_len)
+        return scores, new_hidden
+
     def forward(
         self,
         relation_ids: torch.Tensor,
@@ -60,12 +119,7 @@ class GRUPathReranker(nn.Module):
         lengths: torch.Tensor,
         additive_scores: torch.Tensor | None = None,
     ) -> torch.Tensor:
-        relation_emb = self.relation_embedding(relation_ids)
-        direction_emb = self.direction_embedding(direction_ids)
-        node_type_emb = self.node_type_embedding(node_type_ids)
-        node_emb = self.node_projection(self.node_embeddings(dst_node_ids))
-        tokens = torch.cat([relation_emb, direction_emb, node_type_emb, node_emb], dim=-1)
-        tokens = self.input_dropout(tokens)
+        tokens = self.encode_tokens(relation_ids, direction_ids, node_type_ids, dst_node_ids)
 
         lengths_cpu = lengths.detach().cpu().clamp(min=1)
         packed = nn.utils.rnn.pack_padded_sequence(
@@ -75,15 +129,10 @@ class GRUPathReranker(nn.Module):
             enforce_sorted=False,
         )
         _outputs, hidden = self.gru(packed)
-        path_repr = hidden[-1]
-
-        if self.config.use_score_features:
-            if additive_scores is None:
-                raise ValueError("additive_scores is required when use_score_features=True")
-            max_len = relation_ids.shape[1]
-            len_feature = lengths.float().unsqueeze(1) / max(1, max_len)
-            score_feature = additive_scores.float().unsqueeze(1)
-            path_repr = torch.cat([path_repr, score_feature, len_feature], dim=1)
-
-        return self.head(path_repr).squeeze(1)
+        return self.score_hidden(
+            hidden,
+            lengths,
+            additive_scores,
+            max_len=relation_ids.shape[1],
+        )
 

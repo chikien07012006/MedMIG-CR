@@ -121,7 +121,7 @@ def sample_pair_batch(
     return pos_records, neg_records
 
 
-def evaluate_pair_accuracy(
+def evaluate_pair_metrics(
     model: GRUPathReranker,
     grouped: Dict[int, Dict[str, List[Record]]],
     patient_ids: List[int],
@@ -131,7 +131,7 @@ def evaluate_pair_accuracy(
     batch_size: int = 256,
 ) -> Dict[str, float]:
     if not patient_ids:
-        return {"pair_accuracy": 0.0, "mean_margin": 0.0}
+        return {"bpr_loss": 0.0, "pair_accuracy": 0.0, "mean_margin": 0.0}
     margins: List[float] = []
     model.eval()
     with torch.no_grad():
@@ -147,6 +147,7 @@ def evaluate_pair_accuracy(
             remaining -= current
     margins_arr = np.asarray(margins, dtype=np.float32)
     return {
+        "bpr_loss": float(np.mean(np.logaddexp(0.0, -margins_arr))) if margins_arr.size else 0.0,
         "pair_accuracy": float(np.mean(margins_arr > 0.0)) if margins_arr.size else 0.0,
         "mean_margin": float(np.mean(margins_arr)) if margins_arr.size else 0.0,
     }
@@ -154,11 +155,19 @@ def evaluate_pair_accuracy(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train a GRU path reranker with BPR loss.")
-    parser.add_argument("--train_jsonl", type=Path, default=Path("data/processed/reranker/infonce_k3_train_paths.jsonl"))
+    parser.add_argument(
+        "--train_jsonl",
+        type=Path,
+        default=Path("data/processed/reranker/infonce_e10_k3_hop10_bw128_train_paths_100k.jsonl"),
+    )
     parser.add_argument("--metadata_json", type=Path, default=None)
     parser.add_argument("--graph_dir", type=Path, default=Path("data/processed/primekg_graph"))
-    parser.add_argument("--out_checkpoint", type=Path, default=Path("artifacts/checkpoints/path_gru_reranker/infonce_k3_gru.pt"))
-    parser.add_argument("--epochs", type=int, default=3)
+    parser.add_argument(
+        "--out_checkpoint",
+        type=Path,
+        default=Path("artifacts/checkpoints/path_gru_reranker/infonce_e10_k3_hop10_bw128_gru_100k.pt"),
+    )
+    parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--steps_per_epoch", type=int, default=2000)
     parser.add_argument("--batch_size", type=int, default=256)
     parser.add_argument("--hard_negative_top_k", type=int, default=32)
@@ -171,6 +180,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--hidden_dim", type=int, default=64)
     parser.add_argument("--dropout", type=float, default=0.1)
     parser.add_argument("--use_score_features", action="store_true")
+    parser.add_argument("--validation_fraction", type=float, default=0.1)
+    parser.add_argument("--validation_pairs", type=int, default=2048)
+    parser.add_argument("--early_stopping_patience", type=int, default=2)
+    parser.add_argument("--early_stopping_min_delta", type=float, default=0.0)
     parser.add_argument("--seed", type=int, default=13)
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
     return parser.parse_args()
@@ -189,6 +202,19 @@ def main() -> None:
     patient_ids = eligible_patients(grouped)
     if not patient_ids:
         raise ValueError("No patient has both positive and negative paths; BPR training cannot run.")
+    if not 0.0 <= args.validation_fraction < 1.0:
+        raise ValueError("--validation_fraction must be in [0.0, 1.0).")
+
+    split_rng = random.Random(args.seed)
+    shuffled_patient_ids = list(patient_ids)
+    split_rng.shuffle(shuffled_patient_ids)
+    validation_count = int(len(shuffled_patient_ids) * args.validation_fraction)
+    if args.validation_fraction > 0.0 and validation_count == 0 and len(shuffled_patient_ids) > 1:
+        validation_count = 1
+    validation_patient_ids = shuffled_patient_ids[:validation_count]
+    train_patient_ids = shuffled_patient_ids[validation_count:]
+    if not train_patient_ids:
+        raise ValueError("Validation split leaves no BPR-eligible patients for training.")
 
     node_embeddings = torch.from_numpy(np.load(args.graph_dir / "node_embeddings.npy"))
     config = GRUPathRerankerConfig(
@@ -207,13 +233,16 @@ def main() -> None:
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 
     history: List[Dict[str, float]] = []
+    best_state = None
+    best_validation_bpr_loss = float("inf")
+    epochs_without_improvement = 0
     for epoch in range(1, args.epochs + 1):
         model.train()
         losses: List[float] = []
         for _step in range(args.steps_per_epoch):
             pos_records, neg_records = sample_pair_batch(
                 grouped,
-                patient_ids,
+                train_patient_ids,
                 args.batch_size,
                 rng,
                 hard_negative_top_k=args.hard_negative_top_k,
@@ -230,14 +259,51 @@ def main() -> None:
             optimizer.step()
             losses.append(float(loss.detach().cpu()))
 
-        eval_stats = evaluate_pair_accuracy(model, grouped, patient_ids, device, rng)
+        # Resetting this RNG makes the validation pairs identical each epoch.
+        validation_rng = random.Random(args.seed + 10_000)
+        eval_stats = evaluate_pair_metrics(
+            model,
+            grouped,
+            validation_patient_ids,
+            device,
+            validation_rng,
+            num_pairs=args.validation_pairs,
+        )
         row = {
             "epoch": float(epoch),
-            "loss": float(np.mean(losses)),
-            **eval_stats,
+            "train_bpr_loss": float(np.mean(losses)),
+            **{f"validation_{key}": value for key, value in eval_stats.items()},
         }
         history.append(row)
         print(json.dumps(row, ensure_ascii=False))
+
+        validation_bpr_loss = float(eval_stats["bpr_loss"])
+        if validation_bpr_loss < (best_validation_bpr_loss - args.early_stopping_min_delta):
+            best_validation_bpr_loss = validation_bpr_loss
+            best_state = {key: value.detach().cpu() for key, value in model.state_dict().items()}
+            epochs_without_improvement = 0
+        else:
+            epochs_without_improvement += 1
+        if (
+            validation_patient_ids
+            and args.early_stopping_patience is not None
+            and epochs_without_improvement >= args.early_stopping_patience
+        ):
+            print(
+                json.dumps(
+                    {
+                        "early_stopped": True,
+                        "epoch": epoch,
+                        "best_validation_bpr_loss": best_validation_bpr_loss,
+                        "patience": args.early_stopping_patience,
+                    },
+                    ensure_ascii=False,
+                )
+            )
+            break
+
+    if best_state is not None:
+        model.load_state_dict(best_state)
 
     args.out_checkpoint.parent.mkdir(parents=True, exist_ok=True)
     checkpoint = {
@@ -249,7 +315,14 @@ def main() -> None:
         "history": history,
         "num_records": len(records),
         "num_bpr_patients": len(patient_ids),
+        "num_train_patients": len(train_patient_ids),
+        "num_validation_patients": len(validation_patient_ids),
         "hard_negative_top_k": args.hard_negative_top_k,
+        "validation_fraction": args.validation_fraction,
+        "validation_pairs": args.validation_pairs,
+        "best_validation_bpr_loss": best_validation_bpr_loss,
+        "early_stopping_patience": args.early_stopping_patience,
+        "early_stopping_min_delta": args.early_stopping_min_delta,
     }
     torch.save(checkpoint, args.out_checkpoint)
     summary_path = args.out_checkpoint.with_suffix(".summary.json")

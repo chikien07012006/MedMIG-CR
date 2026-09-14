@@ -150,15 +150,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--checkpoint",
         type=Path,
-        default=Path("artifacts/checkpoints/ddxplus_infonce_beam64_hop6/k3/clinical_mind_infonce_k3.pt"),
+        default=Path("artifacts/checkpoints/ddxplus_infonce_e10_hop10/k3/clinical_mind_infonce_k3.pt"),
     )
     parser.add_argument("--condition_map", type=Path, default=Path("data/mappings/ddxplus_v2/condition_to_primekg.json"))
-    parser.add_argument("--output_jsonl", type=Path, default=Path("data/processed/reranker/infonce_k3_train_paths.jsonl"))
+    parser.add_argument(
+        "--output_jsonl",
+        type=Path,
+        default=Path("data/processed/reranker/infonce_e10_k3_hop10_bw128_train_paths_100k.jsonl"),
+    )
     parser.add_argument("--metadata_json", type=Path, default=None)
-    parser.add_argument("--limit_patients", type=int, default=None)
+    parser.add_argument("--limit_patients", type=int, default=100000)
     parser.add_argument("--interest_count", type=int, default=None)
-    parser.add_argument("--max_hops", type=int, default=8)
-    parser.add_argument("--beam_width", type=int, default=64)
+    parser.add_argument("--max_hops", type=int, default=10)
+    parser.add_argument("--beam_width", type=int, default=128)
     parser.add_argument("--paths_per_interest", type=int, default=4096)
     parser.add_argument("--max_paths_per_patient", type=int, default=512)
     parser.add_argument("--alpha", type=float, default=1.0)

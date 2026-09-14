@@ -244,6 +244,41 @@ summary.json
 by_patient.csv
 ```
 
+## Incremental GRU Inference
+
+The path reranker supports incremental hidden-state inference during retrieval.
+Each beam state carries its GRU hidden state forward, so expanding a path scores
+only the new graph token instead of recomputing the full prefix. The GRU
+architecture and checkpoint format remain unchanged. Post-hoc reranking still
+scores the final candidate paths with the regular full-path forward pass.
+
+Run a small retrieval test:
+
+```bash
+python scripts/retrieval/run_ddxplus_infonce_gru_rerank.py \
+  --test_queries_csv data/processed/ddxplus_v2/test_queries.csv \
+  --mind_checkpoint artifacts/checkpoints/ddxplus_infonce_e10_hop10/k3/clinical_mind_infonce_k3.pt \
+  --reranker_checkpoint artifacts/checkpoints/path_gru_reranker/infonce_e10_k3_hop10_bw128_gru_100k.pt \
+  --interest_count 3 \
+  --max_hops 8 \
+  --beam_width 64 \
+  --limit_patients 100 \
+  --output_csv results/infonce_e10_hop8_beam64_gru_incremental_test100/k3/predictions.csv \
+  --summary_json results/infonce_e10_hop8_beam64_gru_incremental_test100/k3/retrieval_summary.json
+```
+
+Then evaluate the generated predictions:
+
+```bash
+python scripts/evaluation/evaluate_ddxplus_retrieval.py \
+  --queries_csv data/processed/ddxplus_v2/test_queries.csv \
+  --condition_map data/mappings/ddxplus_v2/condition_to_primekg.json \
+  --predictions results/infonce_e10_hop8_beam64_gru_incremental_test100/k3/predictions.csv \
+  --output_dir results/infonce_e10_hop8_beam64_gru_incremental_test100/k3/evaluation \
+  --topk 1 5 10 20 50 \
+  --limit_patients 100
+```
+
 ## Active Research Next Steps
 
 - Run controlled retrieval comparisons to separate model improvements from hop/scoring changes.

@@ -1,0 +1,20 @@
+{
+  "num_evaluated": 100,
+  "skipped": {},
+  "mrr": 0.4013333333333333,
+  "recall@5": 0.45,
+  "recall@10": 0.45,
+  "recall@20": 0.45,
+  "recall@50": 0.45,
+  "patients_csv": "Benchmark data/DDXPlus/release_test_patients.csv",
+  "predictions": "results/infonce_e10_hop10_beam128_no_gru_guided_test100/k3/predictions.csv",
+  "condition_map": "data/mappings/ddxplus_v2/condition_to_primekg.json",
+  "queries_csv": "data/processed/ddxplus_v2/test_queries.csv",
+  "target_mode": "pathology",
+  "topk": [
+    5,
+    10,
+    20,
+    50
+  ]
+}

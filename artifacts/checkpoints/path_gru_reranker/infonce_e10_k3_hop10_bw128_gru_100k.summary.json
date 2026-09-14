@@ -1,0 +1,120 @@
+{
+  "config": {
+    "num_relations": 18,
+    "num_node_types": 6,
+    "graph_dim": 64,
+    "relation_dim": 32,
+    "direction_dim": 8,
+    "node_type_dim": 8,
+    "node_projection_dim": 32,
+    "hidden_dim": 64,
+    "dropout": 0.1,
+    "use_score_features": false
+  },
+  "node_type2id": {
+    "anatomy": 1,
+    "disease": 2,
+    "drug": 3,
+    "effect/phenotype": 4,
+    "gene/protein": 5,
+    "pathway": 6
+  },
+  "train_jsonl": "data/processed/reranker/infonce_e10_k3_hop10_bw128_train_paths_100k.jsonl",
+  "metadata_json": "data/processed/reranker/infonce_e10_k3_hop10_bw128_train_paths_100k.metadata.json",
+  "history": [
+    {
+      "epoch": 1.0,
+      "train_bpr_loss": 0.25604361803084613,
+      "validation_bpr_loss": 0.13885200023651123,
+      "validation_pair_accuracy": 0.9462890625,
+      "validation_mean_margin": 4.991976737976074
+    },
+    {
+      "epoch": 2.0,
+      "train_bpr_loss": 0.11099124988913536,
+      "validation_bpr_loss": 0.0932396948337555,
+      "validation_pair_accuracy": 0.962890625,
+      "validation_mean_margin": 6.714496612548828
+    },
+    {
+      "epoch": 3.0,
+      "train_bpr_loss": 0.08546046714670956,
+      "validation_bpr_loss": 0.09120941907167435,
+      "validation_pair_accuracy": 0.9619140625,
+      "validation_mean_margin": 7.61446475982666
+    },
+    {
+      "epoch": 4.0,
+      "train_bpr_loss": 0.07596929893922061,
+      "validation_bpr_loss": 0.08025592565536499,
+      "validation_pair_accuracy": 0.9658203125,
+      "validation_mean_margin": 7.663957118988037
+    },
+    {
+      "epoch": 5.0,
+      "train_bpr_loss": 0.07028148186951876,
+      "validation_bpr_loss": 0.07490246742963791,
+      "validation_pair_accuracy": 0.96533203125,
+      "validation_mean_margin": 8.588602066040039
+    },
+    {
+      "epoch": 6.0,
+      "train_bpr_loss": 0.06555188240669668,
+      "validation_bpr_loss": 0.06993968784809113,
+      "validation_pair_accuracy": 0.97021484375,
+      "validation_mean_margin": 8.729120254516602
+    },
+    {
+      "epoch": 7.0,
+      "train_bpr_loss": 0.06376148912031203,
+      "validation_bpr_loss": 0.06812439113855362,
+      "validation_pair_accuracy": 0.97021484375,
+      "validation_mean_margin": 9.470264434814453
+    },
+    {
+      "epoch": 8.0,
+      "train_bpr_loss": 0.06132412934023887,
+      "validation_bpr_loss": 0.06611733138561249,
+      "validation_pair_accuracy": 0.974609375,
+      "validation_mean_margin": 9.317562103271484
+    },
+    {
+      "epoch": 9.0,
+      "train_bpr_loss": 0.05997414996754378,
+      "validation_bpr_loss": 0.06715208292007446,
+      "validation_pair_accuracy": 0.970703125,
+      "validation_mean_margin": 9.318077087402344
+    },
+    {
+      "epoch": 10.0,
+      "train_bpr_loss": 0.05902210075641051,
+      "validation_bpr_loss": 0.0657421126961708,
+      "validation_pair_accuracy": 0.97412109375,
+      "validation_mean_margin": 10.11711311340332
+    },
+    {
+      "epoch": 11.0,
+      "train_bpr_loss": 0.05891696924436837,
+      "validation_bpr_loss": 0.07233390212059021,
+      "validation_pair_accuracy": 0.96923828125,
+      "validation_mean_margin": 9.959299087524414
+    },
+    {
+      "epoch": 12.0,
+      "train_bpr_loss": 0.05723794337455183,
+      "validation_bpr_loss": 0.06876616179943085,
+      "validation_pair_accuracy": 0.970703125,
+      "validation_mean_margin": 10.70805549621582
+    }
+  ],
+  "num_records": 3649865,
+  "num_bpr_patients": 53754,
+  "num_train_patients": 48379,
+  "num_validation_patients": 5375,
+  "hard_negative_top_k": 32,
+  "validation_fraction": 0.1,
+  "validation_pairs": 2048,
+  "best_validation_bpr_loss": 0.0657421126961708,
+  "early_stopping_patience": 2,
+  "early_stopping_min_delta": 0.0
+}

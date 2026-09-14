@@ -42,7 +42,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--temperature", type=float, default=0.07)
     parser.add_argument("--evidence_weight", type=float, default=0.2)
     parser.add_argument("--diversity_weight", type=float, default=0.05)
-    parser.add_argument("--epochs", type=int, default=3)
+    parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--weight_decay", type=float, default=1e-5)
@@ -52,7 +52,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max_train_samples", type=int, default=None)
     parser.add_argument("--max_valid_samples", type=int, default=None)
     parser.add_argument("--cosine_export_limit", type=int, default=5000)
-    parser.add_argument("--early_stopping_patience", type=int, default=None)
+    parser.add_argument("--early_stopping_patience", type=int, default=2)
     parser.add_argument("--early_stopping_min_delta", type=float, default=0.0)
     return parser.parse_args()
 

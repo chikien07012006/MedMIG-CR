@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Optional, Sequence, Set, Tuple
+from typing import Any, Callable, List, Optional, Sequence, Set, Tuple
 
 import numpy as np
 
@@ -14,8 +14,17 @@ class BeamItem:
     current_node: int
     path: Tuple[int, ...]
     score: float
+    # The original semantic score is retained for diagnostics and optional GRU inputs.
+    additive_score: float = 0.0
     relation_path: Tuple[int, ...] = ()
     direction_path: Tuple[int, ...] = ()
+    gru_hidden_state: Any = None
+
+
+@dataclass(frozen=True)
+class BeamScore:
+    score: float
+    gru_hidden_state: Any = None
 
 
 class SemanticBeamSearch:
@@ -26,12 +35,14 @@ class SemanticBeamSearch:
         alpha: float = 1.0,
         beta: float = 0.4,
         projection: Optional[dict] = None,
+        path_scorer: Optional[Callable[[Sequence[BeamItem]], Sequence[float | BeamScore]]] = None,
     ):
         self.graph_store = graph_store
         self.alpha = alpha
         self.beta = beta
         self.projection = self._prepare_projection(projection)
         self.interest_vector = self._prepare_interest_vector(interest_vector)
+        self.path_scorer = path_scorer
 
     def _prepare_projection(self, projection: Optional[dict]) -> Optional[dict]:
         if projection is None:
@@ -115,22 +126,53 @@ class SemanticBeamSearch:
                         item.current_node,
                         int(neighbor_id),
                     )
-                    cumulative_score = item.score + float(expansion_score)
+                    additive_score = item.additive_score + float(expansion_score)
                     candidate = BeamItem(
                         int(neighbor_id),
                         path,
-                        cumulative_score,
+                        additive_score,
+                        additive_score,
                         item.relation_path + (step_rel_id,),
                         item.direction_path + (step_direction,),
+                        item.gru_hidden_state,
                     )
                     candidates.append(candidate)
-                    if target_node_ids is not None and int(neighbor_id) in target_node_ids:
-                        existing = target_paths.get(int(neighbor_id))
-                        if existing is None or candidate.score > existing.score:
-                            target_paths[int(neighbor_id)] = candidate
 
             if not candidates:
                 break
+
+            if self.path_scorer is not None:
+                guided_scores = list(self.path_scorer(candidates))
+                if len(guided_scores) != len(candidates):
+                    raise ValueError("path_scorer must return exactly one score per candidate path.")
+                scored_candidates = []
+                for item, guided_score in zip(candidates, guided_scores):
+                    if isinstance(guided_score, BeamScore):
+                        score = guided_score.score
+                        gru_hidden_state = guided_score.gru_hidden_state
+                    else:
+                        score = float(guided_score)
+                        gru_hidden_state = item.gru_hidden_state
+                    scored_candidates.append(
+                        BeamItem(
+                            item.current_node,
+                            item.path,
+                            float(score),
+                            item.additive_score,
+                            item.relation_path,
+                            item.direction_path,
+                            gru_hidden_state,
+                        )
+                    )
+                candidates = scored_candidates
+
+            if target_node_ids is not None:
+                for candidate in candidates:
+                    if candidate.current_node not in target_node_ids:
+                        continue
+                    existing = target_paths.get(candidate.current_node)
+                    if existing is None or candidate.score > existing.score:
+                        target_paths[candidate.current_node] = candidate
 
             candidates.sort(key=lambda item: item.score, reverse=True)
             beam = candidates[:beam_width]

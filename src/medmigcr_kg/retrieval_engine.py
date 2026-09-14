@@ -4,7 +4,7 @@ import csv
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
+from typing import Callable, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 import numpy as np
 
@@ -72,6 +72,7 @@ class RetrievalEngine:
         max_paths_per_interest: int = 3,
         projection: Optional[dict] = None,
         target_node_ids: Optional[Set[int]] = None,
+        path_scorer: Optional[Callable[[Sequence[BeamItem]], Sequence[float]]] = None,
     ) -> RetrievalResult:
         if interest_vectors is None:
             if self.interest_vectors is not None:
@@ -94,7 +95,8 @@ class RetrievalEngine:
                 interest_vector,
                 alpha=alpha,
                 beta=beta,
-                projection=projection
+                projection=projection,
+                path_scorer=path_scorer,
             )
             best_paths = search.search(
                 seed_node_ids,

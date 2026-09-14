@@ -11,6 +11,7 @@ from typing import Dict, Iterable, List, Sequence, Tuple
 
 import numpy as np
 import torch
+from tqdm import tqdm
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -19,6 +20,7 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from medmigcr_kg.graph_store import GraphStore  # noqa: E402
+from medmigcr_kg.beam_search import BeamScore  # noqa: E402
 from medmigcr_kg.retrieval_engine import RetrievalEngine  # noqa: E402
 from medmigcr_mind.contrastive_model import ProjectedClinicalMIND, average_pairwise_cosine  # noqa: E402
 from medmigcr_path_reranker.gru_reranker import GRUPathReranker, GRUPathRerankerConfig  # noqa: E402
@@ -129,6 +131,18 @@ def path_to_record(
         return None
     if target_universe is not None and endpoint not in target_universe:
         return None
+    features = beam_item_to_gru_features(graph_store, node_type2id, item)
+    if features is None:
+        return None
+    return {"endpoint": endpoint, **features}
+
+
+def beam_item_to_gru_features(
+    graph_store: GraphStore,
+    node_type2id: Dict[str, int],
+    item,
+) -> Dict[str, object] | None:
+    """Convert any valid beam prefix into the feature format expected by the GRU."""
     if len(item.path) < 2 or len(item.relation_path) != len(item.path) - 1:
         return None
     if any(int(rel_id) < 0 for rel_id in item.relation_path):
@@ -142,8 +156,7 @@ def path_to_record(
         for node_id in dst_node_ids
     ]
     return {
-        "endpoint": endpoint,
-        "additive_score": float(item.score),
+        "additive_score": float(item.additive_score),
         "dst_node_ids": dst_node_ids,
         "relation_ids": list(item.relation_path),
         "direction_ids": list(item.direction_path),
@@ -200,6 +213,88 @@ def score_records(
     return scores
 
 
+def score_beam_prefixes_with_gru(
+    model: GRUPathReranker,
+    graph_store: GraphStore,
+    node_type2id: Dict[str, int],
+    items,
+    device: torch.device,
+    batch_size: int,
+) -> List[float | BeamScore]:
+    """Score one new token per candidate and return its updated hidden state."""
+    scores: List[object] = [float(item.score) for item in items]
+    valid_indices: List[int] = []
+    records: List[Dict[str, object]] = []
+    for index, item in enumerate(items):
+        features = beam_item_to_gru_features(graph_store, node_type2id, item)
+        if features is not None:
+            valid_indices.append(index)
+            records.append(features)
+
+    for start in range(0, len(records), batch_size):
+        batch_records = records[start : start + batch_size]
+        batch_indices = valid_indices[start : start + batch_size]
+        relation_ids = torch.tensor(
+            [int(record["relation_ids"][-1]) + 1 for record in batch_records],
+            dtype=torch.long,
+            device=device,
+        )
+        direction_ids = torch.tensor(
+            [direction_to_id(int(record["direction_ids"][-1])) for record in batch_records],
+            dtype=torch.long,
+            device=device,
+        )
+        node_type_ids = torch.tensor(
+            [int(record["node_type_ids"][-1]) for record in batch_records],
+            dtype=torch.long,
+            device=device,
+        )
+        dst_node_ids = torch.tensor(
+            [int(record["dst_node_ids"][-1]) for record in batch_records],
+            dtype=torch.long,
+            device=device,
+        )
+        lengths = torch.tensor(
+            [int(record["path_len"]) for record in batch_records],
+            dtype=torch.long,
+            device=device,
+        )
+        additive_scores = torch.tensor(
+            [float(record["additive_score"]) for record in batch_records],
+            dtype=torch.float32,
+            device=device,
+        )
+        parent_hidden = []
+        for index in batch_indices:
+            hidden = items[index].gru_hidden_state
+            if hidden is None:
+                hidden = torch.zeros(
+                    (1, model.config.hidden_dim),
+                    dtype=torch.float32,
+                    device=device,
+                )
+            elif hidden.ndim == 3:
+                hidden = hidden[:, 0, :]
+            parent_hidden.append(hidden.to(device))
+        hidden_batch = torch.stack(parent_hidden, dim=1)
+        batch_scores, new_hidden = model.forward_incremental(
+            relation_ids=relation_ids,
+            direction_ids=direction_ids,
+            node_type_ids=node_type_ids,
+            dst_node_ids=dst_node_ids,
+            hidden=hidden_batch,
+            lengths=lengths,
+            additive_scores=additive_scores,
+            max_len=max(int(record["path_len"]) for record in batch_records),
+        )
+        for offset, (index, score) in enumerate(zip(batch_indices, batch_scores.detach().cpu().tolist())):
+            scores[index] = BeamScore(
+                score=float(score),
+                gru_hidden_state=new_hidden[:, offset, :].detach(),
+            )
+    return scores
+
+
 def reranked_endpoint_scores(
     model: GRUPathReranker,
     records: List[Dict[str, object]],
@@ -235,28 +330,34 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--mind_checkpoint",
         type=Path,
-        default=Path("artifacts/checkpoints/ddxplus_infonce_e6_hop8/k3/clinical_mind_infonce_k3.pt"),
+        default=Path("artifacts/checkpoints/ddxplus_infonce_e10_hop10/k3/clinical_mind_infonce_k3.pt"),
     )
     parser.add_argument(
         "--reranker_checkpoint",
         type=Path,
-        default=Path("artifacts/checkpoints/path_gru_reranker/infonce_e6_k3_hop8_gru_10k.pt"),
+        default=Path("artifacts/checkpoints/path_gru_reranker/infonce_e10_k3_hop10_bw128_gru_100k.pt"),
     )
     parser.add_argument("--condition_map", type=Path, default=Path("data/mappings/ddxplus_v2/condition_to_primekg.json"))
-    parser.add_argument("--output_csv", type=Path, default=Path("results/infonce_e6_hop8_beam64_gru_rerank_test5000/k3/predictions.csv"))
+    parser.add_argument("--output_csv", type=Path, default=Path("results/infonce_e10_hop10_beam128_gru_rerank_test5000/k3/predictions.csv"))
     parser.add_argument("--summary_json", type=Path, default=None)
     parser.add_argument("--interest_count", type=int, default=None)
-    parser.add_argument("--max_hops", type=int, default=8)
-    parser.add_argument("--beam_width", type=int, default=64)
+    parser.add_argument("--max_hops", type=int, default=10)
+    parser.add_argument("--beam_width", type=int, default=128)
     parser.add_argument("--paths_per_interest", type=int, default=4096)
     parser.add_argument("--top_k", type=int, default=50)
     parser.add_argument("--alpha", type=float, default=1.0)
     parser.add_argument("--beta", type=float, default=0.1)
     parser.add_argument("--limit_patients", type=int, default=5000)
     parser.add_argument("--rerank_batch_size", type=int, default=512)
+    parser.add_argument("--beam_guidance_batch_size", type=int, default=2048)
+    parser.add_argument(
+        "--disable_gru_beam_guidance",
+        action="store_true",
+        help="Use the additive score for beam selection; GRU remains enabled as a post-hoc reranker.",
+    )
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
     parser.add_argument("--graph_device", type=str, default="auto")
-    parser.add_argument("--progress_every", type=int, default=100)
+    parser.add_argument("--progress_every", type=int, default=300)
     return parser.parse_args()
 
 
@@ -289,6 +390,17 @@ def main() -> None:
             if node_id is not None
         }
     node_type2id = reranker_ckpt["node_type2id"]
+    beam_path_scorer = None
+    if not args.disable_gru_beam_guidance:
+        def beam_path_scorer(items):
+            return score_beam_prefixes_with_gru(
+                reranker,
+                graph_store,
+                node_type2id,
+                items,
+                device,
+                args.beam_guidance_batch_size,
+            )
 
     rows: List[Dict[str, object]] = []
     skipped_missing_seed = 0
@@ -298,7 +410,8 @@ def main() -> None:
     retrieve_latency_values: List[float] = []
     rerank_latency_values: List[float] = []
 
-    for query_idx, query in enumerate(queries, start=1):
+    progress = tqdm(queries, desc="Retrieving", unit="query")
+    for query_idx, query in enumerate(progress, start=1):
         patient_index = int(query["patient_index"])
         seed_keys = split_nodes(query.get("seed_node_keys", ""))
         seed_ids = resolve_seed_ids(graph_store, seed_keys)
@@ -325,6 +438,7 @@ def main() -> None:
             interest_vectors=interest_vectors,
             max_paths_per_interest=args.paths_per_interest,
             target_node_ids=target_node_ids,
+            path_scorer=beam_path_scorer,
         )
         retrieve_latency_values.append(float(result.latency_seconds))
 
@@ -352,7 +466,13 @@ def main() -> None:
             )
 
         if args.progress_every and query_idx % args.progress_every == 0:
-            print(f"processed {query_idx}/{len(queries)} queries; prediction_rows={len(rows)}")
+            progress.set_postfix(
+                predictions=len(rows),
+                skipped_seed=skipped_missing_seed,
+                no_candidates=no_rerank_candidates,
+            )
+
+    progress.close()
 
     write_predictions(args.output_csv, rows)
     summary = {
@@ -361,6 +481,8 @@ def main() -> None:
         "mind_checkpoint": str(args.mind_checkpoint),
         "reranker_checkpoint": str(args.reranker_checkpoint),
         "reranker_config": asdict(reranker.config),
+        "gru_beam_guidance_enabled": not args.disable_gru_beam_guidance,
+        "beam_guidance_batch_size": args.beam_guidance_batch_size,
         "condition_map": str(args.condition_map) if args.condition_map else None,
         "target_universe_size": len(target_universe) if target_universe is not None else None,
         "candidate_endpoint_filter": "disease endpoints in condition_map target universe",
