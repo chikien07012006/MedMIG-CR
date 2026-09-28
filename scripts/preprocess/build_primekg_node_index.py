@@ -3,11 +3,13 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import time
 from collections import Counter
 from pathlib import Path
 from typing import Dict, Iterable, Tuple
 
 import pandas as pd
+from tqdm import tqdm
 
 
 DEFAULT_NODE_TYPES = ("disease", "effect/phenotype", "drug", "gene/protein", "pathway", "anatomy")
@@ -42,6 +44,7 @@ def write_nodes(path: Path, rows: Iterable[Dict[str, str]]) -> None:
 
 
 def build_index(primekg_csv: Path, output_dir: Path, chunksize: int, allowed_types: set[str]) -> None:
+    started_at = time.perf_counter()
     required = {
         "relation",
         "display_relation",
@@ -58,7 +61,11 @@ def build_index(primekg_csv: Path, output_dir: Path, chunksize: int, allowed_typ
     relation_counts: Counter[str] = Counter()
     display_relation_counts: Counter[str] = Counter()
 
+    progress = tqdm(desc="Indexing PrimeKG", unit="rows")
+    rows_processed = 0
     for chunk in pd.read_csv(primekg_csv, chunksize=chunksize, dtype=str, low_memory=False):
+        progress.update(len(chunk))
+        rows_processed += len(chunk)
         missing = required - set(chunk.columns)
         if missing:
             raise ValueError(f"PrimeKG CSV is missing required columns: {sorted(missing)}")
@@ -86,6 +93,7 @@ def build_index(primekg_csv: Path, output_dir: Path, chunksize: int, allowed_typ
                         "node_id": node_id,
                         "name": name,
                     }
+    progress.close()
 
     rows = sorted(seen.values(), key=lambda item: (item["node_type"], item["source"], item["node_id"]))
     write_nodes(output_dir / "node_metadata.csv", rows)
@@ -108,6 +116,8 @@ def build_index(primekg_csv: Path, output_dir: Path, chunksize: int, allowed_typ
             indent=2,
             ensure_ascii=False,
         )
+    elapsed = max(time.perf_counter() - started_at, 1e-9)
+    print(json.dumps({"stage": "primekg_node_index", "elapsed_seconds": round(elapsed, 3), "rows_processed": rows_processed, "rows_per_second": round(rows_processed / elapsed, 3), "nodes_written": len(rows)}))
 
 
 def parse_args() -> argparse.Namespace:

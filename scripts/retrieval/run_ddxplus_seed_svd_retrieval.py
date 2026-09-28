@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import argparse
 import csv
+import time
+from itertools import islice
 import sys
 from pathlib import Path
 from typing import Dict, Iterable, List, Sequence, Tuple
 
+from tqdm import tqdm
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_DIR = REPO_ROOT / "src"
@@ -14,6 +17,7 @@ if str(SRC_DIR) not in sys.path:
 
 from medmigcr_kg.graph_store import GraphStore  # noqa: E402
 from medmigcr_kg.retrieval_engine import RetrievalEngine  # noqa: E402
+from medmigcr_kg.telemetry import log_run_summary  # noqa: E402
 
 
 def split_nodes(cell: str) -> List[str]:
@@ -26,8 +30,9 @@ def is_disease_node(node_name: str | None) -> bool:
 
 def load_queries(path: Path, limit: int | None = None) -> List[Dict[str, str]]:
     with path.open("r", newline="", encoding="utf-8-sig") as handle:
-        rows = list(csv.DictReader(handle))
-    return rows[:limit] if limit is not None else rows
+        reader = csv.DictReader(handle)
+        rows = list(tqdm(islice(reader, limit), total=limit, desc="Loading queries", unit="query")) if limit is not None else list(tqdm(reader, desc="Loading queries", unit="query"))
+    return rows
 
 
 def resolve_seed_ids(graph_store: GraphStore, seed_node_keys: Sequence[str]) -> List[int]:
@@ -89,6 +94,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    run_started = time.perf_counter()
     graph_store = GraphStore.load(
         graph_npz=args.graph_dir / "graph_csr.npz",
         node_embeddings_npy=args.graph_dir / "node_embeddings.npy",
@@ -103,7 +109,7 @@ def main() -> None:
     prediction_rows: List[Dict[str, object]] = []
     skipped_missing_seed = 0
     no_disease_candidates = 0
-    for row in queries:
+    for row in tqdm(queries, desc="Seed-SVD retrieval", unit="query"):
         patient_index = int(row["patient_index"])
         seed_ids = resolve_seed_ids(graph_store, split_nodes(row.get("seed_node_keys", "")))
         if not seed_ids:
@@ -134,6 +140,7 @@ def main() -> None:
             )
 
     write_predictions(args.output_csv, prediction_rows)
+    log_run_summary("seed_svd_retrieval", run_started, len(queries), "queries", prediction_rows=len(prediction_rows))
     write_summary(
         args.summary_json,
         {
@@ -149,6 +156,7 @@ def main() -> None:
             "beam_width": args.beam_width,
             "paths_per_interest": args.paths_per_interest,
             "top_k": args.top_k,
+            "elapsed_seconds": round(time.perf_counter() - run_started, 3),
         },
     )
     print(f"Wrote predictions to {args.output_csv}")

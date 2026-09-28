@@ -3,3 +3,5 @@ pandas
 scipy
 torch
 tqdm
+xgboost
+torch-geometric

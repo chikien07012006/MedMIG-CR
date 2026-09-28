@@ -4,10 +4,14 @@ import argparse
 import ast
 import csv
 import json
+import time
+from itertools import islice
 import unicodedata
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Sequence
+
+from tqdm import tqdm
 
 
 METRIC_KS = (5, 10, 20, 50)
@@ -72,14 +76,18 @@ def target_nodes_for_patient(
     raise ValueError(f"Unknown target_mode: {target_mode}")
 
 
-def patient_rows(path: Path) -> List[Dict[str, str]]:
+def patient_rows(path: Path, limit: int | None = None) -> List[Dict[str, str]]:
     with path.open("r", newline="", encoding="utf-8-sig") as handle:
-        return list(csv.DictReader(handle))
+        reader = csv.DictReader(handle)
+        iterable = islice(reader, limit) if limit is not None else reader
+        return list(tqdm(iterable, total=limit, desc="Loading patients", unit="patient"))
 
 
-def query_rows(path: Path) -> List[Dict[str, str]]:
+def query_rows(path: Path, limit: int | None = None) -> List[Dict[str, str]]:
     with path.open("r", newline="", encoding="utf-8-sig") as handle:
-        return list(csv.DictReader(handle))
+        reader = csv.DictReader(handle)
+        iterable = islice(reader, limit) if limit is not None else reader
+        return list(tqdm(iterable, total=limit, desc="Loading queries", unit="query"))
 
 
 def candidate_from_row(row: Dict[str, str]) -> str:
@@ -96,7 +104,7 @@ def load_predictions_csv(path: Path) -> Dict[int, List[str]]:
         reader = csv.DictReader(handle)
         if not reader.fieldnames or "patient_index" not in reader.fieldnames:
             raise ValueError("CSV predictions require a patient_index column.")
-        for order, row in enumerate(reader):
+        for order, row in enumerate(tqdm(reader, desc="Loading predictions", unit="row")):
             patient_index = int(row["patient_index"])
             rank = row.get("rank")
             score = row.get("score")
@@ -244,15 +252,14 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    started_at = time.perf_counter()
     condition_map = load_json(args.condition_map)
     predictions = load_predictions(args.predictions)
 
     rows: List[Dict[str, Any]] = []
     skipped: Dict[str, int] = defaultdict(int)
     if args.queries_csv is not None:
-        cohort = query_rows(args.queries_csv)
-        if args.limit_patients is not None:
-            cohort = cohort[: args.limit_patients]
+        cohort = query_rows(args.queries_csv, args.limit_patients)
         evaluation_items = [
             (
                 int(query["patient_index"]),
@@ -262,9 +269,7 @@ def main() -> None:
             for query in cohort
         ]
     else:
-        patients = patient_rows(args.patients_csv)
-        if args.limit_patients is not None:
-            patients = patients[: args.limit_patients]
+        patients = patient_rows(args.patients_csv, args.limit_patients)
         evaluation_items = [
             (
                 patient_index,
@@ -274,7 +279,7 @@ def main() -> None:
             for patient_index, patient in enumerate(patients)
         ]
 
-    for patient_index, patient, target_nodes in evaluation_items:
+    for patient_index, patient, target_nodes in tqdm(evaluation_items, desc="Evaluating", unit="patient"):
         if not target_nodes:
             skipped["missing_target_mapping"] += 1
             continue
@@ -308,6 +313,8 @@ def main() -> None:
         json.dump(summary, handle, indent=2, ensure_ascii=False)
     write_by_patient(args.output_dir / "by_patient.csv", rows, args.topk)
 
+    elapsed = max(time.perf_counter() - started_at, 1e-9)
+    print(json.dumps({"stage": "retrieval_evaluation", "elapsed_seconds": round(elapsed, 3), "patients_evaluated": len(evaluation_items), "patients_per_second": round(len(evaluation_items) / elapsed, 3)}))
     print(json.dumps(summary, indent=2, ensure_ascii=False))
 
 

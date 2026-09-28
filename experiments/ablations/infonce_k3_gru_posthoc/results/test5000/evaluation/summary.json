@@ -1,0 +1,22 @@
+{
+  "num_evaluated": 5000,
+  "skipped": {},
+  "mrr": 0.4592535551391924,
+  "recall@1": 0.4098,
+  "recall@5": 0.5226,
+  "recall@10": 0.541,
+  "recall@20": 0.5498,
+  "recall@50": 0.6038,
+  "patients_csv": "Benchmark data/DDXPlus/release_test_patients.csv",
+  "predictions": "experiments/ablations/infonce_k3_gru_posthoc/results/test5000/predictions_candidate_preserved.csv",
+  "condition_map": "data/mappings/ddxplus_v2/condition_to_primekg.json",
+  "queries_csv": "data/processed/ddxplus_v2/test_queries.csv",
+  "target_mode": "pathology",
+  "topk": [
+    1,
+    5,
+    10,
+    20,
+    50
+  ]
+}

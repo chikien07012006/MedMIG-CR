@@ -1,18 +1,10 @@
-"""
-Train Clinical MIND on DDXPlus queries mapped to PrimeKG nodes.
-
-Input rows come from scripts/preprocess/build_ddxplus_test_queries.py run on
-DDXPlus train/valid CSV files. The symptom vocabulary is the PrimeKG seed-node
-key space (Option B), and the disease vocabulary is the PrimeKG target disease
-node key space.
-"""
-
 from __future__ import annotations
 
 import argparse
 import json
 import random
 import sys
+import time
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -20,6 +12,7 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader, Dataset
+from tqdm import tqdm
 
 SRC_DIR = Path(__file__).resolve().parents[1]
 if str(SRC_DIR) not in sys.path:
@@ -30,6 +23,7 @@ from medmigcr_mind.model import (
     average_active_interest_cosine_similarity,
     training_bce_loss,
 )
+from medmigcr_kg.telemetry import log_run_summary, reset_peak_memory
 
 
 PAD_SYM = 0
@@ -148,6 +142,7 @@ def sample_negatives(pos: torch.Tensor, n_neg: int, num_diseases: int) -> torch.
 
 def main() -> None:
     args = parse_args()
+    run_started = time.perf_counter()
     set_seed(args.seed)
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -198,6 +193,7 @@ def main() -> None:
         disease_padding_idx=0,
     ).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    reset_peak_memory(device)
 
     def evaluate() -> Tuple[float, float]:
         if valid_loader is None:
@@ -206,7 +202,7 @@ def main() -> None:
         losses: List[float] = []
         sims: List[float] = []
         with torch.no_grad():
-            for seeds, pos in valid_loader:
+            for seeds, pos in tqdm(valid_loader, desc="Validating", unit="batch", leave=False):
                 seeds = seeds.to(device)
                 pos = pos.to(device)
                 neg = sample_negatives(pos, args.n_neg, len(disease_vocab))
@@ -223,7 +219,8 @@ def main() -> None:
         model.train()
         total = 0.0
         seen = 0
-        for seeds, pos in train_loader:
+        epoch_started = time.perf_counter()
+        for seeds, pos in tqdm(train_loader, desc=f"Train epoch {epoch}/{args.epochs}", unit="batch", leave=False):
             seeds = seeds.to(device)
             pos = pos.to(device)
             neg = sample_negatives(pos, args.n_neg, len(disease_vocab))
@@ -240,7 +237,8 @@ def main() -> None:
             best_state = {key: value.detach().cpu() for key, value in model.state_dict().items()}
         print(
             f"epoch={epoch}/{args.epochs} train_loss={total / max(1, seen):.4f} "
-            f"valid_loss={valid_loss:.4f} avg_interest_sim={valid_sim:.4f}"
+            f"valid_loss={valid_loss:.4f} avg_interest_sim={valid_sim:.4f} "
+            f"elapsed_seconds={time.perf_counter() - epoch_started:.3f} train_examples={seen}"
         )
 
     checkpoint = {
@@ -264,6 +262,7 @@ def main() -> None:
     with (args.out_dir / f"clinical_mind_ddxplus_k{args.K}_meta.json").open("w", encoding="utf-8") as handle:
         json.dump(checkpoint["hparams"], handle, indent=2, ensure_ascii=False)
     print(f"Saved checkpoint to {ckpt_path}")
+    log_run_summary("mind_baseline_training", run_started, len(train_pos) * args.epochs, "training_examples", device, checkpoint=str(ckpt_path))
 
 
 if __name__ == "__main__":

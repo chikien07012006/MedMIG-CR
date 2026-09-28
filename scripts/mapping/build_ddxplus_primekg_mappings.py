@@ -4,10 +4,13 @@ import argparse
 import csv
 import json
 import re
+import time
 import unicodedata
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Sequence
+
+from tqdm import tqdm
 
 
 STOPWORDS = {
@@ -121,7 +124,7 @@ def match_score(query: str, candidate: str) -> float:
 
 def load_nodes(path: Path) -> List[Dict[str, str]]:
     with path.open("r", newline="", encoding="utf-8-sig") as handle:
-        nodes = list(csv.DictReader(handle))
+        nodes = list(tqdm(csv.DictReader(handle), desc="Loading PrimeKG nodes", unit="node"))
     for node in nodes:
         normalized = normalize(node.get("name", ""))
         node["_normalized_name"] = normalized
@@ -267,7 +270,7 @@ def build_condition_mapping(
     nodes_by_name = exact_name_index(target_nodes)
     disease_nodes = [node for node in target_nodes if node.get("node_type") == "disease"]
     token_index = build_token_index(disease_nodes)
-    for condition_key, condition in conditions.items():
+    for condition_key, condition in tqdm(conditions.items(), total=len(conditions), desc="Mapping conditions", unit="condition"):
         labels = [
             condition.get("cond-name-eng", ""),
             condition.get("condition_name", ""),
@@ -313,7 +316,8 @@ def build_evidence_mapping(
     mapping: Dict[str, Dict[str, Any]] = {}
     nodes_by_name = exact_name_index(exact_match_nodes)
     token_index = build_token_index(phenotype_nodes)
-    for evidence_key, entry in evidence_entries(evidences).items():
+    entries = evidence_entries(evidences)
+    for evidence_key, entry in tqdm(entries.items(), total=len(entries), desc="Mapping evidences", unit="evidence"):
         aliases = alias_names(entry["ddxplus_label"])
         candidates = exact_candidates(aliases, nodes_by_name)
         method = "clinical_alias" if candidates else "lexical"
@@ -359,6 +363,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    started_at = time.perf_counter()
     all_nodes = load_nodes(args.primekg_index_dir / "node_metadata.csv")
     target_nodes = [node for node in all_nodes if node.get("node_type") in {"disease", "effect/phenotype"}]
     with args.conditions_json.open("r", encoding="utf-8-sig") as handle:
@@ -417,7 +422,9 @@ def main() -> None:
             ensure_ascii=False,
         )
 
-    print(f"Wrote DDXPlus mappings to {args.output_dir}")
+    elapsed = max(time.perf_counter() - started_at, 1e-9)
+    processed = len(condition_mapping) + len(evidence_mapping)
+    print(json.dumps({"stage": "ddxplus_mapping", "elapsed_seconds": round(elapsed, 3), "concepts_processed": processed, "concepts_per_second": round(processed / elapsed, 3), "output_dir": str(args.output_dir)}))
 
 
 if __name__ == "__main__":

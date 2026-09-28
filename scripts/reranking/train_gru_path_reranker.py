@@ -4,6 +4,7 @@ import argparse
 import json
 import random
 import sys
+import time
 from collections import defaultdict
 from dataclasses import asdict
 from pathlib import Path
@@ -12,6 +13,7 @@ from typing import Dict, List, Tuple
 import numpy as np
 import torch
 import torch.nn.functional as F
+from tqdm import tqdm
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -20,6 +22,7 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from medmigcr_path_reranker.gru_reranker import GRUPathReranker, GRUPathRerankerConfig  
+from medmigcr_kg.telemetry import log_run_summary, reset_peak_memory
 
 
 Record = Dict[str, object]
@@ -33,7 +36,7 @@ def load_json(path: Path) -> object:
 def load_records(path: Path) -> List[Record]:
     records: List[Record] = []
     with path.open("r", encoding="utf-8") as handle:
-        for line in handle:
+        for line in tqdm(handle, desc="Loading path records", unit="line"):
             line = line.strip()
             if line:
                 records.append(json.loads(line))
@@ -42,7 +45,7 @@ def load_records(path: Path) -> List[Record]:
 
 def group_by_patient(records: List[Record]) -> Dict[int, Dict[str, List[Record]]]:
     grouped: Dict[int, Dict[str, List[Record]]] = defaultdict(lambda: {"pos": [], "neg": []})
-    for record in records:
+    for record in tqdm(records, desc="Grouping path records", unit="path", leave=False):
         key = int(record["patient_index"])
         bucket = "pos" if int(record["label"]) == 1 else "neg"
         grouped[key][bucket].append(record)
@@ -191,6 +194,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    run_started = time.perf_counter()
     rng = random.Random(args.seed)
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
@@ -231,6 +235,7 @@ def main() -> None:
     )
     model = GRUPathReranker(config, node_embeddings).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    reset_peak_memory(device)
 
     history: List[Dict[str, float]] = []
     best_state = None
@@ -239,7 +244,7 @@ def main() -> None:
     for epoch in range(1, args.epochs + 1):
         model.train()
         losses: List[float] = []
-        for _step in range(args.steps_per_epoch):
+        for _step in tqdm(range(args.steps_per_epoch), desc=f"GRU train epoch {epoch}/{args.epochs}", unit="step", leave=False):
             pos_records, neg_records = sample_pair_batch(
                 grouped,
                 train_patient_ids,
@@ -338,6 +343,7 @@ def main() -> None:
             ensure_ascii=False,
         )
     print(f"Saved GRU path reranker to {args.out_checkpoint}")
+    log_run_summary("gru_reranker_training", run_started, len(history) * args.steps_per_epoch * args.batch_size, "path_pairs", device, epochs_completed=len(history), checkpoint=str(args.out_checkpoint))
 
 
 if __name__ == "__main__":

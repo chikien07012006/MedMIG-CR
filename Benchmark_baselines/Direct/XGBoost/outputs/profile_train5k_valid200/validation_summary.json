@@ -1,0 +1,22 @@
+{
+  "split": "validation",
+  "num_evaluated": 2000,
+  "candidate_space_size": 22205,
+  "mrr": 0.5668974386161897,
+  "recall@5": 0.9235,
+  "recall@10": 0.9415,
+  "recall@20": 0.947,
+  "recall@50": 0.949,
+  "candidate_recall": 0.9495,
+  "candidate_recall_at_k": null,
+  "num_targets_total": 2000,
+  "num_targets_in_candidates": 1899,
+  "num_target_nodes_absent_from_candidates": 101,
+  "mean_candidates_scored_per_query": 22205,
+  "candidate_pairs_scored": 44410000.0,
+  "elapsed_seconds": 31.121,
+  "queries_per_second": 64.26518342539316,
+  "candidate_pairs_per_second": 1427008.3979608552,
+  "predictions_csv": "Benchmark_baselines/Direct/XGBoost/outputs/profile_train5k_valid200/validation_predictions.csv",
+  "by_patient_csv": "Benchmark_baselines/Direct/XGBoost/outputs/profile_train5k_valid200/validation_by_patient.csv"
+}

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import random
+import time
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
@@ -16,6 +17,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim import AdamW
 from torch.utils.data import DataLoader, Dataset
+from tqdm import tqdm
 
 
 DEFAULT_NODE_TYPES = ("disease", "effect/phenotype", "drug", "gene/protein", "pathway", "anatomy")
@@ -58,6 +60,7 @@ def collect_triples(
     relation_caps: Dict[str, int],
     chunksize: int,
 ) -> Tuple[List[Tuple[str, str, str]], Dict[str, Dict[str, str]], Counter[str]]:
+    started_at = time.perf_counter()
     required = {
         "relation",
         "x_id",
@@ -74,7 +77,11 @@ def collect_triples(
     relation_counts: Counter[str] = Counter()
     kept_per_relation: Counter[str] = Counter()
 
+    progress = tqdm(desc="Reading PrimeKG edges", unit="rows")
+    rows_processed = 0
     for chunk in pd.read_csv(primekg_csv, chunksize=chunksize, dtype=str, low_memory=False):
+        progress.update(len(chunk))
+        rows_processed += len(chunk)
         missing = required - set(chunk.columns)
         if missing:
             raise ValueError(f"PrimeKG CSV is missing required columns: {sorted(missing)}")
@@ -115,12 +122,15 @@ def collect_triples(
                 },
             )
 
+    progress.close()
+    elapsed = max(time.perf_counter() - started_at, 1e-9)
+    print(f"PrimeKG rows: {rows_processed} in {elapsed:.3f}s ({rows_processed / elapsed:.3f} rows/s)")
     return triples, nodes, relation_counts
 
 
 def build_graph(triples: List[Tuple[str, str, str]]) -> GraphArtifacts:
     edge_relation: Dict[Tuple[str, str], str] = {}
-    for source, relation, target in sorted(set(triples)):
+    for source, relation, target in tqdm(sorted(set(triples)), desc="Deduplicating graph edges", unit="edge"):
         edge_relation.setdefault((source, target), relation)
     triples = [(source, relation, target) for (source, target), relation in sorted(edge_relation.items())]
     node_keys = sorted({node for h, _, t in triples for node in (h, t)})
@@ -169,7 +179,7 @@ class RandomWalkCorpus:
 
     def generate_walks(self) -> List[List[int]]:
         walks: List[List[int]] = []
-        for node in range(len(self.artifacts.node2id)):
+        for node in tqdm(range(len(self.artifacts.node2id)), desc="Generating random walks", unit="node"):
             start = int(self.artifacts.indptr[node])
             end = int(self.artifacts.indptr[node + 1])
             if start == end:
@@ -190,7 +200,7 @@ class RandomWalkCorpus:
 class SkipGramDataset(Dataset):
     def __init__(self, walks: List[List[int]], window_size: int) -> None:
         self.pairs: List[Tuple[int, int]] = []
-        for walk in walks:
+        for walk in tqdm(walks, desc="Building skip-gram pairs", unit="walk"):
             for idx, center in enumerate(walk):
                 for context_idx in range(max(0, idx - window_size), min(len(walk), idx + window_size + 1)):
                     if idx != context_idx:
@@ -236,19 +246,24 @@ def train_node_embeddings(
     np.random.seed(seed)
     torch.manual_seed(seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    started_at = time.perf_counter()
     walks = RandomWalkCorpus(artifacts, walk_length, walks_per_node, seed).generate_walks()
     dataset = SkipGramDataset(walks, window_size)
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0)
     model = SkipGramModel(len(artifacts.node2id), dim).to(device)
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
     optimizer = AdamW(model.parameters(), lr=lr)
     degree = artifacts.out_degree + artifacts.in_degree + 1
     prob = np.power(degree.astype(np.float64), 0.75)
     prob = prob / prob.sum()
     neg_dist = torch.from_numpy(prob).float()
 
+    samples_seen = 0
     for epoch in range(1, epochs + 1):
+        epoch_started = time.perf_counter()
         total = 0.0
-        for center, context in loader:
+        for center, context in tqdm(loader, desc=f"Node2vec epoch {epoch}/{epochs}", unit="batch", leave=False):
             center = center.to(device)
             context = context.to(device)
             negative = torch.multinomial(neg_dist, center.shape[0] * num_negative, replacement=True)
@@ -258,7 +273,11 @@ def train_node_embeddings(
             loss.backward()
             optimizer.step()
             total += float(loss.item()) * center.shape[0]
-        print(f"epoch={epoch} loss={total / max(1, len(dataset)):.6f}")
+            samples_seen += int(center.shape[0])
+        print(f"epoch={epoch} loss={total / max(1, len(dataset)):.6f} elapsed_seconds={time.perf_counter() - epoch_started:.3f} pairs={len(dataset)}")
+    elapsed = max(time.perf_counter() - started_at, 1e-9)
+    memory_mb = round(torch.cuda.max_memory_allocated(device) / (1024**2), 2) if device.type == "cuda" else None
+    print(json.dumps({"stage": "primekg_node2vec", "elapsed_seconds": round(elapsed, 3), "training_pairs_processed": samples_seen, "pairs_per_second": round(samples_seen / elapsed, 3), "gpu_peak_memory_mb": memory_mb}))
     return model.target.weight.detach().cpu().numpy()
 
 
@@ -337,6 +356,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    run_started = time.perf_counter()
     relation_caps = parse_relation_caps(args.relation_caps)
     triples, nodes, relation_counts = collect_triples(
         primekg_csv=args.primekg_csv,
@@ -375,6 +395,8 @@ def main() -> None:
             "embedding_method": args.embedding_method,
         },
     )
+    elapsed = max(time.perf_counter() - run_started, 1e-9)
+    print(json.dumps({"stage": "primekg_graph_build", "elapsed_seconds": round(elapsed, 3), "edges_written": len(artifacts.indices), "nodes_written": len(artifacts.node2id), "embedding_method": args.embedding_method}))
     print(f"Wrote retrieval graph artifacts to {args.output_dir}")
 
 

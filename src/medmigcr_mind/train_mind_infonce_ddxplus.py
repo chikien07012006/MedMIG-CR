@@ -5,6 +5,7 @@ import csv
 import json
 import random
 import sys
+import time
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
 
@@ -12,12 +13,14 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader, Dataset
+from tqdm import tqdm
 
 SRC_DIR = Path(__file__).resolve().parents[1]
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from medmigcr_kg.graph_store import GraphStore  # noqa: E402
+from medmigcr_kg.telemetry import log_run_summary, reset_peak_memory
 from medmigcr_mind.contrastive_model import (  # noqa: E402
     ProjectedClinicalMIND,
     average_pairwise_cosine,
@@ -123,7 +126,7 @@ class ContrastiveQueryDataset(Dataset):
         seeds = []
         target_masks = []
         evidence_masks = []
-        for _, row in frame.iterrows():
+        for _, row in tqdm(frame.iterrows(), total=len(frame), desc="Preparing contrastive examples", unit="row", leave=False):
             seed_nodes = split_nodes(row["seed_node_keys"])
             target_nodes = split_nodes(row["target_node_keys"])
             target_ids = [target_index[node] for node in target_nodes if node in target_index]
@@ -176,7 +179,7 @@ def evaluate(
     diversities: List[float] = []
     cosines: List[float] = []
     with torch.no_grad():
-        for seeds, target_mask, evidence_mask, _patient_indices in loader:
+        for seeds, target_mask, evidence_mask, _patient_indices in tqdm(loader, desc="Validating", unit="batch", leave=False):
             seeds = seeds.to(device)
             target_mask = target_mask.to(device)
             evidence_mask = evidence_mask.to(device)
@@ -230,7 +233,7 @@ def export_cosine_csv(
         writer = csv.DictWriter(handle, fieldnames=["patient_index", "mean_pairwise_cosine", "pair_cosines"])
         writer.writeheader()
         with torch.no_grad():
-            for seeds, _target_mask, _evidence_mask, patient_indices in loader:
+            for seeds, _target_mask, _evidence_mask, patient_indices in tqdm(loader, desc="Exporting cosine", unit="batch", leave=False):
                 seeds = seeds.to(device)
                 projected, _latent, active_mask = model(seeds)
                 z = torch.nn.functional.normalize(projected, dim=-1)
@@ -270,6 +273,7 @@ def export_cosine_csv(
 
 def main() -> None:
     args = parse_args()
+    run_started = time.perf_counter()
     set_seed(args.seed)
     args.out_dir.mkdir(parents=True, exist_ok=True)
     device = torch.device(args.device)
@@ -325,6 +329,7 @@ def main() -> None:
         symptom_padding_idx=PAD_SYM,
     ).to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    reset_peak_memory(device)
 
     history = []
     best_state = None
@@ -333,7 +338,10 @@ def main() -> None:
     for epoch in range(1, args.epochs + 1):
         model.train()
         epoch_losses = []
-        for seeds, target_mask, evidence_mask, _patient_indices in train_loader:
+        epoch_started = time.perf_counter()
+        for seeds, target_mask, evidence_mask, _patient_indices in tqdm(
+            train_loader, desc=f"Train epoch {epoch}/{args.epochs}", unit="batch", leave=False
+        ):
             seeds = seeds.to(device)
             target_mask = target_mask.to(device)
             evidence_mask = evidence_mask.to(device)
@@ -368,6 +376,7 @@ def main() -> None:
         record = {"epoch": epoch, "train_loss": train_loss, **{f"valid_{k}": v for k, v in valid_metrics.items()}}
         history.append(record)
         print(json.dumps(record, ensure_ascii=False))
+        print(json.dumps({"epoch": epoch, "elapsed_seconds": round(time.perf_counter() - epoch_started, 3), "train_examples": len(train_ds)}, ensure_ascii=False))
         if args.early_stopping_patience is not None and epochs_without_improvement >= args.early_stopping_patience:
             print(
                 json.dumps(
@@ -440,6 +449,9 @@ def main() -> None:
         "early_stopping_min_delta": args.early_stopping_min_delta,
         "cosine_export": cosine_export,
     }
+    log_run_summary("infonce_training", run_started, len(train_ds) * len(history), "training_examples", device, epochs_completed=len(history), best_valid_loss=best_valid)
+    summary["elapsed_seconds"] = round(time.perf_counter() - run_started, 3)
+    summary["gpu_peak_memory_mb"] = round(torch.cuda.max_memory_allocated(device) / (1024**2), 2) if device.type == "cuda" else None
     summary_path = args.out_dir / f"training_summary_k{args.K}.json"
     with summary_path.open("w", encoding="utf-8") as handle:
         json.dump(summary, handle, indent=2, ensure_ascii=False)

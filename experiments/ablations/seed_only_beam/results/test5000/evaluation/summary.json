@@ -1,0 +1,22 @@
+{
+  "num_evaluated": 5000,
+  "skipped": {},
+  "mrr": 0.08426752244223268,
+  "recall@1": 0.0158,
+  "recall@5": 0.1484,
+  "recall@10": 0.249,
+  "recall@20": 0.3738,
+  "recall@50": 0.4106,
+  "patients_csv": "Benchmark data/DDXPlus/release_test_patients.csv",
+  "predictions": "experiments/ablations/seed_only_beam/results/test5000/predictions.csv",
+  "condition_map": "data/mappings/ddxplus_v2/condition_to_primekg.json",
+  "queries_csv": "data/processed/ddxplus_v2/test_queries.csv",
+  "target_mode": "pathology",
+  "topk": [
+    1,
+    5,
+    10,
+    20,
+    50
+  ]
+}

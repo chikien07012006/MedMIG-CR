@@ -1,0 +1,141 @@
+{
+  "graph_nodes": 82240,
+  "graph_edges": 2734346,
+  "relation_types": 18,
+  "candidate_space_size": 22205,
+  "embedding_dimension": 64,
+  "rgcn_layers": [
+    {
+      "in": 64,
+      "out": 128,
+      "num_bases": 9
+    },
+    {
+      "in": 128,
+      "out": 64,
+      "num_bases": 9
+    }
+  ],
+  "query_encoder": "mean pool of R-GCN output embeddings for seed IDs",
+  "disease_scorer": "concat(q,d,q*d): 192 -> 128 -> 1",
+  "ranking_loss": "mean(softplus(-score_positive + score_negative))",
+  "optimizer": "Adam",
+  "learning_rate": 0.001,
+  "num_train_queries": 200000,
+  "num_train_queries_with_candidate_target": 186143,
+  "num_valid_queries": 5000,
+  "num_test_queries": 5000,
+  "num_positive_pairs": 186143,
+  "num_negative_pairs_sampled": 37228600,
+  "parameter_count": 5452549,
+  "best_epoch": 10,
+  "best_valid_mrr": 0.056508884344186563,
+  "training_elapsed_seconds": 2323.395,
+  "gpu_peak_memory_mb": null,
+  "candidate_space_check": "passed: PrimeKG disease_nodes.csv, not DDXPlus-only targets",
+  "graph_traversal_at_query_time": false,
+  "path_information_used": false,
+  "pathology_used_as_input": false,
+  "history": [
+    {
+      "epoch": 1,
+      "train_bpr_loss": 0.6965180105705074,
+      "valid_mrr": 0.008196281458443368,
+      "valid_recall@10": 0.0284,
+      "epoch_seconds": 230.04959204094484,
+      "train_positive_pairs": 186143
+    },
+    {
+      "epoch": 2,
+      "train_bpr_loss": 0.6831322532559498,
+      "valid_mrr": 0.03467961889159059,
+      "valid_recall@10": 0.0284,
+      "epoch_seconds": 227.33500504191034,
+      "train_positive_pairs": 186143
+    },
+    {
+      "epoch": 3,
+      "train_bpr_loss": 0.670015494941536,
+      "valid_mrr": 0.03667972257964383,
+      "valid_recall@10": 0.0502,
+      "epoch_seconds": 228.2339939160738,
+      "train_positive_pairs": 186143
+    },
+    {
+      "epoch": 4,
+      "train_bpr_loss": 0.6552560493678804,
+      "valid_mrr": 0.04377006518720795,
+      "valid_recall@10": 0.0776,
+      "epoch_seconds": 233.95581700000912,
+      "train_positive_pairs": 186143
+    },
+    {
+      "epoch": 5,
+      "train_bpr_loss": 0.6374506529828861,
+      "valid_mrr": 0.0492805448999717,
+      "valid_recall@10": 0.078,
+      "epoch_seconds": 232.76844570902176,
+      "train_positive_pairs": 186143
+    },
+    {
+      "epoch": 6,
+      "train_bpr_loss": 0.6155687315359004,
+      "valid_mrr": 0.049829277091720164,
+      "valid_recall@10": 0.078,
+      "epoch_seconds": 230.1359847499989,
+      "train_positive_pairs": 186143
+    },
+    {
+      "epoch": 7,
+      "train_bpr_loss": 0.5886001255331346,
+      "valid_mrr": 0.05096018224755504,
+      "valid_recall@10": 0.078,
+      "epoch_seconds": 224.7782134579029,
+      "train_positive_pairs": 186143
+    },
+    {
+      "epoch": 8,
+      "train_bpr_loss": 0.5557810429153216,
+      "valid_mrr": 0.052582560024111206,
+      "valid_recall@10": 0.1038,
+      "epoch_seconds": 224.6275351671502,
+      "train_positive_pairs": 186143
+    },
+    {
+      "epoch": 9,
+      "train_bpr_loss": 0.5164988867844337,
+      "valid_mrr": 0.05414350285735636,
+      "valid_recall@10": 0.1038,
+      "epoch_seconds": 229.6254253340885,
+      "train_positive_pairs": 186143
+    },
+    {
+      "epoch": 10,
+      "train_bpr_loss": 0.4707482824674307,
+      "valid_mrr": 0.056508884344186563,
+      "valid_recall@10": 0.1038,
+      "epoch_seconds": 231.27529433299787,
+      "train_positive_pairs": 186143
+    }
+  ],
+  "checkpoint": "Benchmark_baselines/Relational_GNN/outputs/full_train_test5000/rgcn_ranker.pt",
+  "test_metrics": {
+    "num_evaluated": 5000,
+    "candidate_space_size": 22205,
+    "mrr": 0.05578514418962582,
+    "recall@5": 0.0542,
+    "recall@10": 0.103,
+    "recall@20": 0.1178,
+    "recall@50": 0.2696,
+    "candidate_recall": 0.9366,
+    "num_targets_total": 5000,
+    "num_targets_in_candidates": 4683,
+    "num_target_nodes_absent_from_candidates": 317,
+    "elapsed_seconds": 30.469,
+    "queries_per_second": 164.10266306906303,
+    "candidate_pairs_scored": 111025000,
+    "predictions_csv": "Benchmark_baselines/Relational_GNN/outputs/full_train_test5000/test_predictions.csv",
+    "by_patient_csv": "Benchmark_baselines/Relational_GNN/outputs/full_train_test5000/test_by_patient.csv"
+  },
+  "elapsed_seconds": 2325.497
+}

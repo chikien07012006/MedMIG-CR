@@ -2,8 +2,12 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
+import time
 from pathlib import Path
 from typing import Dict, List
+
+from tqdm import tqdm
 
 
 def read_rows(path: Path) -> List[Dict[str, str]]:
@@ -30,20 +34,22 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    started_at = time.perf_counter()
     old_rows = read_rows(args.old_queries)
     new_rows = read_rows(args.new_queries)
     new_by_id = {int(row["patient_index"]): row for row in new_rows}
     old_by_id = {int(row["patient_index"]): row for row in old_rows}
     patient_ids = [
         int(row["patient_index"])
-        for row in old_rows
+        for row in tqdm(old_rows, desc="Pairing query cohorts", unit="patient")
         if int(row["patient_index"]) in new_by_id
     ][: args.limit]
     paired_old = [old_by_id[patient_id] for patient_id in patient_ids]
     paired_new = [new_by_id[patient_id] for patient_id in patient_ids]
     write_rows(args.output_dir / "old_queries.csv", paired_old, list(paired_old[0].keys()))
     write_rows(args.output_dir / "new_queries.csv", paired_new, list(paired_new[0].keys()))
-    print(f"Wrote {len(patient_ids)} paired queries to {args.output_dir}")
+    elapsed = max(time.perf_counter() - started_at, 1e-9)
+    print(json.dumps({"stage": "paired_query_cohort", "elapsed_seconds": round(elapsed, 3), "patients_processed": len(old_rows), "patients_per_second": round(len(old_rows) / elapsed, 3), "paired_queries": len(patient_ids), "output_dir": str(args.output_dir)}))
 
 
 if __name__ == "__main__":

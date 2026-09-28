@@ -5,9 +5,12 @@ import ast
 import csv
 import json
 import statistics
+import time
 from collections import Counter
 from pathlib import Path
 from typing import Any, Dict, List
+
+from tqdm import tqdm
 
 
 def load_json(path: Path) -> Any:
@@ -44,6 +47,7 @@ def build_queries(
     summary_json: Path,
     min_seed_nodes: int,
 ) -> None:
+    started_at = time.perf_counter()
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     summary_json.parent.mkdir(parents=True, exist_ok=True)
 
@@ -73,7 +77,7 @@ def build_queries(
         writer = csv.DictWriter(out_handle, fieldnames=fieldnames)
         writer.writeheader()
 
-        for patient_index, row in enumerate(reader):
+        for patient_index, row in enumerate(tqdm(reader, desc=f"Building {patients_csv.stem} queries", unit="patient")):
             stats["patients_total"] += 1
             evidence_keys = parse_list_cell(row.get("EVIDENCES", ""))
             seed_nodes: List[str] = []
@@ -153,6 +157,9 @@ def build_queries(
     }
     with summary_json.open("w", encoding="utf-8") as handle:
         json.dump(summary, handle, indent=2, ensure_ascii=False)
+    elapsed = max(time.perf_counter() - started_at, 1e-9)
+    processed = int(stats["patients_total"])
+    print(json.dumps({"stage": "ddxplus_query_build", "elapsed_seconds": round(elapsed, 3), "patients_processed": processed, "patients_per_second": round(processed / elapsed, 3), "patients_written": int(stats["patients_written"])}))
 
 
 def parse_args() -> argparse.Namespace:

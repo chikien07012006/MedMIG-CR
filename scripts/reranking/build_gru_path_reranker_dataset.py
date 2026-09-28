@@ -4,11 +4,14 @@ import argparse
 import csv
 import json
 import sys
+import time
+from itertools import islice
 from collections import Counter
 from pathlib import Path
 from typing import Dict, Iterable, List, Sequence, Tuple
 
 import torch
+from tqdm import tqdm
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -18,6 +21,7 @@ if str(SRC_DIR) not in sys.path:
 
 from medmigcr_kg.graph_store import GraphStore  # noqa: E402
 from medmigcr_kg.retrieval_engine import RetrievalEngine  # noqa: E402
+from medmigcr_kg.telemetry import log_run_summary, reset_peak_memory  # noqa: E402
 from medmigcr_mind.contrastive_model import ProjectedClinicalMIND  # noqa: E402
 
 
@@ -31,8 +35,9 @@ def split_nodes(cell: str) -> List[str]:
 
 def load_queries(path: Path, limit: int | None = None) -> List[Dict[str, str]]:
     with path.open("r", newline="", encoding="utf-8-sig") as handle:
-        rows = list(csv.DictReader(handle))
-    return rows[:limit] if limit is not None else rows
+        reader = csv.DictReader(handle)
+        rows = list(tqdm(islice(reader, limit), total=limit, desc="Loading queries", unit="query")) if limit is not None else list(tqdm(reader, desc="Loading queries", unit="query"))
+    return rows
 
 
 def load_checkpoint(path: Path, device: torch.device) -> dict:
@@ -175,6 +180,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    run_started = time.perf_counter()
     device = torch.device(args.device)
     model, hp, seed_vocab = load_model(args.checkpoint, device)
     use_interests = int(args.interest_count or hp["K"])
@@ -191,6 +197,7 @@ def main() -> None:
     )
     engine = RetrievalEngine(graph_store)
     queries = load_queries(args.queries_csv, limit=args.limit_patients)
+    reset_peak_memory(device)
     target_universe = load_target_universe(args.condition_map)
     target_universe_ids = None
     if target_universe:
@@ -207,7 +214,7 @@ def main() -> None:
 
     counts: Counter[str] = Counter()
     with args.output_jsonl.open("w", encoding="utf-8") as handle:
-        for query_idx, query in enumerate(queries, start=1):
+        for query_idx, query in enumerate(tqdm(queries, desc="Generating reranker paths", unit="query"), start=1):
             patient_index = int(query["patient_index"])
             pathology = query.get("pathology", "")
             seed_keys = split_nodes(query.get("seed_node_keys", ""))
@@ -291,6 +298,7 @@ def main() -> None:
     with metadata_path.open("w", encoding="utf-8") as handle:
         json.dump(metadata, handle, indent=2, ensure_ascii=False)
     print(json.dumps(metadata, indent=2, ensure_ascii=False))
+    log_run_summary("gru_path_generation", run_started, counts["queries_processed"], "queries", device, paths_written=counts["positive_paths"] + counts["negative_paths"])
 
 
 if __name__ == "__main__":

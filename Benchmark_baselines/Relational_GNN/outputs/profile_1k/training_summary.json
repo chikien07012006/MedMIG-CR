@@ -1,0 +1,69 @@
+{
+  "graph_nodes": 82240,
+  "graph_edges": 2734346,
+  "relation_types": 18,
+  "candidate_space_size": 22205,
+  "embedding_dimension": 64,
+  "rgcn_layers": [
+    {
+      "in": 64,
+      "out": 128,
+      "num_bases": 9
+    },
+    {
+      "in": 128,
+      "out": 64,
+      "num_bases": 9
+    }
+  ],
+  "query_encoder": "mean pool of R-GCN output embeddings for seed IDs",
+  "disease_scorer": "concat(q,d,q*d): 192 -> 128 -> 1",
+  "ranking_loss": "mean(softplus(-score_positive + score_negative))",
+  "optimizer": "Adam",
+  "learning_rate": 0.001,
+  "num_train_queries": 1000,
+  "num_train_queries_with_candidate_target": 935,
+  "num_valid_queries": 100,
+  "num_test_queries": 100,
+  "num_positive_pairs": 935,
+  "num_negative_pairs_sampled": 18700,
+  "parameter_count": 5452549,
+  "best_epoch": 1,
+  "best_valid_mrr": 0.010129372434174637,
+  "training_elapsed_seconds": 7.819,
+  "gpu_peak_memory_mb": null,
+  "candidate_space_check": "passed: PrimeKG disease_nodes.csv, not DDXPlus-only targets",
+  "graph_traversal_at_query_time": false,
+  "path_information_used": false,
+  "pathology_used_as_input": false,
+  "history": [
+    {
+      "epoch": 1,
+      "train_bpr_loss": 0.6964925592595881,
+      "valid_mrr": 0.010129372434174637,
+      "valid_recall@10": 0.05,
+      "epoch_seconds": 6.630650165956467,
+      "train_positive_pairs": 935
+    }
+  ],
+  "checkpoint": "Benchmark_baselines/Relational_GNN/outputs/profile_1k/rgcn_ranker.pt",
+  "test_metrics": {
+    "num_evaluated": 100,
+    "candidate_space_size": 22205,
+    "mrr": 0.010172761596719614,
+    "recall@5": 0.0,
+    "recall@10": 0.06,
+    "recall@20": 0.06,
+    "recall@50": 0.09,
+    "candidate_recall": 0.97,
+    "num_targets_total": 100,
+    "num_targets_in_candidates": 97,
+    "num_target_nodes_absent_from_candidates": 3,
+    "elapsed_seconds": 1.139,
+    "queries_per_second": 87.76167789695512,
+    "candidate_pairs_scored": 2220500,
+    "predictions_csv": "Benchmark_baselines/Relational_GNN/outputs/profile_1k/test_predictions.csv",
+    "by_patient_csv": "Benchmark_baselines/Relational_GNN/outputs/profile_1k/test_by_patient.csv"
+  },
+  "elapsed_seconds": 8.0
+}

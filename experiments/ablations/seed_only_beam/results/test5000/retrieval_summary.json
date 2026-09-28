@@ -1,0 +1,23 @@
+{
+  "experiment": "seed_only_beam",
+  "query_encoder": "none",
+  "seed_interest_initialization": "mean PrimeKG embedding of resolved seed nodes",
+  "test_queries_csv": "/Users/duonghienchikien/Documents/Work Space/MedMIG-CR/data/processed/ddxplus_v2/test_queries.csv",
+  "graph_dir": "/Users/duonghienchikien/Documents/Work Space/MedMIG-CR/data/processed/primekg_graph",
+  "condition_map": "/Users/duonghienchikien/Documents/Work Space/MedMIG-CR/data/mappings/ddxplus_v2/condition_to_primekg.json",
+  "target_universe_size": 47,
+  "target_aware_candidate_collection": true,
+  "output_csv": "/Users/duonghienchikien/Documents/Work Space/MedMIG-CR/experiments/ablations/seed_only_beam/results/test5000/predictions.csv",
+  "num_queries_loaded": 5000,
+  "num_prediction_rows": 104507,
+  "skipped_missing_seed": 0,
+  "no_target_candidates": 0,
+  "max_hops": 10,
+  "beam_width": 128,
+  "paths_per_interest": 4096,
+  "top_k": 50,
+  "alpha": 1.0,
+  "beta": 0.1,
+  "retrieval_seconds": 839.213,
+  "elapsed_seconds": 855.966
+}

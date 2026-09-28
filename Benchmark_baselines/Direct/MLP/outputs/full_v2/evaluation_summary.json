@@ -1,0 +1,15 @@
+{
+  "num_evaluated": 134236,
+  "mrr": 0.991063541490774,
+  "recall@5": 0.9999776513006943,
+  "recall@10": 1.0,
+  "recall@20": 1.0,
+  "recall@50": 1.0,
+  "checkpoint": "Benchmark_baselines/Direct/MLP/outputs/full_v2/mlp_baseline.pt",
+  "test_csv": "data/processed/ddxplus_v2/test_queries.csv",
+  "num_test_queries": 134236,
+  "input_seed_nodes": 132,
+  "target_nodes": 47,
+  "parameter_count": 73007,
+  "unknown_seed_mentions": 0
+}

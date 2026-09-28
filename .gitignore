@@ -17,7 +17,7 @@ __pycache__/
 # Keep smaller metadata, mappings, processed graph artifacts, test/valid queries,
 # reports, and experiment summaries trackable for moving the project to a new laptop.
 /kg_giant.csv
-/Benchmark data/DDXPlus/release_train_patients.csv
+/Benchmark data/DDXPlus/release_*_patients.csv
 /data/processed/ddxplus/train_queries.csv
 /data/processed/ddxplus_v2/train_queries.csv
 
@@ -35,6 +35,28 @@ __pycache__/
 # Keep small summary JSON files trackable.
 /results/**/predictions.csv
 /results/**/by_patient.csv
+
+# Generated benchmark outputs: retain small JSON summaries, ignore data/model artifacts.
+/Benchmark_baselines/**/outputs/**/*.csv
+/Benchmark_baselines/**/outputs/**/*.pt
+/Benchmark_baselines/**/outputs/**/*.pth
+/Benchmark_baselines/**/outputs/**/*.ckpt
+/Benchmark_baselines/**/outputs/**/xgboost_ranker.json
+
+# Ablation checkpoints, path-training dumps, and prediction-level results.
+/experiments/ablations/**/checkpoints/**/*.pt
+/experiments/ablations/**/checkpoints/**/*.pth
+/experiments/ablations/**/checkpoints/**/*.ckpt
+/experiments/ablations/**/checkpoints/**/*.csv
+/experiments/ablations/**/data/**/*.jsonl
+/experiments/ablations/**/results/**/*.csv
+
+# Reproduction run artifacts follow the same policy.
+/experiments/reproduction/**/checkpoints/**/*.pt
+/experiments/reproduction/**/checkpoints/**/*.pth
+/experiments/reproduction/**/checkpoints/**/*.ckpt
+/experiments/reproduction/**/data/**/*.jsonl
+/experiments/reproduction/**/results/**/*.csv
 
 # Obsolete/generated folders from pre-reorg experiments
 /multi-interest/
