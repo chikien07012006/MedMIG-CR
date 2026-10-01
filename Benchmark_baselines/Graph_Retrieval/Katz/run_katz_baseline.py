@@ -6,39 +6,35 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from graph_propagation import PPR_SCORES, PropagationConfig, add_common_arguments, run_propagation  # noqa: E402
+from graph_propagation import KATZ_NORMALIZATIONS, PropagationConfig, add_common_arguments, run_propagation  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     add_common_arguments(parser)
-    parser.add_argument("--restart_probability", type=float, default=0.15)
-    parser.add_argument("--max_iterations", type=int, default=200)
-    parser.add_argument("--tolerance", type=float, default=1e-6, help="Per-query L1 change that counts as converged.")
-    parser.add_argument("--ppr_score", choices=PPR_SCORES, default="raw",
-                        help="raw: stationary probability; degree: probability / degree (reduces hub bias).")
+    parser.add_argument("--katz_beta", type=float, default=0.5, help="Decay per walk step.")
+    parser.add_argument("--katz_max_length", type=int, default=4, help="Longest walk length L.")
+    parser.add_argument("--katz_normalization", choices=KATZ_NORMALIZATIONS, default="sym",
+                        help="none: raw walk counts (A); sym: D^-1/2 A D^-1/2; rw: A D^-1 (random-walk mass).")
     args = parser.parse_args()
-    if not 0.0 < args.restart_probability < 1.0:
-        parser.error("--restart_probability must be in (0, 1)")
-    if args.max_iterations < 1 or args.tolerance <= 0:
-        parser.error("--max_iterations and --tolerance must be positive")
+    if args.katz_beta <= 0 or args.katz_max_length < 1:
+        parser.error("--katz_beta must be positive and --katz_max_length at least 1")
     return args
 
 
 def main() -> None:
     args = parse_args()
     config = PropagationConfig(
-        method="ppr",
+        method="katz",
         graph_dir=args.graph_dir,
         condition_map=args.condition_map,
         candidate_space=args.candidate_space,
         exclude_relations=tuple(args.exclude_relations),
         top_k=args.top_k,
         keep_zero_scores=args.keep_zero_scores,
-        restart_probability=args.restart_probability,
-        max_iterations=args.max_iterations,
-        tolerance=args.tolerance,
-        ppr_score=args.ppr_score,
+        katz_beta=args.katz_beta,
+        katz_max_length=args.katz_max_length,
+        katz_normalization=args.katz_normalization,
     )
     run_propagation(
         config,

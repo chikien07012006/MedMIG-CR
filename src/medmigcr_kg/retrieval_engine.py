@@ -10,6 +10,7 @@ import numpy as np
 
 from .beam_search import BeamItem, SemanticBeamSearch
 from .graph_store import GraphStore
+from .target_distance import TargetDistanceGuide
 from .subgraph_builder import build_subgraph_from_paths
 
 
@@ -73,6 +74,7 @@ class RetrievalEngine:
         projection: Optional[dict] = None,
         target_node_ids: Optional[Set[int]] = None,
         path_scorer: Optional[Callable[[Sequence[BeamItem]], Sequence[float]]] = None,
+        distance_guide: Optional[TargetDistanceGuide] = None,
     ) -> RetrievalResult:
         if interest_vectors is None:
             if self.interest_vectors is not None:
@@ -97,6 +99,7 @@ class RetrievalEngine:
                 beta=beta,
                 projection=projection,
                 path_scorer=path_scorer,
+                distance_guide=distance_guide,
             )
             best_paths = search.search(
                 seed_node_ids,

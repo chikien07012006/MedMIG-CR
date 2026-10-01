@@ -21,8 +21,10 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from medmigcr_kg.graph_store import GraphStore  # noqa: E402
+from medmigcr_kg.parallel import recommended_workers, run_ordered  # noqa: E402
 from medmigcr_kg.beam_search import BeamScore  # noqa: E402
 from medmigcr_kg.retrieval_engine import RetrievalEngine  # noqa: E402
+from medmigcr_kg.target_distance import build_distance_guide  # noqa: E402
 from medmigcr_kg.telemetry import log_run_summary, reset_peak_memory  # noqa: E402
 from medmigcr_mind.contrastive_model import ProjectedClinicalMIND, average_pairwise_cosine  # noqa: E402
 from medmigcr_path_reranker.gru_reranker import GRUPathReranker, GRUPathRerankerConfig  # noqa: E402
@@ -377,20 +379,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
     parser.add_argument("--graph_device", type=str, default="auto")
     parser.add_argument("--progress_every", type=int, default=300)
+    parser.add_argument("--distance_pruning", action="store_true",
+                        help="Drop neighbours that cannot reach any target within the remaining hops.")
+    parser.add_argument("--distance_weight", type=float, default=0.0,
+                        help="Subtract weight * hop distance to the nearest target from each step score.")
+    parser.add_argument(
+        "--num_workers",
+        type=int,
+        default=1,
+        help=f"CPU processes for beam search; output is identical to 1 worker. Suggested on this machine: {recommended_workers()}.",
+    )
+    parser.add_argument("--chunksize", type=int, default=8)
     return parser.parse_args()
 
 
-def main() -> None:
-    args = parse_args()
-    run_started = time.perf_counter()
-    device = torch.device(args.device)
-    mind_model, hp, seed_vocab = load_mind_model(args.mind_checkpoint, device)
-    reranker, reranker_ckpt = load_reranker(args.reranker_checkpoint, args.graph_dir, device)
-    use_interests = int(args.interest_count or hp["K"])
-    if use_interests < 1 or use_interests > int(hp["K"]):
-        raise ValueError(f"--interest_count must be between 1 and checkpoint K={hp['K']}")
-
-    graph_store = GraphStore.load(
+def load_graph_store(args: argparse.Namespace) -> GraphStore:
+    return GraphStore.load(
         graph_npz=args.graph_dir / "graph_csr.npz",
         node_embeddings_npy=args.graph_dir / "node_embeddings.npy",
         out_degree_npy=args.graph_dir / "out_degree.npy",
@@ -398,9 +402,17 @@ def main() -> None:
         mapping_dir=args.graph_dir / "mappings",
         device=args.graph_device,
     )
-    engine = RetrievalEngine(graph_store)
-    queries = load_queries(args.test_queries_csv, limit=args.limit_patients)
-    reset_peak_memory(device)
+
+
+# Per-process state, filled once by init_state() in the main process or each worker.
+_STATE: Dict[str, object] = {}
+
+
+def init_state(args: argparse.Namespace) -> None:
+    device = torch.device(args.device)
+    mind_model, hp, seed_vocab = load_mind_model(args.mind_checkpoint, device)
+    reranker, reranker_ckpt = load_reranker(args.reranker_checkpoint, args.graph_dir, device)
+    graph_store = load_graph_store(args)
     target_universe = load_target_universe(args.condition_map)
     target_node_ids = None
     if target_universe is not None:
@@ -423,6 +435,121 @@ def main() -> None:
                 args.beam_guidance_batch_size,
             )
 
+    _STATE.update(
+        args=args,
+        device=device,
+        mind_model=mind_model,
+        hp=hp,
+        seed_vocab=seed_vocab,
+        use_interests=int(args.interest_count or hp["K"]),
+        reranker=reranker,
+        graph_store=graph_store,
+        engine=RetrievalEngine(graph_store),
+        target_universe=target_universe,
+        target_node_ids=target_node_ids,
+        node_type2id=node_type2id,
+        beam_path_scorer=beam_path_scorer,
+    )
+    _STATE["distance_guide"] = build_distance_guide(
+        _STATE["graph_store"], _STATE["target_node_ids"], args.distance_pruning, args.distance_weight
+    )
+
+
+def process_query(query: Dict[str, str]) -> Dict[str, object]:
+    """Retrieve and rerank one query; the main process aggregates the counters."""
+    args = _STATE["args"]
+    graph_store = _STATE["graph_store"]
+    hp = _STATE["hp"]
+    seed_vocab = _STATE["seed_vocab"]
+    device = _STATE["device"]
+    use_interests = _STATE["use_interests"]
+    target_universe = _STATE["target_universe"]
+
+    patient_index = int(query["patient_index"])
+    seed_keys = split_nodes(query.get("seed_node_keys", ""))
+    seed_ids = resolve_seed_ids(graph_store, seed_keys)
+    if not seed_ids:
+        return {"status": "missing_seed"}
+    encoded = encode_seed_nodes(seed_keys, seed_vocab, int(hp["max_seq_len"]))
+    has_unk_seed = any(seed_vocab.get(key, UNK_SYM) == UNK_SYM for key in seed_keys)
+    x = torch.tensor([encoded], dtype=torch.long, device=device)
+    with torch.no_grad():
+        projected, _latent, active_mask = _STATE["mind_model"](x)
+        interest_vectors = projected[0, :use_interests, :].detach().cpu().numpy()
+        cosine_mean, _ = average_pairwise_cosine(projected[:, :use_interests, :], active_mask[:, :use_interests])
+
+    result = _STATE["engine"].retrieve(
+        seed_node_ids=seed_ids,
+        max_hops=args.max_hops,
+        beam_width=args.beam_width,
+        topk_paths=args.paths_per_interest,
+        alpha=args.alpha,
+        beta=args.beta,
+        interest_vectors=interest_vectors,
+        max_paths_per_interest=args.paths_per_interest,
+        target_node_ids=_STATE["target_node_ids"],
+        path_scorer=_STATE["beam_path_scorer"],
+        distance_guide=_STATE["distance_guide"],
+    )
+    beam_ranked = beam_endpoint_scores(result, graph_store, target_universe)
+
+    records = [
+        record
+        for item in result.paths
+        for record in [path_to_record(graph_store, _STATE["node_type2id"], target_universe, item)]
+        if record is not None
+    ]
+
+    rerank_start = time.perf_counter()
+    reranked = reranked_endpoint_scores(
+        _STATE["reranker"],
+        records,
+        device,
+        args.rerank_batch_size,
+        top_k=len(target_universe) if target_universe is not None else args.top_k,
+    )
+    rerank_latency = time.perf_counter() - rerank_start
+    reranked_endpoints = {candidate for candidate, _score in reranked}
+    fallback = [
+        (candidate, score)
+        for candidate, score in beam_ranked
+        if candidate not in reranked_endpoints
+    ]
+    ranked = reranked + fallback
+    rows = [
+        {
+            "patient_index": patient_index,
+            "candidate": candidate,
+            "score": f"{score:.8f}",
+            "rank": rank,
+        }
+        for rank, (candidate, score) in enumerate(ranked[: args.top_k], start=1)
+    ]
+    return {
+        "status": "ok" if ranked else "no_candidates",
+        "rows": rows,
+        "has_unk_seed": has_unk_seed,
+        "cosine_mean": cosine_mean,
+        "retrieve_latency": float(result.latency_seconds),
+        "rerank_latency": rerank_latency,
+        "fallback_count": len(fallback),
+    }
+
+
+def main() -> None:
+    args = parse_args()
+    run_started = time.perf_counter()
+    device = torch.device(args.device)
+    _mind_model, hp, _seed_vocab = load_mind_model(args.mind_checkpoint, device)
+    reranker, _reranker_ckpt = load_reranker(args.reranker_checkpoint, args.graph_dir, device)
+    use_interests = int(args.interest_count or hp["K"])
+    if use_interests < 1 or use_interests > int(hp["K"]):
+        raise ValueError(f"--interest_count must be between 1 and checkpoint K={hp['K']}")
+
+    queries = load_queries(args.test_queries_csv, limit=args.limit_patients)
+    reset_peak_memory(device)
+    target_universe = load_target_universe(args.condition_map)
+
     rows: List[Dict[str, object]] = []
     skipped_missing_seed = 0
     no_target_candidates = 0
@@ -432,75 +559,28 @@ def main() -> None:
     retrieve_latency_values: List[float] = []
     rerank_latency_values: List[float] = []
 
-    progress = tqdm(queries, desc="Retrieving", unit="query")
-    for query_idx, query in enumerate(progress, start=1):
-        patient_index = int(query["patient_index"])
-        seed_keys = split_nodes(query.get("seed_node_keys", ""))
-        seed_ids = resolve_seed_ids(graph_store, seed_keys)
-        if not seed_ids:
+    results = run_ordered(
+        queries,
+        process_query,
+        init_fn=init_state,
+        init_args=(args,),
+        num_workers=args.num_workers,
+        chunksize=args.chunksize,
+    )
+    progress = tqdm(results, total=len(queries), desc="Retrieving", unit="query")
+    for query_idx, outcome in enumerate(progress, start=1):
+        if outcome["status"] == "missing_seed":
             skipped_missing_seed += 1
             continue
-        encoded = encode_seed_nodes(seed_keys, seed_vocab, int(hp["max_seq_len"]))
-        if any(seed_vocab.get(key, UNK_SYM) == UNK_SYM for key in seed_keys):
-            unk_seed_queries += 1
-        x = torch.tensor([encoded], dtype=torch.long, device=device)
-        with torch.no_grad():
-            projected, _latent, active_mask = mind_model(x)
-            interest_vectors = projected[0, :use_interests, :].detach().cpu().numpy()
-            cosine_mean, _ = average_pairwise_cosine(projected[:, :use_interests, :], active_mask[:, :use_interests])
-            cosine_values.append(cosine_mean)
-
-        result = engine.retrieve(
-            seed_node_ids=seed_ids,
-            max_hops=args.max_hops,
-            beam_width=args.beam_width,
-            topk_paths=args.paths_per_interest,
-            alpha=args.alpha,
-            beta=args.beta,
-            interest_vectors=interest_vectors,
-            max_paths_per_interest=args.paths_per_interest,
-            target_node_ids=target_node_ids,
-            path_scorer=beam_path_scorer,
-        )
-        retrieve_latency_values.append(float(result.latency_seconds))
-        beam_ranked = beam_endpoint_scores(result, graph_store, target_universe)
-
-        records = [
-            record
-            for item in result.paths
-            for record in [path_to_record(graph_store, node_type2id, target_universe, item)]
-            if record is not None
-        ]
-
-        rerank_start = time.perf_counter()
-        reranked = reranked_endpoint_scores(
-            reranker,
-            records,
-            device,
-            args.rerank_batch_size,
-            top_k=len(target_universe) if target_universe is not None else args.top_k,
-        )
-        rerank_latency_values.append(time.perf_counter() - rerank_start)
-        reranked_endpoints = {candidate for candidate, _score in reranked}
-        fallback = [
-            (candidate, score)
-            for candidate, score in beam_ranked
-            if candidate not in reranked_endpoints
-        ]
-        preserved_unreranked_candidates += len(fallback)
-        ranked = reranked + fallback
-        if not ranked:
+        unk_seed_queries += int(outcome["has_unk_seed"])
+        cosine_values.append(outcome["cosine_mean"])
+        retrieve_latency_values.append(outcome["retrieve_latency"])
+        rerank_latency_values.append(outcome["rerank_latency"])
+        preserved_unreranked_candidates += outcome["fallback_count"]
+        if outcome["status"] == "no_candidates":
             no_target_candidates += 1
             continue
-        for rank, (candidate, score) in enumerate(ranked[: args.top_k], start=1):
-            rows.append(
-                {
-                    "patient_index": patient_index,
-                    "candidate": candidate,
-                    "score": f"{score:.8f}",
-                    "rank": rank,
-                }
-            )
+        rows.extend(outcome["rows"])
 
         if args.progress_every and query_idx % args.progress_every == 0:
             progress.set_postfix(
@@ -521,10 +601,13 @@ def main() -> None:
         "reranker_config": asdict(reranker.config),
         "gru_beam_guidance_enabled": not args.disable_gru_beam_guidance,
         "beam_guidance_batch_size": args.beam_guidance_batch_size,
+        "num_workers": args.num_workers,
+        "distance_pruning": args.distance_pruning,
+        "distance_weight": args.distance_weight,
         "condition_map": str(args.condition_map) if args.condition_map else None,
         "target_universe_size": len(target_universe) if target_universe is not None else None,
         "candidate_endpoint_filter": "all mapped target endpoints found by beam search; valid disease paths are GRU-reranked and remaining endpoints retain beam ordering",
-        "target_aware_candidate_collection": target_node_ids is not None,
+        "target_aware_candidate_collection": target_universe is not None,
         "output_csv": str(args.output_csv),
         "elapsed_seconds": round(time.perf_counter() - run_started, 3),
         "gpu_peak_memory_mb": round(torch.cuda.max_memory_allocated(device) / (1024**2), 2) if device.type == "cuda" else None,
