@@ -20,6 +20,7 @@ __pycache__/
 /Benchmark data/DDXPlus/release_*_patients.csv
 /data/processed/ddxplus/train_queries.csv
 /data/processed/ddxplus_v2/train_queries.csv
+/data/processed/ddxplus_v2_subsets/train_*.csv
 
 # Generated reranker training dumps can be large; keep metadata JSON trackable.
 /data/processed/reranker/*.jsonl

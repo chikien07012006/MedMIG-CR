@@ -7,6 +7,7 @@ import numpy as np
 
 from . import scoring
 from .graph_store import GraphStore
+from .target_distance import TargetDistanceGuide
 
 
 @dataclass(frozen=True)
@@ -36,8 +37,10 @@ class SemanticBeamSearch:
         beta: float = 0.4,
         projection: Optional[dict] = None,
         path_scorer: Optional[Callable[[Sequence[BeamItem]], Sequence[float | BeamScore]]] = None,
+        distance_guide: Optional[TargetDistanceGuide] = None,
     ):
         self.graph_store = graph_store
+        self.distance_guide = distance_guide
         self.alpha = alpha
         self.beta = beta
         self.projection = self._prepare_projection(projection)
@@ -100,12 +103,15 @@ class SemanticBeamSearch:
         global_paths: List[BeamItem] = []
         target_paths: dict[int, BeamItem] = {}
 
-        for _hop in range(max_hops):
+        for hop in range(max_hops):
+            remaining_hops = max_hops - hop - 1
             candidates: List[BeamItem] = []
             for item in beam:
                 out_neighbors = self.graph_store.get_neighbors(item.current_node, direction="out")
                 in_neighbors = self.graph_store.get_neighbors(item.current_node, direction="in")
                 neighbor_ids = np.unique(np.concatenate([out_neighbors, in_neighbors]))
+                if self.distance_guide is not None:
+                    neighbor_ids = neighbor_ids[self.distance_guide.admissible(neighbor_ids, remaining_hops)]
                 if neighbor_ids.size == 0:
                     continue
                 embeddings = self.graph_store.get_embeddings(neighbor_ids, as_tensor=self.graph_store.use_torch)
@@ -114,8 +120,12 @@ class SemanticBeamSearch:
                 if self.graph_store.use_torch:
                     scores = scores.detach().cpu().numpy()
                 scores = np.asarray(scores, dtype=np.float32)
+                if self.distance_guide is not None:
+                    heuristics = self.distance_guide.penalty(neighbor_ids, max_hops)
+                else:
+                    heuristics = np.zeros(len(neighbor_ids), dtype=np.float32)
 
-                for neighbor_id, expansion_score in zip(neighbor_ids, scores):
+                for neighbor_id, expansion_score, heuristic in zip(neighbor_ids, scores, heuristics):
                     if avoid_cycles and neighbor_id in item.path:
                         continue
                     path = item.path + (int(neighbor_id),)
@@ -130,7 +140,7 @@ class SemanticBeamSearch:
                     candidate = BeamItem(
                         int(neighbor_id),
                         path,
-                        additive_score,
+                        additive_score - float(heuristic),
                         additive_score,
                         item.relation_path + (step_rel_id,),
                         item.direction_path + (step_direction,),

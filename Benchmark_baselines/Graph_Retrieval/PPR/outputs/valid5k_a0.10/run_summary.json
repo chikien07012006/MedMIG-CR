@@ -1,0 +1,59 @@
+{
+  "method": "Personalized PageRank",
+  "config": {
+    "method": "ppr",
+    "graph_dir": "data/processed/primekg_graph",
+    "condition_map": "data/mappings/ddxplus_v2/condition_to_primekg.json",
+    "candidate_space": "closed",
+    "exclude_relations": [],
+    "top_k": 50,
+    "keep_zero_scores": false,
+    "restart_probability": 0.1,
+    "max_iterations": 200,
+    "tolerance": 1e-06,
+    "ppr_score": "raw",
+    "katz_beta": 0.5,
+    "katz_max_length": 4,
+    "katz_normalization": "sym"
+  },
+  "queries_csv": "data/processed/ddxplus_v2_subsets/valid_5k.csv",
+  "num_queries": 5000,
+  "skipped_missing_seed": 0,
+  "num_prediction_rows": 235000,
+  "graph": "PrimeKG, undirected union of directed edges, unweighted",
+  "personalization": "uniform over resolved seed nodes",
+  "batch_size": 64,
+  "num_workers": 6,
+  "elapsed_seconds": 231.694,
+  "queries_per_second": 21.58,
+  "ppr_convergence": {
+    "converged_queries": 5000,
+    "converged_fraction": 1.0,
+    "mean_iterations": 97.2432,
+    "max_iterations_used": 130
+  },
+  "candidate_coverage": 1.0,
+  "metrics": {
+    "num_evaluated": 5000,
+    "skipped": {},
+    "mrr": 0.14472349313502486,
+    "recall@1": 0.0656,
+    "recall@5": 0.1634,
+    "recall@10": 0.2792,
+    "recall@20": 0.5186,
+    "recall@50": 1.0,
+    "patients_csv": "Benchmark data/DDXPlus/release_test_patients.csv",
+    "predictions": "Benchmark_baselines/Graph_Retrieval/PPR/outputs/valid5k_a0.10/predictions.csv",
+    "condition_map": "data/mappings/ddxplus_v2/condition_to_primekg.json",
+    "queries_csv": "data/processed/ddxplus_v2_subsets/valid_5k.csv",
+    "target_mode": "pathology",
+    "topk": [
+      1,
+      5,
+      10,
+      20,
+      50
+    ],
+    "candidate_coverage": 1.0
+  }
+}

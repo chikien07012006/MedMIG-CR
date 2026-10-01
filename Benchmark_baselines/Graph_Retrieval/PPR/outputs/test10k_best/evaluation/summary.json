@@ -1,0 +1,22 @@
+{
+  "num_evaluated": 10000,
+  "skipped": {},
+  "mrr": 0.14551939150545146,
+  "recall@1": 0.0674,
+  "recall@5": 0.1686,
+  "recall@10": 0.2764,
+  "recall@20": 0.5218,
+  "recall@50": 1.0,
+  "patients_csv": "Benchmark data/DDXPlus/release_test_patients.csv",
+  "predictions": "Benchmark_baselines/Graph_Retrieval/PPR/outputs/test10k_best/predictions.csv",
+  "condition_map": "data/mappings/ddxplus_v2/condition_to_primekg.json",
+  "queries_csv": "data/processed/ddxplus_v2_subsets/test_10k.csv",
+  "target_mode": "pathology",
+  "topk": [
+    1,
+    5,
+    10,
+    20,
+    50
+  ]
+}
